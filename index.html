@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
   <meta name="theme-color" content="#0f1117">
-  <title>MesCorses - Gestion des courses</title>
+  <title>MesCourses - Gestion des courses</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -34,18 +34,19 @@
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 0.5rem; }
     .section-title { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #fff 0%, #a0aec0 100%); background-clip: text; -webkit-background-clip: text; color: transparent; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; transition: all 0.2s ease; margin-bottom: 0.8rem; cursor: pointer; }
-    .card:hover { border-color: var(--accent); box-shadow: 0 4px 12px var(--accent-glow); }
+    .card:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
     .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.6rem 1.2rem; font-size: 0.88rem; font-weight: 500; border-radius: 2rem; border: none; cursor: pointer; transition: all 0.2s ease; background: var(--surface2); color: var(--text); font-family: var(--font); }
     .btn-primary { background: linear-gradient(135deg, var(--accent), #818cf8); color: white; }
     .btn-danger { background: linear-gradient(135deg, #ef4444, #f87171); color: white; }
     .btn-success { background: linear-gradient(135deg, #10b981, #34d399); color: white; }
+    .btn-warning { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white; }
     .btn-ghost { background: transparent; border: 1px solid var(--border); }
     .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
     .btn-block { width: 100%; }
     .btn-link { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 0.85rem; padding: 0.5rem; }
     .form-group { margin-bottom: 1rem; }
     .form-label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--text2); margin-bottom: 0.35rem; }
-    input, select { width: 100%; padding: 0.7rem 1rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 0.75rem; color: var(--text); font-size: 0.9rem; }
+    input, select, textarea { width: 100%; padding: 0.7rem 1rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 0.75rem; color: var(--text); font-size: 0.9rem; }
     input:focus, select:focus { outline: none; border-color: var(--accent); }
     .form-row { display: flex; gap: 0.75rem; align-items: flex-end; }
     .progress-bar { background: var(--surface2); border-radius: 1rem; height: 6px; overflow: hidden; margin-top: 0.5rem; }
@@ -60,10 +61,13 @@
     .qty-select { width: 60px; padding: 0.3rem; font-size: 0.8rem; text-align: center; }
     .cat-group-title { font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin: 1.2rem 0 0.6rem 0; }
     .catalogue-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.75rem; margin-top: 0.5rem; }
-    .catalogue-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 0.5rem; text-align: center; transition: all 0.2s; cursor: pointer; }
+    .catalogue-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 0.5rem; text-align: center; transition: all 0.2s; cursor: pointer; position: relative; }
     .catalogue-card:hover { border-color: var(--accent); transform: translateY(-2px); }
     .catalogue-card-emoji { font-size: 1.8rem; margin-bottom: 0.5rem; }
     .catalogue-card-name { font-size: 0.8rem; font-weight: 500; }
+    .catalogue-card-cat { font-size: 0.65rem; color: var(--text3); margin-top: 0.25rem; }
+    .catalogue-card .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.8); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0; transition: opacity 0.2s; }
+    .catalogue-card:hover .delete-btn { opacity: 1; }
     .filter-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
     .filter-btn { background: var(--surface2); border: 1px solid var(--border); padding: 0.4rem 0.8rem; border-radius: 2rem; color: var(--text2); cursor: pointer; font-size: 0.8rem; }
     .filter-btn.active { background: var(--accent); color: white; }
@@ -79,6 +83,7 @@
     .menu-popup { position: absolute; right: 0; top: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius-sm); min-width: 140px; z-index: 50; overflow: hidden; }
     .menu-item { display: block; width: 100%; text-align: left; padding: 0.65rem 1rem; font-size: 0.88rem; background: none; border: none; color: var(--text); cursor: pointer; }
     .menu-item:hover { background: var(--surface); }
+    .admin-badge { background: var(--accent); color: white; padding: 0.2rem 0.5rem; border-radius: 1rem; font-size: 0.7rem; margin-left: 0.5rem; }
   </style>
 </head>
 <body>
@@ -140,15 +145,15 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // ⚠️ REMPLACEZ CES VALEURS par celles de votre projet Firebase
+    // VOTRE CONFIGURATION FIREBASE
     const firebaseConfig = {
-  apiKey: "AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
-  authDomain: "mes-courses-cf52d.firebaseapp.com",
-  projectId: "mes-courses-cf52d",
-  storageBucket: "mes-courses-cf52d.firebasestorage.app",
-  messagingSenderId: "248641691402",
-  appId: "1:248641691402:web:f36ad91dc0045d1edf24f3"
-};
+      apiKey: "AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
+      authDomain: "mes-courses-cf52d.firebaseapp.com",
+      projectId: "mes-courses-cf52d",
+      storageBucket: "mes-courses-cf52d.firebasestorage.app",
+      messagingSenderId: "248641691402",
+      appId: "1:248641691402:web:f36ad91dc0045d1edf24f3"
+    };
 
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -157,6 +162,7 @@
     let currentUser = null, currentListeId = null, catalogue = [], listes = [], dossiers = [], articles = [];
     let isLoginMode = true, filterDossier = '__all__', filterStatut = '__all__', filtreCoche = '__all__';
     let showAjoutModal = false, searchCatalogue = '', catalogueSearch = '', catalogueCategorie = '__all__';
+    let showGestionCatalogue = false;
 
     function showToast(msg, isError = false) {
       const toast = document.getElementById('toast');
@@ -168,6 +174,7 @@
 
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
 
+    // AUTHENTIFICATION
     async function handleAuth(e) {
       e.preventDefault();
       const email = document.getElementById('auth-email').value;
@@ -213,6 +220,40 @@
       try { await auth.sendPasswordResetEmail(email); showToast('📧 Email envoyé !'); } catch { showToast('❌ Email non trouvé', true); }
     }
 
+    // GESTION DU CATALOGUE (ADMIN)
+    async function ajouterProduit(nom, categorie, emoji) {
+      if (!nom.trim()) return;
+      const newProduit = { nom: nom.trim(), categorie: categorie || '', emoji: emoji || '🛍️' };
+      const docRef = await db.collection('catalogue').add(newProduit);
+      catalogue.push({ id: docRef.id, ...newProduit });
+      showToast(`✅ Produit "${nom}" ajouté`);
+      renderCataloguePage();
+    }
+
+    async function modifierProduit(id, nom, categorie, emoji) {
+      const ref = db.collection('catalogue').doc(id);
+      await ref.update({ nom: nom.trim(), categorie: categorie || '', emoji: emoji || '🛍️' });
+      const produit = catalogue.find(p => p.id === id);
+      if (produit) { produit.nom = nom.trim(); produit.categorie = categorie; produit.emoji = emoji; }
+      showToast(`✏️ Produit modifié`);
+      renderCataloguePage();
+    }
+
+    async function supprimerProduit(id, nom) {
+      if (!confirm(`Supprimer "${nom}" du catalogue ?`)) return;
+      await db.collection('catalogue').doc(id).delete();
+      catalogue = catalogue.filter(p => p.id !== id);
+      showToast(`🗑️ Produit supprimé`);
+      renderCataloguePage();
+    }
+
+    async function ajouterCategorie(nom) {
+      if (!nom.trim()) return;
+      // Les catégories sont juste des strings dans les produits, pas une collection séparée
+      showToast(`📁 Catégorie "${nom}" disponible (ajoutez des produits avec cette catégorie)`);
+    }
+
+    // CHARGEMENT DES DONNÉES
     async function loadCatalogue() {
       const snapshot = await db.collection('catalogue').orderBy('nom').get();
       catalogue = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -233,6 +274,7 @@
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
 
+    // GESTION LISTES
     async function creerListe(nom, dossier = '') {
       const newListe = { nom, dossier, statut: 'en_cours', createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
       const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').add(newListe);
@@ -299,6 +341,7 @@
       renderListesPage();
     }
 
+    // GESTION ARTICLES DANS UNE LISTE
     async function ajouterArticle(listeId, articleData) {
       const newArticle = { ...articleData, coche: false, addedAt: firebase.firestore.FieldValue.serverTimestamp() };
       const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').add(newArticle);
@@ -328,6 +371,7 @@
       renderListePage(listeId);
     }
 
+    // RENDU PAGES
     function renderListesPage() {
       const container = document.getElementById('main-content');
       let listesFiltrees = listes.filter(l => (filterDossier === '__all__' || l.dossier === filterDossier) && (filterStatut === '__all__' || l.statut === filterStatut));
@@ -363,7 +407,7 @@
       const categoriesTriees = Object.keys(articlesParCategorie).sort();
       let html = `<div class="fade-up"><div class="section-header"><button class="btn btn-ghost btn-sm" onclick="renderListesPage()">← Retour</button><h2 class="section-title">${escapeHtml(liste.nom)}</h2>${!estTerminee ? `<button class="btn btn-success btn-sm" onclick="terminerListe('${listeId}')">✓ Terminer</button>` : `<button class="btn btn-primary btn-sm" onclick="reactiverListe('${listeId}')">🔄 Réactiver</button>`}</div>${total > 0 ? `<div><div style="display:flex;justify-content:space-between;font-size:0.8rem"><span>${coches}/${total}</span><span>${pct}%</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div></div>` : ''}<div class="filter-group"><button class="filter-btn ${filtreCoche === '__all__' ? 'active' : ''}" data-filtre-coche="__all__">Tous (${total})</button><button class="filter-btn ${filtreCoche === 'non_coche' ? 'active' : ''}" data-filtre-coche="non_coche">À faire (${total - coches})</button><button class="filter-btn ${filtreCoche === 'coche' ? 'active' : ''}" data-filtre-coche="coche">Cochés (${coches})</button></div>${!estTerminee ? `<button class="btn btn-primary" style="width:100%;margin-bottom:1rem" id="btn-ajouter-article">+ Ajouter un article</button>` : ''}`;
       if (articles.length === 0) html += `<div class="empty-state"><p>Aucun article</p></div>`;
-      else for (const cat of categoriesTriees) { html += `<div class="cat-group-title">${escapeHtml(cat)}</div>`; for (const article of articlesParCategorie[cat]) html += `<div class="article-item ${article.coche ? 'article-coche' : ''}"><div class="article-info" onclick="${!estTerminee ? `toggleCoche('${listeId}','${article.id}')` : ''}"><span class="article-check">${article.coche ? '✓' : '◯'}</span><span class="article-name">${escapeHtml(article.nom)}</span>${article.quantite > 1 ? `<span class="article-qty">×${article.quantite}</span>` : ''}</div>${!estTerminee ? `<div class="article-actions"><select class="qty-select" onchange="modifierQuantite('${listeId}','${article.id}',parseInt(this.value))">${[1,2,3,4,5,6,7,8,9,10].map(n => `<option value="${n}" ${article.quantite === n ? 'selected' : ''}>${n}</option>`).join('')}</select><button class="btn-icon" style="background:none;border:none;cursor:pointer;font-size:1.1rem" onclick="supprimerArticle('${listeId}','${article.id}','${escapeHtml(article.nom)}')">🗑️</button></div>` : ''}</div>`; }
+      else for (const cat of categoriesTriees) { html += `<div class="cat-group-title">${escapeHtml(cat)}</div>`; for (const article of articlesParCategorie[cat]) html += `<div class="article-item ${article.coche ? 'article-coche' : ''}"><div class="article-info" onclick="${!estTerminee ? `toggleCoche('${listeId}','${article.id}')` : ''}"><span class="article-check">${article.coche ? '✓' : '◯'}</span><span class="article-name">${escapeHtml(article.nom)}</span>${article.quantite > 1 ? `<span class="article-qty">×${article.quantite}</span>` : ''}</div>${!estTerminee ? `<div class="article-actions"><select class="qty-select" onchange="modifierQuantite('${listeId}','${article.id}',parseInt(this.value))">${[1,2,3,4,5,6,7,8,9,10].map(n => `<option value="${n}" ${article.quantite === n ? 'selected' : ''}>${n}</option>`).join('')}</select><button class="btn-icon" style="background:none;border:none;cursor:pointer;font-size:1.1rem" onclick="supprimerArticle('${listeId}','${article.id}','${escapeHtml(article.nom)}')">🗑️</button></div>` : ''}</div>`); }
       html += `</div>`;
       if (showAjoutModal) { const filtered = catalogue.filter(a => a.nom.toLowerCase().includes(searchCatalogue.toLowerCase())); html += `<div class="modal-overlay" onclick="closeModal()"><div class="modal" onclick="event.stopPropagation()"><h3>Ajouter un article</h3><input type="text" id="search-catalogue" placeholder="Rechercher..." value="${escapeHtml(searchCatalogue)}" oninput="searchCatalogue=this.value;renderListePage('${currentListeId}')">${searchCatalogue && filtered.length ? `<div style="max-height:200px;overflow-y:auto;margin:1rem 0;border-bottom:1px solid var(--border)">${filtered.slice(0,10).map(a => `<button class="btn btn-ghost" style="width:100%;text-align:left" onclick="ajouterArticle('${currentListeId}',{nom:'${escapeHtml(a.nom)}',quantite:1,categorie:'${escapeHtml(a.categorie||'')}',emoji:'${escapeHtml(a.emoji||'')}'});showAjoutModal=false;renderListePage('${currentListeId}')">${a.emoji||'📦'} ${escapeHtml(a.nom)} ${a.categorie ? `(${escapeHtml(a.categorie)})` : ''}</button>`).join('')}</div>` : ''}<form id="form-ajout-manuel"><div class="form-group"><label class="form-label">Nom</label><input type="text" id="article-nom" required></div><div class="form-row"><div class="form-group"><label class="form-label">Quantité</label><input type="number" id="article-quantite" value="1" min="1"></div><div class="form-group"><label class="form-label">Catégorie</label><input type="text" id="article-categorie" placeholder="Optionnel"></div></div><div class="modal-buttons"><button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button><button type="submit" class="btn btn-primary">Ajouter</button></div></form></div></div>`; }
       document.getElementById('main-content').innerHTML = html;
@@ -385,13 +429,32 @@
     function renderCataloguePage() {
       const categories = [...new Set(catalogue.map(i => i.categorie).filter(Boolean))].sort();
       let filtered = catalogue.filter(i => (catalogueSearch === '' || i.nom.toLowerCase().includes(catalogueSearch.toLowerCase())) && (catalogueCategorie === '__all__' || i.categorie === catalogueCategorie));
-      let html = `<div class="fade-up"><div class="section-header"><h2 class="section-title">📦 Catalogue</h2></div><div style="margin-bottom:1rem"><input type="text" id="catalogue-search" placeholder="🔍 Rechercher..." value="${escapeHtml(catalogueSearch)}"></div><div class="filter-group"><button class="filter-btn ${catalogueCategorie === '__all__' ? 'active' : ''}" data-cat="__all__">Toutes</button>${categories.map(c => `<button class="filter-btn ${catalogueCategorie === c ? 'active' : ''}" data-cat="${c}">${escapeHtml(c)}</button>`).join('')}</div>`;
-      if (!filtered.length) html += `<div class="empty-state"><p>Aucun article</p></div>`;
-      else { html += `<div class="catalogue-grid">`; for (const a of filtered) html += `<div class="catalogue-card fade-up" onclick="copierNom('${escapeHtml(a.nom)}')"><div class="catalogue-card-emoji">${a.emoji || '🛍️'}</div><div class="catalogue-card-name">${escapeHtml(a.nom)}</div>${a.categorie ? `<div class="catalogue-card-cat">${escapeHtml(a.categorie)}</div>` : ''}</div>`; html += `</div>`; }
+      let html = `<div class="fade-up"><div class="section-header"><h2 class="section-title">📦 Catalogue</h2><button class="btn btn-primary btn-sm" id="btn-ajouter-produit">+ Nouveau produit</button></div><div style="margin-bottom:1rem"><input type="text" id="catalogue-search" placeholder="🔍 Rechercher..." value="${escapeHtml(catalogueSearch)}"></div><div class="filter-group"><button class="filter-btn ${catalogueCategorie === '__all__' ? 'active' : ''}" data-cat="__all__">Toutes</button>${categories.map(c => `<button class="filter-btn ${catalogueCategorie === c ? 'active' : ''}" data-cat="${c}">${escapeHtml(c)}</button>`).join('')}<button class="filter-btn ${showGestionCatalogue ? 'active' : ''}" id="btn-mode-gestion">✏️ Gérer</button></div>`;
+      if (!filtered.length) html += `<div class="empty-state"><p>Aucun produit</p><button class="btn btn-primary" id="btn-premier-produit">+ Ajouter votre premier produit</button></div>`;
+      else { html += `<div class="catalogue-grid">`; for (const a of filtered) html += `<div class="catalogue-card fade-up" ${!showGestionCatalogue ? `onclick="copierNom('${escapeHtml(a.nom)}')"` : ''}><div class="catalogue-card-emoji">${a.emoji || '🛍️'}</div><div class="catalogue-card-name">${escapeHtml(a.nom)}</div>${a.categorie ? `<div class="catalogue-card-cat">${escapeHtml(a.categorie)}</div>` : ''}${showGestionCatalogue ? `<button class="delete-btn" onclick="event.stopPropagation();modifierProduitPrompt('${a.id}','${escapeHtml(a.nom)}','${escapeHtml(a.categorie||'')}','${escapeHtml(a.emoji||'🛍️')}')">✏️</button><button class="delete-btn" style="right:30px" onclick="event.stopPropagation();supprimerProduit('${a.id}','${escapeHtml(a.nom)}')">🗑️</button>` : ''}</div>`; html += `</div>`; }
       html += `</div>`;
       document.getElementById('main-content').innerHTML = html;
       document.getElementById('catalogue-search')?.addEventListener('input', e => { catalogueSearch = e.target.value; renderCataloguePage(); });
       document.querySelectorAll('[data-cat]').forEach(btn => btn.addEventListener('click', () => { catalogueCategorie = btn.dataset.cat; renderCataloguePage(); }));
+      document.getElementById('btn-ajouter-produit')?.addEventListener('click', () => ajouterProduitPrompt());
+      document.getElementById('btn-premier-produit')?.addEventListener('click', () => ajouterProduitPrompt());
+      document.getElementById('btn-mode-gestion')?.addEventListener('click', () => { showGestionCatalogue = !showGestionCatalogue; renderCataloguePage(); });
+    }
+
+    function ajouterProduitPrompt() {
+      const nom = prompt("Nom du produit :");
+      if (!nom) return;
+      const categorie = prompt("Catégorie (ex: Fruits, Légumes, etc.) :", "");
+      const emoji = prompt("Émoji (ex: 🍎, 🥛, etc.) :", "🛍️");
+      ajouterProduit(nom, categorie, emoji);
+    }
+
+    function modifierProduitPrompt(id, oldNom, oldCategorie, oldEmoji) {
+      const nom = prompt("Modifier le nom :", oldNom);
+      if (!nom) return;
+      const categorie = prompt("Modifier la catégorie :", oldCategorie);
+      const emoji = prompt("Modifier l'émoji :", oldEmoji);
+      modifierProduit(id, nom, categorie, emoji);
     }
 
     function copierNom(nom) { navigator.clipboard.writeText(nom); showToast(`📋 "${nom}" copié !`); }
@@ -424,11 +487,14 @@
     document.getElementById('forgot-password-btn').addEventListener('click', handleForgotPassword);
     document.querySelectorAll('.nav-item').forEach(btn => btn.addEventListener('click', () => showPage(btn.dataset.page)));
 
+    // Expositions globales
     window.ouvrirListe = ouvrirListe; window.renderListesPage = renderListesPage; window.renommerListe = renommerListe;
     window.dupliquerListe = dupliquerListe; window.deplacerListe = deplacerListe; window.supprimerListe = supprimerListe;
     window.terminerListe = terminerListe; window.reactiverListe = reactiverListe; window.toggleMenu = toggleMenu;
     window.ajouterArticle = ajouterArticle; window.toggleCoche = toggleCoche; window.supprimerArticle = supprimerArticle;
     window.modifierQuantite = modifierQuantite; window.closeModal = closeModal; window.copierNom = copierNom;
+    window.ajouterProduit = ajouterProduit; window.modifierProduit = modifierProduit; window.supprimerProduit = supprimerProduit;
+    window.ajouterProduitPrompt = ajouterProduitPrompt; window.modifierProduitPrompt = modifierProduitPrompt;
   </script>
 </body>
 </html>
