@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <meta name="theme-color" content="#0f1117">
+  <title>MesCorses - Gestion des courses</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d26;
+      --surface2: #232734;
+      --border: #2d3242;
+      --text: #edf2f7;
+      --text2: #a0aec0;
+      --text3: #718096;
+      --accent: #6366f1;
+      --accent2: #ef4444;
+      --accent3: #43e97b;
+      --accent-glow: rgba(99, 102, 241, 0.3);
+      --radius: 1rem;
+      --radius-sm: 0.75rem;
+      --shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      --font: 'Inter', -apple-system, system-ui, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 15px;
+      line-height: 1.4;
+      min-height: 100vh;
+    }
+
+    /* Screens */
+    .screen {
+      display: none;
+      min-height: 100vh;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    /* Layout */
+    .app-layout {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .main-content {
+      flex: 1;
+      max-width: 600px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1rem 1rem 5rem 1rem;
+    }
+
+    /* Auth */
+    .auth-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .auth-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 2rem 1.5rem;
+      max-width: 400px;
+      width: 100%;
+    }
+    .auth-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .auth-logo {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    .auth-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 0.25rem;
+    }
+    .auth-header p {
+      color: var(--text2);
+      font-size: 0.9rem;
+    }
+    .auth-footer {
+      margin-top: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    /* Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(26, 29, 38, 0.95);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 0.6rem 1rem 0.8rem;
+      max-width: 600px;
+      margin: 0 auto;
+      z-index: 100;
+    }
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-size: 0.7rem;
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 1rem;
+      font-family: var(--font);
+    }
+    .nav-item svg {
+      width: 22px;
+      height: 22px;
+      stroke: currentColor;
+      fill: none;
+    }
+    .nav-item.active {
+      color: var(--accent);
+    }
+
+    /* Header */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+      transition: all 0.2s ease;
+      margin-bottom: 0.8rem;
+      cursor: pointer;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.88rem;
+      font-weight: 500;
+      border-radius: 2rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--surface2);
+      color: var(--text);
+      font-family: var(--font);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #818cf8);
+      color: white;
+      box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #f87171);
+      color: white;
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #34d399);
+      color: white;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      background: var(--surface2);
+      border-color: var(--accent);
+    }
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+    .btn-block {
+      width: 100%;
+    }
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 0.85rem;
+      padding: 0.5rem;
+      font-family: var(--font);
+    }
+    .btn-link:hover {
+      text-decoration: underline;
+    }
+
+    /* Forms */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text2);
+      margin-bottom: 0.35rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+    .form-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-end;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      background: var(--surface2);
+      border-radius: 1rem;
+      height: 6px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      height: 100%;
+      border-radius: 1rem;
+      transition: width 0.3s ease;
+    }
+
+    /* Articles */
+    .article-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 0.5rem;
+    }
+    .article-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      flex: 1;
+      cursor: pointer;
+    }
+    .article-check {
+      font-size: 1.2rem;
+      width: 24px;
+      text-align: center;
+    }
+    .article-name {
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .article-qty {
+      font-size: 0.75rem;
+      color: var(--text3);
+      background: var(--surface2);
+      padding: 0.15rem 0.4rem;
+      border-radius: 1rem;
+    }
+    .article-coche .article-name {
+      text-decoration: line-through;
+      color: var(--text3);
+    }
+    .article-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .qty-select {
+      width: 60px;
+      padding: 0.3rem;
+      font-size: 0.8rem;
+      text-align: center;
+    }
+    .cat-group-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin: 1.2rem 0 0.6rem 0;
+      padding-left: 0.25rem;
+    }
+
+    /* Catalogue Grid */
+    .catalogue-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    .catalogue-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 0.5rem;
+      text-align: center;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .catalogue-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .catalogue-card-emoji {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .catalogue-card-name {
+      font-size: 0.8rem;
+      font-weight: 500;
+      word-break: break-word;
+    }
+    .catalogue-card-cat {
+      font-size: 0.65rem;
+      color: var(--text3);
+      margin-top: 0.25rem;
+    }
+
+    /* Filter buttons */
+    .filter-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      border-radius: 2rem;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      max-width: 500px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal h3 {
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 0.7rem;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text2);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 2rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      z-index: 1100;
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      animation: fadeUp 0.3s ease-out;
+    }
+
+    /* Menu popup */
+    .menu-popup {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      min-width: 140px;
+      z-index: 50;
+      overflow: hidden;
+    }
+    .menu-item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.65rem 1rem;
+      font-size: 0.88rem;
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      font-family: var(--font);
+    }
+    .menu-item:hover {
+      background: var(--surface);
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Écran d'authentification -->
+    <div id="auth-screen" class="screen active">
+      <div class="auth-container">
+        <div class="auth-card fade-up">
+          <div class="auth-header">
+            <div class="auth-logo">🛒</div>
+            <h1>MesCorses</h1>
+            <p id="auth-subtitle">Retrouvez vos listes</p>
+          </div>
+          <form id="auth-form">
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" id="auth-email" placeholder="vous@exemple.com" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mot de passe</label>
+              <input type="password" id="auth-password" placeholder="••••••••" required>
+            </div>
+            <div id="auth-confirm-group" class="form-group" style="display: none;">
+              <label class="form-label">Confirmer</label>
+              <input type="password" id="auth-confirm" placeholder="••••••••">
+            </div>
+            <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block">Se connecter</button>
+          </form>
+          <div class="auth-footer">
+            <button id="forgot-password-btn" class="btn-link" style="display: none;">Mot de passe oublié ?</button>
+            <button id="switch-auth-mode" class="btn-link">Créer un compte</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Écran principal -->
+    <div id="main-screen" class="screen">
+      <div class="app-layout">
+        <main class="main-content" id="main-content"></main>
+        <nav class="bottom-nav">
+          <button class="nav-item" data-page="catalogue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/>
+              <rect x="9" y="3" width="6" height="4" rx="1"/>
+              <path d="M9 12h6M9 16h4"/>
+            </svg>
+            <span>Catalogue</span>
+          </button>
+          <button class="nav-item active" data-page="listes">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+              <line x1="3" y1="6" x2="21" y2="6"/>
+              <path d="M16 10a4 4 0 01-8 0"/>
+            </svg>
+            <span>Mes listes</span>
+          </button>
+          <button class="nav-item" data-page="profil">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>Profil</span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    // ==================== CONFIGURATION FIREBASE ====================
+    // ⚠️ REMPLACEZ CES VALEURS par celles de votre projet Firebase
+    // Rendez-vous sur https://console.firebase.google.com/ > Paramètres du projet > Vos applications
+    const firebaseConfig = {
+      apiKey: "VOTRE_API_KEY",
+      authDomain: "VOTRE_PROJECT.firebaseapp.com",
+      projectId: "VOTRE_PROJECT_ID",
+      storageBucket: "VOTRE_PROJECT.appspot.com",
+      messagingSenderId: "VOTRE_SENDER_ID",
+      appId: "VOTRE_APP_ID"
+    };
+
+    // Initialisation
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // ==================== ÉTAT GLOBAL ====================
+    let currentUser = null;
+    let currentListeId = null;
+    let catalogue = [];
+    let listes = [];
+    let dossiers = [];
+    let articles = [];
+    let isLoginMode = true;
+    let filterDossier = '__all__';
+    let filterStatut = '__all__';
+    let filtreCoche = '__all__';
+    let showAjoutModal = false;
+    let searchCatalogue = '';
+    let catalogueSearch = '';
+    let catalogueCategorie = '__all__';
+
+    // ==================== UTILITAIRES ====================
+    function showToast(message, isError = false) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.style.borderColor = isError ? '#ef4444' : '#6366f1';
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
+
+    // ==================== AUTHENTIFICATION ====================
+    async function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      const password = document.getElementById('auth-password').value;
+      const submitBtn = document.getElementById('auth-submit-btn');
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Chargement...';
+      
+      try {
+        if (isLoginMode) {
+          await auth.signInWithEmailAndPassword(email, password);
+          showToast('✅ Connecté !');
+        } else {
+          const confirm = document.getElementById('auth-confirm').value;
+          if (password !== confirm) {
+            showToast('❌ Les mots de passe ne correspondent pas', true);
+            submitBtn.disabled = false;
+            submitBtn.textContent = isLoginMode ? 'Se connecter' : "S'inscrire";
+            return;
+          }
+          if (password.length < 6) {
+            showToast('❌ Mot de passe trop court (6+ caractères)', true);
+            submitBtn.disabled = false;
+            submitBtn.textContent = isLoginMode ? 'Se connecter' : "S'inscrire";
+            return;
+          }
+          await auth.createUserWithEmailAndPassword(email, password);
+          showToast('✅ Compte créé !');
+        }
+      } catch (err) {
+        let msg = 'Erreur';
+        if (err.code === 'auth/invalid-email') msg = 'Email invalide';
+        else if (err.code === 'auth/user-not-found') msg = 'Compte non trouvé';
+        else if (err.code === 'auth/wrong-password') msg = 'Mot de passe incorrect';
+        else if (err.code === 'auth/email-already-in-use') msg = 'Email déjà utilisé';
+        else if (err.code === 'auth/weak-password') msg = 'Mot de passe trop faible';
+        showToast(`❌ ${msg}`, true);
+      }
+      
+      submitBtn.disabled = false;
+      submitBtn.textContent = isLoginMode ? 'Se connecter' : "S'inscrire";
+    }
+
+    function switchAuthMode() {
+      isLoginMode = !isLoginMode;
+      const subtitle = document.getElementById('auth-subtitle');
+      const confirmGroup = document.getElementById('auth-confirm-group');
+      const forgotBtn = document.getElementById('forgot-password-btn');
+      const submitBtn = document.getElementById('auth-submit-btn');
+      const switchBtn = document.getElementById('switch-auth-mode');
+      
+      if (isLoginMode) {
+        subtitle.textContent = 'Retrouvez vos listes';
+        confirmGroup.style.display = 'none';
+        forgotBtn.style.display = 'inline-block';
+        submitBtn.textContent = 'Se connecter';
+        switchBtn.textContent = 'Créer un compte';
+      } else {
+        subtitle.textContent = 'Créez votre compte';
+        confirmGroup.style.display = 'block';
+        forgotBtn.style.display = 'none';
+        submitBtn.textContent = "S'inscrire";
+        switchBtn.textContent = 'Déjà un compte ? Se connecter';
+      }
+    }
+
+    async function handleForgotPassword() {
+      const email = document.getElementById('auth-email').value;
+      if (!email) {
+        showToast('❌ Entrez votre email d\'abord', true);
+        return;
+      }
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showToast('📧 Email de réinitialisation envoyé !');
+      } catch (err) {
+        showToast('❌ Email non trouvé', true);
+      }
+    }
+
+    // ==================== CHARGEMENT DONNÉES ====================
+    async function loadCatalogue() {
+      try {
+        const snapshot = await db.collection('catalogue').orderBy('nom').get();
+        catalogue = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (err) {
+        console.error('Erreur chargement catalogue:', err);
+      }
+    }
+
+    async function loadListes() {
+      if (!currentUser) return;
+      const snapshot = await db.collection('users').doc(currentUser.uid).collection('listes').orderBy('createdAt', 'desc').get();
+      listes = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      const dossiersSnap = await db.collection('users').doc(currentUser.uid).collection('dossiers').get();
+      dossiers = dossiersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      renderListesPage();
+    }
+
+    async function loadArticles(listeId) {
+      if (!currentUser) return [];
+      const snapshot = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').orderBy('categorie').orderBy('nom').get();
+      return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    }
+
+    // ==================== GESTION LISTES ====================
+    async function creerListe(nom, dossier = '') {
+      const newListe = {
+        nom,
+        dossier,
+        statut: 'en_cours',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').add(newListe);
+      listes.unshift({ id: docRef.id, ...newListe });
+      renderListesPage();
+      showToast(`✅ Liste "${nom}" créée`);
+      return docRef.id;
+    }
+
+    async function supprimerListe(listeId, listeNom) {
+      if (!confirm(`Supprimer "${listeNom}" définitivement ?`)) return;
+      const batch = db.batch();
+      const articlesSnap = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').get();
+      articlesSnap.forEach(doc => batch.delete(doc.ref));
+      batch.delete(db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId));
+      await batch.commit();
+      listes = listes.filter(l => l.id !== listeId);
+      renderListesPage();
+      showToast('🗑️ Liste supprimée');
+    }
+
+    async function renommerListe(listeId) {
+      const nouveauNom = prompt('Nouveau nom :');
+      if (!nouveauNom?.trim()) return;
+      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).update({ nom: nouveauNom.trim() });
+      const liste = listes.find(l => l.id === listeId);
+      if (liste) liste.nom = nouveauNom.trim();
+      renderListesPage();
+      showToast('✅ Liste renommée');
+    }
+
+    async function deplacerListe(listeId) {
+      const nouveauDossier = prompt('Nom du dossier (vide = racine) :');
+      if (nouveauDossier === null) return;
+      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).update({ dossier: nouveauDossier });
+      const liste = listes.find(l => l.id === listeId);
+      if (liste) liste.dossier = nouveauDossier;
+      renderListesPage();
+      showToast('📁 Liste déplacée');
+    }
+
+    async function dupliquerListe(listeId) {
+      const original = listes.find(l => l.id === listeId);
+      if (!original) return;
+      const articlesSnap = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').get();
+      const newId = await creerListe(`${original.nom} (copie)`, original.dossier);
+      const batch = db.batch();
+      articlesSnap.forEach(doc => {
+        const newRef = db.collection('users').doc(currentUser.uid).collection('listes').doc(newId).collection('articles').doc();
+        batch.set(newRef, { ...doc.data(), coche: false });
+      });
+      await batch.commit();
+      showToast('✅ Liste dupliquée');
+    }
+
+    async function terminerListe(listeId) {
+      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).update({ statut: 'terminee' });
+      const liste = listes.find(l => l.id === listeId);
+      if (liste) liste.statut = 'terminee';
+      if (currentListeId === listeId) renderListePage(listeId);
+      renderListesPage();
+      showToast('✓ Liste terminée');
+    }
+
+    async function reactiverListe(listeId) {
+      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).update({ statut: 'en_cours' });
+      const liste = listes.find(l => l.id === listeId);
+      if (liste) liste.statut = 'en_cours';
+      if (currentListeId === listeId) renderListePage(listeId);
+      renderListesPage();
+      showToast('🔄 Liste réactivée');
+    }
+
+    async function creerDossier() {
+      const nom = prompt('Nom du nouveau dossier :');
+      if (!nom?.trim()) return;
+      const newDossier = { nom: nom.trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+      const docRef = await db.collection('users').doc(currentUser.uid).collection('dossiers').add(newDossier);
+      dossiers.push({ id: docRef.id, ...newDossier });
+      renderListesPage();
+      showToast(`📁 Dossier "${nom}" créé`);
+    }
+
+    async function supprimerDossier(dossierId, dossierNom) {
+      if (!confirm(`Supprimer le dossier "${dossierNom}" ? Les listes seront déplacées à la racine.`)) return;
+      const batch = db.batch();
+      const listesDansDossier = listes.filter(l => l.dossier === dossierNom);
+      for (const liste of listesDansDossier) {
+        const ref = db.collection('users').doc(currentUser.uid).collection('listes').doc(liste.id);
+        batch.update(ref, { dossier: '' });
+        liste.dossier = '';
+      }
+      batch.delete(db.collection('users').doc(currentUser.uid).collection('dossiers').doc(dossierId));
+      await batch.commit();
+      dossiers = dossiers.filter(d => d.id !== dossierId);
+      renderListesPage();
+      showToast('🗑️ Dossier supprimé');
+    }
+
+    // ==================== GESTION ARTICLES ====================
+    async function ajouterArticle(listeId, articleData) {
+      const newArticle = {
+        ...articleData,
+        coche: false,
+        addedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').add(newArticle);
+      if (currentListeId === listeId) {
+        articles.push({ id: docRef.id, ...newArticle });
+        renderListePage(listeId);
+      }
+      showToast(`✅ "${articleData.nom}" ajouté`);
+    }
+
+    async function toggleCoche(listeId, articleId) {
+      const article = articles.find(a => a.id === articleId);
+      if (!article) return;
+      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').doc(articleId).update({ coche: !article.coche });
+      article.coche = !article.coche;
+      renderListePage(listeId);
+    }
+
+    async function supprimerArticle(listeId, articleId, articleNom) {
+      if (!confirm(`Supprimer "${articleNom}" ?`)) return;
+      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').doc(articleId).delete();
+      articles = articles.filter(a => a.id !== articleId);
+      renderListePage(listeId);
+      showToast('🗑️ Article supprimé');
+    }
+
+    async function modifierQuantite(listeId, articleId, quantite) {
+      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').doc(articleId).update({ quantite });
+      const article = articles.find(a => a.id === articleId);
+      if (article) article.quantite = quantite;
+      renderListePage(listeId);
+    }
+
+    // ==================== RENDU LISTES PAGE ====================
+    function renderListesPage() {
+      const container = document.getElementById('main-content');
+      
+      let listesFiltrees = listes.filter(l => {
+        const okDossier = filterDossier === '__all__' || l.dossier === filterDossier;
+        const okStatut = filterStatut === '__all__' || l.statut === filterStatut;
+        return okDossier && okStatut;
+      });
+      
+      let grouped = {};
+      if (filterDossier !== '__all__') {
+        grouped[filterDossier || 'Mes listes'] = listesFiltrees;
+      } else {
+        grouped[''] = [];
+        dossiers.forEach(d => { grouped[d.nom] = []; });
+        listesFiltrees.forEach(l => {
+          if (l.dossier && grouped[l.dossier]) grouped[l.dossier].push(l);
+          else grouped[''].push(l);
+        });
+      }
+      
+      let html = `
+        <div class="fade-up">
+          <div class="section-header">
+            <h2 class="section-title">🛍️ Mes Listes</h2>
+            <button class="btn btn-ghost btn-sm" id="btn-nouveau-dossier">📁 Dossier</button>
+          </div>
+          
+          <div class="card" style="margin-bottom: 1.2rem">
+            <form id="form-nouvelle-liste">
+              <div class="form-row">
+                <input type="text" id="nouvelle-liste-nom" placeholder="Nom de la nouvelle liste…" required>
+                ${dossiers.length > 0 ? `
+                  <select id="nouvelle-liste-dossier" style="width: 140px">
+                    <option value="">Aucun dossier</option>
+                    ${dossiers.map(d => `<option value="${d.nom}">${escapeHtml(d.nom)}</option>`).join('')}
+                  </select>
+                ` : ''}
+                <button type="submit" class="btn btn-primary" style="white-space: nowrap">+ Créer</button>
+              </div>
+            </form>
+          </div>
+          
+          <div class="filter-group">
+            <button class="filter-btn ${filterStatut === '__all__' ? 'active' : ''}" data-filter-statut="__all__">Toutes</button>
+            <button class="filter-btn ${filterStatut === 'en_cours' ? 'active' : ''}" data-filter-statut="en_cours">En cours</button>
+            <button class="filter-btn ${filterStatut === 'terminee' ? 'active' : ''}" data-filter-statut="terminee">Terminées</button>
+            ${dossiers.length > 0 ? `
+              <button class="filter-btn ${filterDossier === '__all__' ? 'active' : ''}" data-filter-dossier="__all__">Tous dossiers</button>
+              <button class="filter-btn ${filterDossier === '' ? 'active' : ''}" data-filter-dossier="">Sans dossier</button>
+              ${dossiers.map(d => `<button class="filter-btn ${filterDossier === d.nom ? 'active' : ''}" data-filter-dossier="${d.nom}">📁 ${escapeHtml(d.nom)}</button>`).join('')}
+            ` : ''}
+          </div>
+      `;
+      
+      if (listes.length === 0) {
+        html += `
+          <div class="empty-state">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem">🛒</div>
+            <p>Aucune liste pour le moment.<br>Créez votre première liste de courses !</p>
+          </div>
+        `;
+      } else if (listesFiltrees.length === 0) {
+        html += `<div class="empty-state"><p>Aucune liste ne correspond aux filtres.</p></div>`;
+      } else {
+        for (const [dossierNom, items] of Object.entries(grouped)) {
+          if (items.length === 0) continue;
+          if (Object.keys(grouped).length > 1) {
+            html += `<div class="cat-group-title"><span>${dossierNom ? `📁 ${escapeHtml(dossierNom)}` : '📋 Mes listes'}</span></div>`;
+          }
+          for (const liste of items) {
+            const dateStr = liste.createdAt?.toDate ? liste.createdAt.toDate().toLocaleDateString('fr-FR') : '';
+            html += `
+              <div class="card fade-up" style="border: ${liste.statut === 'terminee' ? '1px solid rgba(67,233,123,0.25)' : '1px solid var(--border)'}">
+                <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 0.5rem">
+                  <div style="flex: 1" onclick="ouvrirListe('${liste.id}')">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.2rem">
+                      <span style="font-weight: 700; font-size: 1rem">${escapeHtml(liste.nom)}</span>
+                      ${liste.statut === 'terminee' ? '<span style="font-size: 0.7rem; background: rgba(67,233,123,0.15); color: #43e97b; padding: 0.15rem 0.5rem; border-radius: 20px">✓ Terminée</span>' : ''}
+                    </div>
+                    <div style="font-size: 0.78rem; color: var(--text3); display: flex; gap: 0.8rem; flex-wrap: wrap">
+                      ${liste.dossier ? `<span>📁 ${escapeHtml(liste.dossier)}</span>` : ''}
+                      ${dateStr ? `<span>📅 ${dateStr}</span>` : ''}
+                    </div>
+                  </div>
+                  <div style="position: relative">
+                    <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation(); toggleMenu(this)">⋮</button>
+                    <div class="menu-popup" style="display: none">
+                      <button class="menu-item" onclick="renommerListe('${liste.id}')">✏️ Renommer</button>
+                      <button class="menu-item" onclick="dupliquerListe('${liste.id}')">📋 Dupliquer</button>
+                      <button class="menu-item" onclick="deplacerListe('${liste.id}')">📁 Déplacer</button>
+                      <button class="menu-item" style="color: #ef4444" onclick="supprimerListe('${liste.id}', '${escapeHtml(liste.nom)}')">🗑️ Supprimer</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        }
+      }
+      
+      html += `</div>`;
+      container.innerHTML = html;
+      
+      // Événements
+      document.getElementById('form-nouvelle-liste')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nom = document.getElementById('nouvelle-liste-nom').value.trim();
+        if (!nom) return;
+        const dossier = document.getElementById('nouvelle-liste-dossier')?.value || '';
+        const id = await creerListe(nom, dossier);
+        ouvrirListe(id);
+      });
+      
+      document.getElementById('btn-nouveau-dossier')?.addEventListener('click', () => creerDossier());
+      
+      document.querySelectorAll('[data-filter-statut]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterStatut = btn.dataset.filterStatut;
+          renderListesPage();
+        });
+      });
+      
+      document.querySelectorAll('[data-filter-dossier]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterDossier = btn.dataset.filterDossier;
+          renderListesPage();
+        });
+      });
+    }
+
+    function toggleMenu(btn) {
+      const menu = btn.nextElementSibling;
+      const isVisible = menu.style.display === 'block';
+      menu.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) {
+        document.addEventListener('click', function closeMenu(e) {
+          if (!btn.contains(e.target)) {
+            menu.style.display = 'none';
+            document.removeEventListener('click', closeMenu);
+          }
+        });
+      }
+    }
+
+    function ouvrirListe(listeId) {
+      currentListeId = listeId;
+      renderListePage(listeId);
+    }
+
+    // ==================== RENDU LISTE PAGE ====================
+    async function renderListePage(listeId) {
+      articles = await loadArticles(listeId);
+      const liste = listes.find(l => l.id === listeId);
+      if (!liste) return;
+      
+      const estTerminee = liste.statut === 'terminee';
+      const total = articles.length;
+      const coches = articles.filter(a => a.coche).length;
+      const pct = total ? Math.round((coches / total) * 100) : 0;
+      
+      let articlesFiltres = articles;
+      if (filtreCoche === 'coche') articlesFiltres = articles.filter(a => a.coche);
+      if (filtreCoche === 'non_coche') articlesFiltres = articles.filter(a => !a.coche);
+      
+      const articlesParCategorie = {};
+      articlesFiltres.forEach(article => {
+        const cat = article.categorie || 'Autres';
+        if (!articlesParCategorie[cat]) articlesParCategorie[cat] = [];
+        articlesParCategorie[cat].push(article);
+      });
+      const categoriesTriees = Object.keys(articlesParCategorie).sort();
+      
+      let html = `
+        <div class="fade-up">
+          <div class="section-header">
+            <button class="btn btn-ghost btn-sm" onclick="renderListesPage()">← Retour</button>
+            <h2 class="section-title" style="margin: 0">${escapeHtml(liste.nom)}</h2>
+            ${!estTerminee ? 
+              `<button class="btn btn-success btn-sm" onclick="terminerListe('${listeId}')">✓ Terminer</button>` :
+              `<button class="btn btn-primary btn-sm" onclick="reactiverListe('${listeId}')">🔄 Réactiver</button>`
+            }
+          </div>
+          
+          ${total > 0 ? `
+            <div style="margin-bottom: 1rem">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem">
+                <span>${coches}/${total} articles</span>
+                <span>${pct}%</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+            </div>
+          ` : ''}
+          
+          <div class="filter-group">
+            <button class="filter-btn ${filtreCoche === '__all__' ? 'active' : ''}" data-filtre-coche="__all__">Tous (${total})</button>
+            <button class="filter-btn ${filtreCoche === 'non_coche' ? 'active' : ''}" data-filtre-coche="non_coche">À faire (${total - coches})</button>
+            <button class="filter-btn ${filtreCoche === 'coche' ? 'active' : ''}" data-filtre-coche="coche">Cochés (${coches})</button>
+          </div>
+          
+          ${!estTerminee ? `
+            <button class="btn btn-primary" style="margin-bottom: 1rem; width: 100%" id="btn-ajouter-article">+ Ajouter un article</button>
+          ` : ''}
+      `;
+      
+      if (articles.length === 0) {
+        html += `<div class="empty-state"><p>Aucun article dans cette liste</p></div>`;
+      } else {
+        for (const categorie of categoriesTriees) {
+          html += `<div class="cat-group-title">${escapeHtml(categorie)}</div>`;
+          for (const article of articlesParCategorie[categorie]) {
+            html += `
+              <div class="article-item ${article.coche ? 'article-coche' : ''}">
+                <div class="article-info" onclick="${!estTerminee ? `toggleCoche('${listeId}', '${article.id}')` : ''}">
+                  <span class="article-check">${article.coche ? '✓' : '◯'}</span>
+                  <span class="article-name">${escapeHtml(article.nom)}</span>
+                  ${article.quantite > 1 ? `<span class="article-qty">×${article.quantite}</span>` : ''}
+                </div>
+                ${!estTerminee ? `
+                  <div class="article-actions">
+                    <select class="qty-select" onchange="modifierQuantite('${listeId}', '${article.id}', parseInt(this.value))">
+                      ${[1,2,3,4,5,6,7,8,9,10].map(n => `<option value="${n}" ${article.quantite === n ? 'selected' : ''}>${n}</option>`).join('')}
+                    </select>
+                    <button class="btn-icon" style="background:none; border:none; cursor:pointer; font-size:1.1rem" onclick="supprimerArticle('${listeId}', '${article.id}', '${escapeHtml(article.nom)}')">🗑️</button>
+                  </div>
+                ` : ''}
+              </div>
+            `;
+          }
+        }
+      }
+      
+      html += `</div>`;
+      
+      if (showAjoutModal) {
+        html += renderAjoutModal();
+      }
+      
+      document.getElementById('main-content').innerHTML = html;
+      
+      document.querySelectorAll('[data-filtre-coche]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          filtreCoche = btn.dataset.filtreCoche;
+          renderListePage(listeId);
+        });
+      });
+      
+      document.getElementById('btn-ajouter-article')?.addEventListener('click', () => {
+        showAjoutModal = true;
+        renderListePage(listeId);
+      });
+    }
+
+    function renderAjoutModal() {
+      const articlesCatalogueFiltres = catalogue.filter(a =>
+        a.nom.toLowerCase().includes(searchCatalogue.toLowerCase())
+      );
+      
+      return `
+        <div class="modal-overlay" onclick="closeModal()">
+          <div class="modal" onclick="event.stopPropagation()">
+            <h3>Ajouter un article</h3>
+            <div style="margin-bottom: 1rem">
+              <input type="text" id="search-catalogue" placeholder="Rechercher dans le catalogue..." value="${escapeHtml(searchCatalogue)}" oninput="searchCatalogue = this.value; renderListePage('${currentListeId}')">
+            </div>
+            ${searchCatalogue && articlesCatalogueFiltres.length > 0 ? `
+              <div style="max-height: 200px; overflow-y: auto; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem">
+                ${articlesCatalogueFiltres.slice(0, 10).map(article => `
+                  <button class="btn btn-ghost" style="width: 100%; text-align: left; justify-content: flex-start; margin-bottom: 0.25rem" onclick="ajouterArticle('${currentListeId}', { nom: '${escapeHtml(article.nom)}', quantite: 1, categorie: '${escapeHtml(article.categorie || '')}', emoji: '${escapeHtml(article.emoji || '')}' }); showAjoutModal = false; renderListePage('${currentListeId}')">
+                    ${article.emoji || '📦'} ${escapeHtml(article.nom)} ${article.categorie ? `(${escapeHtml(article.categorie)})` : ''}
+                  </button>
+                `).join('')}
+              </div>
+            ` : ''}
+            <form id="form-ajout-manuel">
+              <div class="form-group">
+                <label class="form-label">Nom</label>
+                <input type="text" id="article-nom" placeholder="Article personnalisé" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Quantité</label>
+                  <input type="number" id="article-quantite" value="1" min="1">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Catégorie</label>
+                  <input type="text" id="article-categorie" placeholder="Optionnel">
+                </div>
+              </div>
+              <div class="modal-buttons">
+                <button type="button" class="btn btn-ghost" onclick="closeModal()">Annuler</button>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      `;
+    }
+
+    function closeModal() {
+      showAjoutModal = false;
+      searchCatalogue = '';
+      renderListePage(currentListeId);
+    }
+
+    // ==================== PROFIL PAGE ====================
+    function renderProfilPage() {
+      const user = auth.currentUser;
+      const initiales = (user?.displayName || user?.email || 'U').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+      
+      const html = `
+        <div class="fade-up">
+          <h2 class="section-title" style="margin-bottom: 1.5rem">👤 Mon Profil</h2>
+          
+          <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #a78bfa); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; font-weight: 800; color: #fff">${initiales}</div>
+            <div>
+              <div style="font-weight: 700; font-size: 1.1rem">${escapeHtml(user?.displayName || 'Utilisateur')}</div>
+              <div style="color: var(--text2); font-size: 0.88rem">${escapeHtml(user?.email)}</div>
+            </div>
+          </div>
+          
+          <div class="card" style="margin-bottom: 1rem">
+            <h3 style="font-size: 0.95rem; margin-bottom: 1rem; color: var(--text2)">✏️ Modifier le prénom</h3>
+            <form id="form-update-name">
+              <div class="form-group">
+                <label class="form-label">Prénom affiché</label>
+                <input type="text" id="display-name" value="${escapeHtml(user?.displayName || '')}" placeholder="Votre prénom">
+              </div>
+              <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </form>
+          </div>
+          
+          <div class="card" style="margin-bottom: 1.5rem">
+            <h3 style="font-size: 0.95rem; margin-bottom: 1rem; color: var(--text2)">ℹ️ Informations</h3>
+            <div style="font-size: 0.88rem; color: var(--text2); display: flex; flex-direction: column; gap: 0.4rem">
+              <div>📧 Email : <span style="color: var(--text)">${escapeHtml(user?.email)}</span></div>
+              <div>🆔 UID : <span style="color: var(--text3); font-size: 0.78rem; font-family: monospace">${user?.uid}</span></div>
+            </div>
+          </div>
+          
+          <button id="btn-logout" class="btn btn-danger" style="width: 100%; justify-content: center; padding: 0.75rem">🚪 Se déconnecter</button>
+        </div>
+      `;
+      
+      document.getElementById('main-content').innerHTML = html;
+      
+      document.getElementById('form-update-name')?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const newName = document.getElementById('display-name').value.trim();
+        if (!newName) return;
+        try {
+          await auth.currentUser.updateProfile({ displayName: newName });
+          showToast('✅ Prénom mis à jour');
+          renderProfilPage();
+        } catch (err) {
+          showToast('❌ Erreur', true);
+        }
+      });
+      
+      document.getElementById('btn-logout')?.addEventListener('click', async () => {
+        await auth.signOut();
+        showToast('👋 Déconnecté');
+      });
+    }
+
+    // ==================== CATALOGUE PAGE ====================
+    function renderCataloguePage() {
+      const categories = [...new Set(catalogue.map(item => item.categorie).filter(Boolean))].sort();
+      
+      let articlesFiltres = catalogue.filter(item => {
+        const matchSearch = catalogueSearch === '' || item.nom.toLowerCase().includes(catalogueSearch.toLowerCase());
+        const matchCategorie = catalogueCategorie === '__all__' || item.categorie === catalogueCategorie;
+        return matchSearch && matchCategorie;
+      });
+      
+      let html = `
+        <div class="fade-up">
+          <div class="section-header">
+            <h2 class="section-title">📦 Catalogue</h2>
+          </div>
+          
+          <div style="margin-bottom: 1rem">
+            <input type="text" id="catalogue-search" placeholder="🔍 Rechercher un article..." value="${escapeHtml(catalogueSearch)}">
+          </div>
+          
+          <div class="filter-group">
+            <button class="filter-btn ${catalogueCategorie === '__all__' ? 'active' : ''}" data-cat="__all__">Toutes</button>
+            ${categories.map(cat => `<button class="filter-btn ${catalogueCategorie === cat ? 'active' : ''}" data-cat="${cat}">${escapeHtml(cat)}</button>`).join('')}
+          </div>
+      `;
+      
+      if (articlesFiltres.length === 0) {
+        html += `<div class="empty-state"><p>Aucun article trouvé</p></div>`;
+      } else {
+        html += `<div class="catalogue-grid">`;
+        for (const article of articlesFiltres) {
+          html += `
+            <div class="catalogue-card fade-up" onclick="copierNom('${escapeHtml(article.nom)}')">
+              <div class="catalogue-card-emoji">${article.emoji || '🛍️'}</div>
+              <div class="catalogue-card-name">${escapeHtml(article.nom)}</div>
+              ${article.categorie ? `<div class="catalogue-card-cat">${escapeHtml(article.categorie)}</div>` : ''}
+            </div>
+          `;
+        }
+        html += `</div>`;
+      }
+      
+      html += `</div>`;
+      document.getElementById('main-content').innerHTML = html;
+      
+      document.getElementById('catalogue-search')?.addEventListener('input', (e) => {
+        catalogueSearch = e.target.value;
+        renderCataloguePage();
+      });
+      
+      document.querySelectorAll('[data-cat]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          catalogueCategorie = btn.dataset.cat;
+          renderCataloguePage();
+        });
+      });
+    }
+
+    function copierNom(nom) {
+      navigator.clipboard.writeText(nom);
+      showToast(`📋 "${nom}" copié !`);
+    }
+
+    // ==================== NAVIGATION ====================
+    function showPage(page) {
+      document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+      document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+      
+      if (page === 'listes') renderListesPage();
+      else if (page === 'catalogue') renderCataloguePage();
+      else if (page === 'profil') renderProfilPage();
+    }
+
+    // ==================== AUTH STATE ====================
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      if (user) {
+        document.getElementById('auth-screen').classList.remove('active');
+        document.getElementById('main-screen').classList.add('active');
+        await loadCatalogue();
+        await loadListes();
+        showPage('listes');
+      } else {
+        document.getElementById('auth-screen').classList.add('active');
+        document.getElementById('main-screen').classList.remove('active');
+        // Reset states
+        listes = [];
+        dossiers = [];
+        articles = [];
+        currentListeId = null;
+      }
+    });
+
+    // ==================== INITIALISATION ÉVÉNEMENTS ====================
+    document.getElementById('auth-form').addEventListener('submit', handleAuth);
+    document.getElementById('switch-auth-mode').addEventListener('click', switchAuthMode);
+    document.getElementById('forgot-password-btn').addEventListener('click', handleForgotPassword);
+
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => showPage(btn.dataset.page));
+    });
+
+    // Fonctions globales exposées pour les appels inline
+    window.ouvrirListe = ouvrirListe;
+    window.renderListesPage = renderListesPage;
+    window.renderListePage = renderListePage;
+    window.renommerListe = renommerListe;
+    window.dupliquerListe = dupliquerListe;
+    window.deplacerListe = deplacerListe;
+    window.supprimerListe = supprimerListe;
+    window.terminerListe = terminerListe;
+    window.reactiverListe = reactiverListe;
+    window.toggleMenu = toggleMenu;
+    window.ajouterArticle = ajouterArticle;
+    window.toggleCoche = toggleCoche;
+    window.supprimerArticle = supprimerArticle;
+    window.modifierQuantite = modifierQuantite;
+    window.closeModal = closeModal;
+    window.copierNom = copierNom;
+  </script>
+</body>
+</html>
