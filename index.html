@@ -145,7 +145,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // VOTRE CONFIGURATION FIREBASE
+    // VOTRE CONFIGURATION FIREBASE - CORRIGÉE (sans virgule après la dernière propriété)
     const firebaseConfig = {
       apiKey: "AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
       authDomain: "mes-courses-cf52d.firebaseapp.com",
@@ -159,105 +159,64 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    // ========== CATALOGUE PRÉ-REMPLI ==========
+    // CATALOGUE PRÉ-REMPLI
     const CATALOGUE_PAR_DEFAUT = [
-      { nom: "Pommes", categorie: "🍎 Fruits", emoji: "🍎" },
-      { nom: "Bananes", categorie: "🍎 Fruits", emoji: "🍌" },
-      { nom: "Oranges", categorie: "🍎 Fruits", emoji: "🍊" },
-      { nom: "Fraises", categorie: "🍎 Fruits", emoji: "🍓" },
-      { nom: "Raisins", categorie: "🍎 Fruits", emoji: "🍇" },
-      { nom: "Poires", categorie: "🍎 Fruits", emoji: "🍐" },
-      { nom: "Pêches", categorie: "🍎 Fruits", emoji: "🍑" },
-      { nom: "Kiwi", categorie: "🍎 Fruits", emoji: "🥝" },
-      { nom: "Ananas", categorie: "🍎 Fruits", emoji: "🍍" },
-      { nom: "Mangues", categorie: "🍎 Fruits", emoji: "🥭" },
-      { nom: "Cerises", categorie: "🍎 Fruits", emoji: "🍒" },
-      { nom: "Citrons", categorie: "🍎 Fruits", emoji: "🍋" },
-      { nom: "Pastèque", categorie: "🍎 Fruits", emoji: "🍉" },
-      { nom: "Melon", categorie: "🍎 Fruits", emoji: "🍈" },
-      { nom: "Abricots", categorie: "🍎 Fruits", emoji: "🍑" },
-      { nom: "Carottes", categorie: "🥕 Légumes", emoji: "🥕" },
-      { nom: "Tomates", categorie: "🥕 Légumes", emoji: "🍅" },
-      { nom: "Salade", categorie: "🥕 Légumes", emoji: "🥬" },
-      { nom: "Courgettes", categorie: "🥕 Légumes", emoji: "🥒" },
-      { nom: "Aubergines", categorie: "🥕 Légumes", emoji: "🍆" },
-      { nom: "Poivrons", categorie: "🥕 Légumes", emoji: "🫑" },
-      { nom: "Oignons", categorie: "🥕 Légumes", emoji: "🧅" },
-      { nom: "Ail", categorie: "🥕 Légumes", emoji: "🧄" },
-      { nom: "Pommes de terre", categorie: "🥕 Légumes", emoji: "🥔" },
-      { nom: "Brocoli", categorie: "🥕 Légumes", emoji: "🥦" },
-      { nom: "Choux-fleur", categorie: "🥕 Légumes", emoji: "🥦" },
-      { nom: "Haricots verts", categorie: "🥕 Légumes", emoji: "🟢" },
-      { nom: "Petits pois", categorie: "🥕 Légumes", emoji: "🟢" },
-      { nom: "Champignons", categorie: "🥕 Légumes", emoji: "🍄" },
-      { nom: "Épinards", categorie: "🥕 Légumes", emoji: "🥬" },
-      { nom: "Lait", categorie: "🥛 Produits laitiers", emoji: "🥛" },
-      { nom: "Fromage râpé", categorie: "🥛 Produits laitiers", emoji: "🧀" },
-      { nom: "Beurre", categorie: "🥛 Produits laitiers", emoji: "🧈" },
-      { nom: "Yaourts", categorie: "🥛 Produits laitiers", emoji: "🥛" },
-      { nom: "Crème fraîche", categorie: "🥛 Produits laitiers", emoji: "🥛" },
-      { nom: "Œufs", categorie: "🥛 Produits laitiers", emoji: "🥚" },
-      { nom: "Fromage blanc", categorie: "🥛 Produits laitiers", emoji: "🥛" },
-      { nom: "Mozzarella", categorie: "🥛 Produits laitiers", emoji: "🧀" },
-      { nom: "Parmesan", categorie: "🥛 Produits laitiers", emoji: "🧀" },
-      { nom: "Camembert", categorie: "🥛 Produits laitiers", emoji: "🧀" },
-      { nom: "Poulet", categorie: "🍗 Viande", emoji: "🍗" },
-      { nom: "Bœuf haché", categorie: "🍗 Viande", emoji: "🥩" },
-      { nom: "Steaks", categorie: "🍗 Viande", emoji: "🥩" },
-      { nom: "Poisson blanc", categorie: "🐟 Poisson", emoji: "🐟" },
-      { nom: "Saumon", categorie: "🐟 Poisson", emoji: "🐟" },
-      { nom: "Crevettes", categorie: "🐟 Poisson", emoji: "🦐" },
-      { nom: "Jambon", categorie: "🍗 Viande", emoji: "🍖" },
-      { nom: "Saucisses", categorie: "🍗 Viande", emoji: "🌭" },
-      { nom: "Lardons", categorie: "🍗 Viande", emoji: "🥓" },
-      { nom: "Dinde", categorie: "🍗 Viande", emoji: "🍗" },
-      { nom: "Moules", categorie: "🐟 Poisson", emoji: "🦪" },
-      { nom: "Thon", categorie: "🐟 Poisson", emoji: "🐟" },
-      { nom: "Pâtes", categorie: "🍝 Épicerie", emoji: "🍝" },
-      { nom: "Riz", categorie: "🍝 Épicerie", emoji: "🍚" },
-      { nom: "Semoule", categorie: "🍝 Épicerie", emoji: "🌾" },
-      { nom: "Lentilles", categorie: "🍝 Épicerie", emoji: "🟢" },
-      { nom: "Pois chiches", categorie: "🍝 Épicerie", emoji: "🟢" },
-      { nom: "Haricots rouges", categorie: "🍝 Épicerie", emoji: "🔴" },
-      { nom: "Sauce tomate", categorie: "🍝 Épicerie", emoji: "🍅" },
-      { nom: "Huile d'olive", categorie: "🍝 Épicerie", emoji: "🫒" },
-      { nom: "Vinaigre", categorie: "🍝 Épicerie", emoji: "🧴" },
-      { nom: "Sel", categorie: "🍝 Épicerie", emoji: "🧂" },
-      { nom: "Poivre", categorie: "🍝 Épicerie", emoji: "⚫" },
-      { nom: "Farine", categorie: "🍝 Épicerie", emoji: "🌾" },
-      { nom: "Sucre", categorie: "🍝 Épicerie", emoji: "🍬" },
-      { nom: "Concentré tomate", categorie: "🍝 Épicerie", emoji: "🍅" },
-      { nom: "Bouillon cubes", categorie: "🍝 Épicerie", emoji: "🧊" },
-      { nom: "Eau", categorie: "☕ Boissons", emoji: "💧" },
-      { nom: "Café", categorie: "☕ Boissons", emoji: "☕" },
-      { nom: "Thé", categorie: "☕ Boissons", emoji: "🍵" },
-      { nom: "Jus d'orange", categorie: "☕ Boissons", emoji: "🧃" },
-      { nom: "Jus de pomme", categorie: "☕ Boissons", emoji: "🧃" },
-      { nom: "Soda", categorie: "☕ Boissons", emoji: "🥤" },
-      { nom: "Eau gazeuse", categorie: "☕ Boissons", emoji: "💧" },
-      { nom: "Pain", categorie: "🥖 Boulangerie", emoji: "🥖" },
-      { nom: "Baguette", categorie: "🥖 Boulangerie", emoji: "🥖" },
-      { nom: "Croissants", categorie: "🥖 Boulangerie", emoji: "🥐" },
-      { nom: "Pain au chocolat", categorie: "🥖 Boulangerie", emoji: "🥐" },
-      { nom: "Brioche", categorie: "🥖 Boulangerie", emoji: "🍞" },
-      { nom: "Gâteaux", categorie: "🍪 Sucreries", emoji: "🍰" },
-      { nom: "Chocolat", categorie: "🍪 Sucreries", emoji: "🍫" },
-      { nom: "Biscuits", categorie: "🍪 Sucreries", emoji: "🍪" },
-      { nom: "Nutella", categorie: "🍪 Sucreries", emoji: "🍫" },
-      { nom: "Confiture", categorie: "🍪 Sucreries", emoji: "🍯" },
-      { nom: "Miel", categorie: "🍪 Sucreries", emoji: "🍯" },
-      { nom: "Lessive", categorie: "🧹 Ménager", emoji: "🧺" },
-      { nom: "Papier toilette", categorie: "🧹 Ménager", emoji: "🧻" },
-      { nom: "Essuie-tout", categorie: "🧹 Ménager", emoji: "🧻" },
-      { nom: "Sac poubelle", categorie: "🧹 Ménager", emoji: "🗑️" },
-      { nom: "Éponge", categorie: "🧹 Ménager", emoji: "🧽" },
-      { nom: "Liquide vaisselle", categorie: "🧹 Ménager", emoji: "🧴" },
-      { nom: "Dentifrice", categorie: "🪥 Hygiène", emoji: "🪥" },
-      { nom: "Brosse à dents", categorie: "🪥 Hygiène", emoji: "🪥" },
-      { nom: "Shampooing", categorie: "🪥 Hygiène", emoji: "🧴" },
-      { nom: "Savon", categorie: "🪥 Hygiène", emoji: "🧼" },
-      { nom: "Déodorant", categorie: "🪥 Hygiène", emoji: "🧴" },
-      { nom: "Gel douche", categorie: "🪥 Hygiène", emoji: "🧴" }
+      { nom: "Pommes", categorie: "Fruits", emoji: "🍎" },
+      { nom: "Bananes", categorie: "Fruits", emoji: "🍌" },
+      { nom: "Oranges", categorie: "Fruits", emoji: "🍊" },
+      { nom: "Fraises", categorie: "Fruits", emoji: "🍓" },
+      { nom: "Raisins", categorie: "Fruits", emoji: "🍇" },
+      { nom: "Poires", categorie: "Fruits", emoji: "🍐" },
+      { nom: "Kiwi", categorie: "Fruits", emoji: "🥝" },
+      { nom: "Ananas", categorie: "Fruits", emoji: "🍍" },
+      { nom: "Mangues", categorie: "Fruits", emoji: "🥭" },
+      { nom: "Carottes", categorie: "Légumes", emoji: "🥕" },
+      { nom: "Tomates", categorie: "Légumes", emoji: "🍅" },
+      { nom: "Salade", categorie: "Légumes", emoji: "🥬" },
+      { nom: "Courgettes", categorie: "Légumes", emoji: "🥒" },
+      { nom: "Aubergines", categorie: "Légumes", emoji: "🍆" },
+      { nom: "Poivrons", categorie: "Légumes", emoji: "🫑" },
+      { nom: "Pommes de terre", categorie: "Légumes", emoji: "🥔" },
+      { nom: "Brocoli", categorie: "Légumes", emoji: "🥦" },
+      { nom: "Lait", categorie: "Produits laitiers", emoji: "🥛" },
+      { nom: "Fromage râpé", categorie: "Produits laitiers", emoji: "🧀" },
+      { nom: "Beurre", categorie: "Produits laitiers", emoji: "🧈" },
+      { nom: "Yaourts", categorie: "Produits laitiers", emoji: "🥛" },
+      { nom: "Crème fraîche", categorie: "Produits laitiers", emoji: "🥛" },
+      { nom: "Œufs", categorie: "Produits laitiers", emoji: "🥚" },
+      { nom: "Poulet", categorie: "Viande", emoji: "🍗" },
+      { nom: "Bœuf haché", categorie: "Viande", emoji: "🥩" },
+      { nom: "Steaks", categorie: "Viande", emoji: "🥩" },
+      { nom: "Jambon", categorie: "Viande", emoji: "🍖" },
+      { nom: "Saucisses", categorie: "Viande", emoji: "🌭" },
+      { nom: "Saumon", categorie: "Poisson", emoji: "🐟" },
+      { nom: "Thon", categorie: "Poisson", emoji: "🐟" },
+      { nom: "Pâtes", categorie: "Épicerie", emoji: "🍝" },
+      { nom: "Riz", categorie: "Épicerie", emoji: "🍚" },
+      { nom: "Semoule", categorie: "Épicerie", emoji: "🌾" },
+      { nom: "Lentilles", categorie: "Épicerie", emoji: "🟢" },
+      { nom: "Sauce tomate", categorie: "Épicerie", emoji: "🍅" },
+      { nom: "Huile d'olive", categorie: "Épicerie", emoji: "🫒" },
+      { nom: "Sel", categorie: "Épicerie", emoji: "🧂" },
+      { nom: "Poivre", categorie: "Épicerie", emoji: "⚫" },
+      { nom: "Farine", categorie: "Épicerie", emoji: "🌾" },
+      { nom: "Sucre", categorie: "Épicerie", emoji: "🍬" },
+      { nom: "Eau", categorie: "Boissons", emoji: "💧" },
+      { nom: "Café", categorie: "Boissons", emoji: "☕" },
+      { nom: "Thé", categorie: "Boissons", emoji: "🍵" },
+      { nom: "Jus d'orange", categorie: "Boissons", emoji: "🧃" },
+      { nom: "Soda", categorie: "Boissons", emoji: "🥤" },
+      { nom: "Pain", categorie: "Boulangerie", emoji: "🥖" },
+      { nom: "Baguette", categorie: "Boulangerie", emoji: "🥖" },
+      { nom: "Croissants", categorie: "Boulangerie", emoji: "🥐" },
+      { nom: "Chocolat", categorie: "Sucreries", emoji: "🍫" },
+      { nom: "Biscuits", categorie: "Sucreries", emoji: "🍪" },
+      { nom: "Lessive", categorie: "Ménager", emoji: "🧺" },
+      { nom: "Papier toilette", categorie: "Ménager", emoji: "🧻" },
+      { nom: "Essuie-tout", categorie: "Ménager", emoji: "🧻" },
+      { nom: "Dentifrice", categorie: "Hygiène", emoji: "🪥" },
+      { nom: "Shampooing", categorie: "Hygiène", emoji: "🧴" },
+      { nom: "Savon", categorie: "Hygiène", emoji: "🧼" }
     ];
 
     let currentUser = null;
@@ -277,7 +236,7 @@
     let showGestionCatalogue = false;
 
     function showToast(msg, isError) {
-      const toast = document.getElementById('toast');
+      var toast = document.getElementById('toast');
       toast.textContent = msg;
       toast.style.borderColor = isError ? '#ef4444' : '#6366f1';
       toast.classList.add('show');
@@ -295,7 +254,7 @@
     }
 
     async function initCatalogue() {
-      const snapshot = await db.collection('catalogue').limit(1).get();
+      var snapshot = await db.collection('catalogue').limit(1).get();
       if (snapshot.empty) {
         showToast("📦 Installation du catalogue...", false);
         for (var i = 0; i < CATALOGUE_PAR_DEFAUT.length; i++) {
@@ -305,148 +264,43 @@
       }
     }
 
-    async function handleAuth(e) {
-      e.preventDefault();
-      const email = document.getElementById('auth-email').value;
-      const password = document.getElementById('auth-password').value;
-      const submitBtn = document.getElementById('auth-submit-btn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Chargement...';
-      try {
-        if (isLoginMode) {
-          await auth.signInWithEmailAndPassword(email, password);
-          showToast('✅ Connecté !', false);
-        } else {
-          const confirm = document.getElementById('auth-confirm').value;
-          if (password !== confirm) {
-            showToast('❌ Mots de passe différents', true);
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Se connecter';
-            return;
-          }
-          if (password.length < 6) {
-            showToast('❌ 6 caractères minimum', true);
-            submitBtn.disabled = false;
-            submitBtn.textContent = "S'inscrire";
-            return;
-          }
-          await auth.createUserWithEmailAndPassword(email, password);
-          showToast('✅ Compte créé !', false);
-        }
-      } catch (err) {
-        var msg = 'Erreur';
-        if (err.code === 'auth/invalid-email') msg = 'Email invalide';
-        else if (err.code === 'auth/user-not-found') msg = 'Compte non trouvé';
-        else if (err.code === 'auth/wrong-password') msg = 'Mot de passe incorrect';
-        else if (err.code === 'auth/email-already-in-use') msg = 'Email déjà utilisé';
-        showToast('❌ ' + msg, true);
-      }
-      submitBtn.disabled = false;
-      submitBtn.textContent = isLoginMode ? 'Se connecter' : "S'inscrire";
-    }
-
-    function switchAuthMode() {
-      isLoginMode = !isLoginMode;
-      document.getElementById('auth-subtitle').textContent = isLoginMode ? 'Retrouvez vos listes' : 'Créez votre compte';
-      document.getElementById('auth-confirm-group').style.display = isLoginMode ? 'none' : 'block';
-      document.getElementById('forgot-password-btn').style.display = isLoginMode ? 'inline-block' : 'none';
-      document.getElementById('auth-submit-btn').textContent = isLoginMode ? 'Se connecter' : "S'inscrire";
-      document.getElementById('switch-auth-mode').textContent = isLoginMode ? 'Créer un compte' : 'Déjà un compte ? Se connecter';
-    }
-
-    async function handleForgotPassword() {
-      const email = document.getElementById('auth-email').value;
-      if (!email) {
-        showToast('❌ Entrez votre email', true);
-        return;
-      }
-      try {
-        await auth.sendPasswordResetEmail(email);
-        showToast('📧 Email envoyé !', false);
-      } catch(e) {
-        showToast('❌ Email non trouvé', true);
-      }
-    }
-
-    async function ajouterProduit(nom, categorie, emoji) {
-      if (!nom.trim()) return;
-      const newProduit = { nom: nom.trim(), categorie: categorie || '', emoji: emoji || '🛍️' };
-      const docRef = await db.collection('catalogue').add(newProduit);
-      catalogue.push({ id: docRef.id, nom: nom.trim(), categorie: categorie, emoji: emoji });
-      showToast('✅ Produit "' + nom + '" ajouté', false);
-      renderCataloguePage();
-    }
-
-    async function modifierProduit(id, nom, categorie, emoji) {
-      const ref = db.collection('catalogue').doc(id);
-      await ref.update({ nom: nom.trim(), categorie: categorie || '', emoji: emoji || '🛍️' });
-      for (var i = 0; i < catalogue.length; i++) {
-        if (catalogue[i].id === id) {
-          catalogue[i].nom = nom.trim();
-          catalogue[i].categorie = categorie;
-          catalogue[i].emoji = emoji;
-          break;
-        }
-      }
-      showToast('✏️ Produit modifié', false);
-      renderCataloguePage();
-    }
-
-    async function supprimerProduit(id, nom) {
-      if (!confirm('Supprimer "' + nom + '" du catalogue ?')) return;
-      await db.collection('catalogue').doc(id).delete();
-      var newCatalogue = [];
-      for (var i = 0; i < catalogue.length; i++) {
-        if (catalogue[i].id !== id) newCatalogue.push(catalogue[i]);
-      }
-      catalogue = newCatalogue;
-      showToast('🗑️ Produit supprimé', false);
-      renderCataloguePage();
-    }
-
     async function loadCatalogue() {
-      const snapshot = await db.collection('catalogue').orderBy('nom').get();
+      var snapshot = await db.collection('catalogue').orderBy('nom').get();
       catalogue = [];
       for (var i = 0; i < snapshot.docs.length; i++) {
-        catalogue.push({ id: snapshot.docs[i].id, ...snapshot.docs[i].data() });
+        catalogue.push({ id: snapshot.docs[i].id, nom: snapshot.docs[i].data().nom, categorie: snapshot.docs[i].data().categorie, emoji: snapshot.docs[i].data().emoji });
       }
     }
 
     async function loadListes() {
       if (!currentUser) return;
-      const snapshot = await db.collection('users').doc(currentUser.uid).collection('listes').orderBy('createdAt', 'desc').get();
+      var snapshot = await db.collection('users').doc(currentUser.uid).collection('listes').orderBy('createdAt', 'desc').get();
       listes = [];
       for (var i = 0; i < snapshot.docs.length; i++) {
-        listes.push({ id: snapshot.docs[i].id, ...snapshot.docs[i].data() });
+        listes.push({ id: snapshot.docs[i].id, nom: snapshot.docs[i].data().nom, dossier: snapshot.docs[i].data().dossier, statut: snapshot.docs[i].data().statut });
       }
-      const dossiersSnap = await db.collection('users').doc(currentUser.uid).collection('dossiers').get();
+      var dossiersSnap = await db.collection('users').doc(currentUser.uid).collection('dossiers').get();
       dossiers = [];
       for (var i = 0; i < dossiersSnap.docs.length; i++) {
-        dossiers.push({ id: dossiersSnap.docs[i].id, ...dossiersSnap.docs[i].data() });
+        dossiers.push({ id: dossiersSnap.docs[i].id, nom: dossiersSnap.docs[i].data().nom });
       }
       renderListesPage();
     }
 
     async function loadArticles(listeId) {
       if (!currentUser) return [];
-      const snapshot = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').orderBy('categorie').orderBy('nom').get();
+      var snapshot = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').orderBy('categorie').orderBy('nom').get();
       var result = [];
       for (var i = 0; i < snapshot.docs.length; i++) {
-        result.push({ id: snapshot.docs[i].id, ...snapshot.docs[i].data() });
+        result.push({ id: snapshot.docs[i].id, nom: snapshot.docs[i].data().nom, quantite: snapshot.docs[i].data().quantite, categorie: snapshot.docs[i].data().categorie, coche: snapshot.docs[i].data().coche });
       }
       return result;
     }
 
     async function creerListe(nom, dossier) {
       if (dossier === undefined) dossier = '';
-      const newListe = {
-        nom: nom,
-        dossier: dossier,
-        statut: 'en_cours',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-      const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').add(newListe);
+      var newListe = { nom: nom, dossier: dossier, statut: 'en_cours', createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
+      var docRef = await db.collection('users').doc(currentUser.uid).collection('listes').add(newListe);
       listes.unshift({ id: docRef.id, nom: nom, dossier: dossier, statut: 'en_cours' });
       renderListesPage();
       showToast('✅ Liste "' + nom + '" créée', false);
@@ -455,8 +309,8 @@
 
     async function supprimerListe(listeId, listeNom) {
       if (!confirm('Supprimer "' + listeNom + '" définitivement ?')) return;
-      const batch = db.batch();
-      const articlesSnap = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').get();
+      var batch = db.batch();
+      var articlesSnap = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').get();
       for (var i = 0; i < articlesSnap.docs.length; i++) {
         batch.delete(articlesSnap.docs[i].ref);
       }
@@ -472,23 +326,14 @@
     }
 
     async function renommerListe(listeId) {
-      const nouveauNom = prompt('Nouveau nom :');
+      var nouveauNom = prompt('Nouveau nom :');
       if (!nouveauNom || !nouveauNom.trim()) return;
       await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).update({ nom: nouveauNom.trim() });
       for (var i = 0; i < listes.length; i++) {
         if (listes[i].id === listeId) listes[i].nom = nouveauNom.trim();
       }
       renderListesPage();
-    }
-
-    async function deplacerListe(listeId) {
-      const dossier = prompt('Nom du dossier (vide = racine) :');
-      if (dossier === null) return;
-      await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).update({ dossier: dossier });
-      for (var i = 0; i < listes.length; i++) {
-        if (listes[i].id === listeId) listes[i].dossier = dossier;
-      }
-      renderListesPage();
+      showToast('✅ Liste renommée', false);
     }
 
     async function dupliquerListe(listeId) {
@@ -497,11 +342,11 @@
         if (listes[i].id === listeId) original = listes[i];
       }
       if (!original) return;
-      const articlesSnap = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').get();
-      const newId = await creerListe(original.nom + ' (copie)', original.dossier);
-      const batch = db.batch();
+      var articlesSnap = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').get();
+      var newId = await creerListe(original.nom + ' (copie)', original.dossier);
+      var batch = db.batch();
       for (var i = 0; i < articlesSnap.docs.length; i++) {
-        const newRef = db.collection('users').doc(currentUser.uid).collection('listes').doc(newId).collection('articles').doc();
+        var newRef = db.collection('users').doc(currentUser.uid).collection('listes').doc(newId).collection('articles').doc();
         var data = articlesSnap.docs[i].data();
         data.coche = false;
         batch.set(newRef, data);
@@ -517,6 +362,7 @@
       }
       if (currentListeId === listeId) renderListePage(listeId);
       renderListesPage();
+      showToast('✓ Liste terminée', false);
     }
 
     async function reactiverListe(listeId) {
@@ -526,17 +372,33 @@
       }
       if (currentListeId === listeId) renderListePage(listeId);
       renderListesPage();
+      showToast('🔄 Liste réactivée', false);
+    }
+
+    async function ajouterProduit(nom, categorie, emoji) {
+      if (!nom.trim()) return;
+      var newProduit = { nom: nom.trim(), categorie: categorie || '', emoji: emoji || '🛍️' };
+      var docRef = await db.collection('catalogue').add(newProduit);
+      catalogue.push({ id: docRef.id, nom: nom.trim(), categorie: categorie, emoji: emoji });
+      showToast('✅ Produit "' + nom + '" ajouté', false);
+      renderCataloguePage();
+    }
+
+    async function supprimerProduit(id, nom) {
+      if (!confirm('Supprimer "' + nom + '" du catalogue ?')) return;
+      await db.collection('catalogue').doc(id).delete();
+      var newCatalogue = [];
+      for (var i = 0; i < catalogue.length; i++) {
+        if (catalogue[i].id !== id) newCatalogue.push(catalogue[i]);
+      }
+      catalogue = newCatalogue;
+      showToast('🗑️ Produit supprimé', false);
+      renderCataloguePage();
     }
 
     async function ajouterArticle(listeId, articleData) {
-      const newArticle = {
-        nom: articleData.nom,
-        quantite: articleData.quantite,
-        categorie: articleData.categorie || '',
-        coche: false,
-        addedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-      const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').add(newArticle);
+      var newArticle = { nom: articleData.nom, quantite: articleData.quantite, categorie: articleData.categorie || '', coche: false, addedAt: firebase.firestore.FieldValue.serverTimestamp() };
+      var docRef = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').add(newArticle);
       if (currentListeId === listeId) {
         articles.push({ id: docRef.id, nom: articleData.nom, quantite: articleData.quantite, categorie: articleData.categorie, coche: false });
         renderListePage(listeId);
@@ -564,6 +426,7 @@
       }
       articles = newArticles;
       renderListePage(listeId);
+      showToast('🗑️ Article supprimé', false);
     }
 
     async function modifierQuantite(listeId, articleId, quantite) {
@@ -572,124 +435,6 @@
         if (articles[i].id === articleId) articles[i].quantite = quantite;
       }
       renderListePage(listeId);
-    }
-
-    function renderListesPage() {
-      const container = document.getElementById('main-content');
-      var listesFiltrees = [];
-      for (var i = 0; i < listes.length; i++) {
-        var l = listes[i];
-        var okDossier = (filterDossier === '__all__' || l.dossier === filterDossier);
-        var okStatut = (filterStatut === '__all__' || l.statut === filterStatut);
-        if (okDossier && okStatut) listesFiltrees.push(l);
-      }
-      var grouped = {};
-      if (filterDossier !== '__all__') {
-        grouped[filterDossier || 'Mes listes'] = listesFiltrees;
-      } else {
-        grouped[''] = [];
-        for (var i = 0; i < dossiers.length; i++) grouped[dossiers[i].nom] = [];
-        for (var i = 0; i < listesFiltrees.length; i++) {
-          var l = listesFiltrees[i];
-          if (l.dossier && grouped[l.dossier]) grouped[l.dossier].push(l);
-          else grouped[''].push(l);
-        }
-      }
-      var html = '<div class="fade-up"><div class="section-header"><h2 class="section-title">🛍️ Mes Listes</h2><button class="btn btn-ghost btn-sm" id="btn-nouveau-dossier">📁 Dossier</button></div><div class="card" style="margin-bottom:1.2rem"><form id="form-nouvelle-liste"><div class="form-row"><input type="text" id="nouvelle-liste-nom" placeholder="Nom de la nouvelle liste…" required>';
-      if (dossiers.length > 0) {
-        html += '<select id="nouvelle-liste-dossier" style="width:140px"><option value="">Aucun dossier</option>';
-        for (var i = 0; i < dossiers.length; i++) {
-          html += '<option value="' + escapeHtml(dossiers[i].nom) + '">' + escapeHtml(dossiers[i].nom) + '</option>';
-        }
-        html += '</select>';
-      }
-      html += '<button type="submit" class="btn btn-primary">+ Créer</button></div></form></div><div class="filter-group"><button class="filter-btn ' + (filterStatut === '__all__' ? 'active' : '') + '" data-filter-statut="__all__">Toutes</button><button class="filter-btn ' + (filterStatut === 'en_cours' ? 'active' : '') + '" data-filter-statut="en_cours">En cours</button><button class="filter-btn ' + (filterStatut === 'terminee' ? 'active' : '') + '" data-filter-statut="terminee">Terminées</button>';
-      if (dossiers.length > 0) {
-        html += '<button class="filter-btn ' + (filterDossier === '__all__' ? 'active' : '') + '" data-filter-dossier="__all__">Tous dossiers</button><button class="filter-btn ' + (filterDossier === '' ? 'active' : '') + '" data-filter-dossier="">Sans dossier</button>';
-        for (var i = 0; i < dossiers.length; i++) {
-          html += '<button class="filter-btn ' + (filterDossier === dossiers[i].nom ? 'active' : '') + '" data-filter-dossier="' + escapeHtml(dossiers[i].nom) + '">📁 ' + escapeHtml(dossiers[i].nom) + '</button>';
-        }
-      }
-      html += '</div>';
-      if (listes.length === 0) {
-        html += '<div class="empty-state"><div style="font-size:3rem">🛒</div><p>Créez votre première liste !</p></div>';
-      } else if (listesFiltrees.length === 0) {
-        html += '<div class="empty-state"><p>Aucune liste</p></div>';
-      } else {
-        var groupKeys = Object.keys(grouped);
-        for (var g = 0; g < groupKeys.length; g++) {
-          var dossierNom = groupKeys[g];
-          var items = grouped[dossierNom];
-          if (items.length === 0) continue;
-          if (Object.keys(grouped).length > 1) {
-            html += '<div class="cat-group-title">' + (dossierNom ? '📁 ' + escapeHtml(dossierNom) : '📋 Mes listes') + '</div>';
-          }
-          for (var i = 0; i < items.length; i++) {
-            var liste = items[i];
-            html += '<div class="card fade-up" style="border:' + (liste.statut === 'terminee' ? '1px solid rgba(67,233,123,0.25)' : '1px solid var(--border)') + '"><div style="display:flex;justify-content:space-between"><div style="flex:1" onclick="ouvrirListe(\'' + liste.id + '\')"><div><span style="font-weight:700">' + escapeHtml(liste.nom) + '</span>';
-            if (liste.statut === 'terminee') html += '<span style="font-size:0.7rem;background:rgba(67,233,123,0.15);color:#43e97b;padding:0.15rem 0.5rem;border-radius:20px;margin-left:0.5rem">✓ Terminée</span>';
-            html += '</div><div style="font-size:0.78rem;color:var(--text3)">';
-            if (liste.dossier) html += '📁 ' + escapeHtml(liste.dossier);
-            html += '</div></div><div style="position:relative"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();toggleMenu(this)">⋮</button><div class="menu-popup" style="display:none"><button class="menu-item" onclick="renommerListe(\'' + liste.id + '\')">✏️ Renommer</button><button class="menu-item" onclick="dupliquerListe(\'' + liste.id + '\')">📋 Dupliquer</button><button class="menu-item" onclick="deplacerListe(\'' + liste.id + '\')">📁 Déplacer</button><button class="menu-item" style="color:#ef4444" onclick="supprimerListe(\'' + liste.id + '\',\'' + escapeHtml(liste.nom) + '\')">🗑️ Supprimer</button></div></div></div></div>';
-          }
-        }
-      }
-      html += '</div>';
-      container.innerHTML = html;
-      var form = document.getElementById('form-nouvelle-liste');
-      if (form) {
-        form.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          var nom = document.getElementById('nouvelle-liste-nom').value.trim();
-          if (nom) {
-            var dossierSelect = document.getElementById('nouvelle-liste-dossier');
-            var dossier = dossierSelect ? dossierSelect.value : '';
-            var id = await creerListe(nom, dossier);
-            ouvrirListe(id);
-          }
-        });
-      }
-      var btnDossier = document.getElementById('btn-nouveau-dossier');
-      if (btnDossier) {
-        btnDossier.addEventListener('click', async function() {
-          var nom = prompt('Nom du dossier :');
-          if (nom && nom.trim()) {
-            var newDossier = { nom: nom.trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() };
-            var docRef = await db.collection('users').doc(currentUser.uid).collection('dossiers').add(newDossier);
-            dossiers.push({ id: docRef.id, nom: nom.trim() });
-            renderListesPage();
-            showToast('📁 Dossier créé', false);
-          }
-        });
-      }
-      var statutBtns = document.querySelectorAll('[data-filter-statut]');
-      for (var i = 0; i < statutBtns.length; i++) {
-        statutBtns[i].addEventListener('click', function() {
-          filterStatut = this.dataset.filterStatut;
-          renderListesPage();
-        });
-      }
-      var dossierBtns = document.querySelectorAll('[data-filter-dossier]');
-      for (var i = 0; i < dossierBtns.length; i++) {
-        dossierBtns[i].addEventListener('click', function() {
-          filterDossier = this.dataset.filterDossier;
-          renderListesPage();
-        });
-      }
-    }
-
-    function toggleMenu(btn) {
-      var menu = btn.nextElementSibling;
-      var isVisible = menu.style.display === 'block';
-      menu.style.display = isVisible ? 'none' : 'block';
-      if (!isVisible) {
-        document.addEventListener('click', function close(e) {
-          if (!btn.contains(e.target)) {
-            menu.style.display = 'none';
-            document.removeEventListener('click', close);
-          }
-        });
-      }
     }
 
     function ouvrirListe(listeId) {
@@ -762,7 +507,7 @@
               for (var n = 1; n <= 10; n++) {
                 html += '<option value="' + n + '" ' + (article.quantite === n ? 'selected' : '') + '>' + n + '</option>';
               }
-              html += '</select><button class="btn-icon" style="background:none;border:none;cursor:pointer;font-size:1.1rem" onclick="supprimerArticle(\'' + listeId + '\',\'' + article.id + '\',\'' + escapeHtml(article.nom) + '\')">🗑️</button></div>';
+              html += '</select><button style="background:none;border:none;cursor:pointer;font-size:1.1rem" onclick="supprimerArticle(\'' + listeId + '\',\'' + article.id + '\',\'' + escapeHtml(article.nom) + '\')">🗑️</button></div>';
             }
             html += '</div>';
           }
@@ -822,31 +567,120 @@
       renderListePage(currentListeId);
     }
 
-    function renderProfilPage() {
-      var user = auth.currentUser;
-      var initiales = (user.displayName || user.email || 'U').split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().slice(0,2);
-      var html = '<div class="fade-up"><h2 class="section-title">👤 Mon Profil</h2><div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem"><div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#fff">' + initiales + '</div><div><div style="font-weight:700">' + escapeHtml(user.displayName || 'Utilisateur') + '</div><div style="color:var(--text2);font-size:0.88rem">' + escapeHtml(user.email) + '</div></div></div><div class="card"><h3 style="font-size:0.95rem;margin-bottom:1rem;color:var(--text2)">✏️ Modifier le prénom</h3><form id="form-update-name"><div class="form-group"><label class="form-label">Prénom</label><input type="text" id="display-name" value="' + escapeHtml(user.displayName || '') + '"></div><button type="submit" class="btn btn-primary">Enregistrer</button></form></div><div class="card"><h3 style="font-size:0.95rem;margin-bottom:1rem;color:var(--text2)">ℹ️ Informations</h3><div style="font-size:0.88rem;color:var(--text2)"><div>📧 ' + escapeHtml(user.email) + '</div><div>🆔 <span style="font-family:monospace">' + user.uid + '</span></div></div></div><button id="btn-logout" class="btn btn-danger" style="width:100%">🚪 Se déconnecter</button></div>';
-      document.getElementById('main-content').innerHTML = html;
-      var formName = document.getElementById('form-update-name');
-      if (formName) {
-        formName.addEventListener('submit', async function(e) {
+    function renderListesPage() {
+      var container = document.getElementById('main-content');
+      var listesFiltrees = [];
+      for (var i = 0; i < listes.length; i++) {
+        var l = listes[i];
+        var okDossier = (filterDossier === '__all__' || l.dossier === filterDossier);
+        var okStatut = (filterStatut === '__all__' || l.statut === filterStatut);
+        if (okDossier && okStatut) listesFiltrees.push(l);
+      }
+      var grouped = {};
+      if (filterDossier !== '__all__') {
+        grouped[filterDossier || 'Mes listes'] = listesFiltrees;
+      } else {
+        grouped[''] = [];
+        for (var i = 0; i < dossiers.length; i++) grouped[dossiers[i].nom] = [];
+        for (var i = 0; i < listesFiltrees.length; i++) {
+          var l = listesFiltrees[i];
+          if (l.dossier && grouped[l.dossier]) grouped[l.dossier].push(l);
+          else grouped[''].push(l);
+        }
+      }
+      var html = '<div class="fade-up"><div class="section-header"><h2 class="section-title">🛍️ Mes Listes</h2><button class="btn btn-ghost btn-sm" id="btn-nouveau-dossier">📁 Dossier</button></div><div class="card" style="margin-bottom:1.2rem"><form id="form-nouvelle-liste"><div class="form-row"><input type="text" id="nouvelle-liste-nom" placeholder="Nom de la nouvelle liste…" required>';
+      if (dossiers.length > 0) {
+        html += '<select id="nouvelle-liste-dossier" style="width:140px"><option value="">Aucun dossier</option>';
+        for (var i = 0; i < dossiers.length; i++) {
+          html += '<option value="' + escapeHtml(dossiers[i].nom) + '">' + escapeHtml(dossiers[i].nom) + '</option>';
+        }
+        html += '</select>';
+      }
+      html += '<button type="submit" class="btn btn-primary">+ Créer</button></div></form></div><div class="filter-group"><button class="filter-btn ' + (filterStatut === '__all__' ? 'active' : '') + '" data-filter-statut="__all__">Toutes</button><button class="filter-btn ' + (filterStatut === 'en_cours' ? 'active' : '') + '" data-filter-statut="en_cours">En cours</button><button class="filter-btn ' + (filterStatut === 'terminee' ? 'active' : '') + '" data-filter-statut="terminee">Terminées</button>';
+      if (dossiers.length > 0) {
+        html += '<button class="filter-btn ' + (filterDossier === '__all__' ? 'active' : '') + '" data-filter-dossier="__all__">Tous dossiers</button><button class="filter-btn ' + (filterDossier === '' ? 'active' : '') + '" data-filter-dossier="">Sans dossier</button>';
+        for (var i = 0; i < dossiers.length; i++) {
+          html += '<button class="filter-btn ' + (filterDossier === dossiers[i].nom ? 'active' : '') + '" data-filter-dossier="' + escapeHtml(dossiers[i].nom) + '">📁 ' + escapeHtml(dossiers[i].nom) + '</button>';
+        }
+      }
+      html += '</div>';
+      if (listes.length === 0) {
+        html += '<div class="empty-state"><div style="font-size:3rem">🛒</div><p>Créez votre première liste !</p></div>';
+      } else if (listesFiltrees.length === 0) {
+        html += '<div class="empty-state"><p>Aucune liste</p></div>';
+      } else {
+        var groupKeys = Object.keys(grouped);
+        for (var g = 0; g < groupKeys.length; g++) {
+          var dossierNom = groupKeys[g];
+          var items = grouped[dossierNom];
+          if (items.length === 0) continue;
+          if (Object.keys(grouped).length > 1) {
+            html += '<div class="cat-group-title">' + (dossierNom ? '📁 ' + escapeHtml(dossierNom) : '📋 Mes listes') + '</div>';
+          }
+          for (var i = 0; i < items.length; i++) {
+            var liste = items[i];
+            html += '<div class="card fade-up" style="border:' + (liste.statut === 'terminee' ? '1px solid rgba(67,233,123,0.25)' : '1px solid var(--border)') + '"><div style="display:flex;justify-content:space-between"><div style="flex:1" onclick="ouvrirListe(\'' + liste.id + '\')"><div><span style="font-weight:700">' + escapeHtml(liste.nom) + '</span>';
+            if (liste.statut === 'terminee') html += '<span style="font-size:0.7rem;background:rgba(67,233,123,0.15);color:#43e97b;padding:0.15rem 0.5rem;border-radius:20px;margin-left:0.5rem">✓ Terminée</span>';
+            html += '</div><div style="font-size:0.78rem;color:var(--text3)">';
+            if (liste.dossier) html += '📁 ' + escapeHtml(liste.dossier);
+            html += '</div></div><div style="position:relative"><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();toggleMenu(this)">⋮</button><div class="menu-popup" style="display:none"><button class="menu-item" onclick="renommerListe(\'' + liste.id + '\')">✏️ Renommer</button><button class="menu-item" onclick="dupliquerListe(\'' + liste.id + '\')">📋 Dupliquer</button><button class="menu-item" style="color:#ef4444" onclick="supprimerListe(\'' + liste.id + '\',\'' + escapeHtml(liste.nom) + '\')">🗑️ Supprimer</button></div></div></div></div>';
+          }
+        }
+      }
+      html += '</div>';
+      container.innerHTML = html;
+      var form = document.getElementById('form-nouvelle-liste');
+      if (form) {
+        form.addEventListener('submit', async function(e) {
           e.preventDefault();
-          var newName = document.getElementById('display-name').value.trim();
-          if (newName) {
-            try {
-              await auth.currentUser.updateProfile({ displayName: newName });
-              showToast('✅ Prénom mis à jour', false);
-              renderProfilPage();
-            } catch(err) {
-              showToast('❌ Erreur', true);
-            }
+          var nom = document.getElementById('nouvelle-liste-nom').value.trim();
+          if (nom) {
+            var dossierSelect = document.getElementById('nouvelle-liste-dossier');
+            var dossier = dossierSelect ? dossierSelect.value : '';
+            var id = await creerListe(nom, dossier);
+            ouvrirListe(id);
           }
         });
       }
-      var btnLogout = document.getElementById('btn-logout');
-      if (btnLogout) {
-        btnLogout.addEventListener('click', async function() {
-          await auth.signOut();
+      var btnDossier = document.getElementById('btn-nouveau-dossier');
+      if (btnDossier) {
+        btnDossier.addEventListener('click', async function() {
+          var nom = prompt('Nom du dossier :');
+          if (nom && nom.trim()) {
+            var newDossier = { nom: nom.trim(), createdAt: firebase.firestore.FieldValue.serverTimestamp() };
+            var docRef = await db.collection('users').doc(currentUser.uid).collection('dossiers').add(newDossier);
+            dossiers.push({ id: docRef.id, nom: nom.trim() });
+            renderListesPage();
+            showToast('📁 Dossier créé', false);
+          }
+        });
+      }
+      var statutBtns = document.querySelectorAll('[data-filter-statut]');
+      for (var i = 0; i < statutBtns.length; i++) {
+        statutBtns[i].addEventListener('click', function() {
+          filterStatut = this.dataset.filterStatut;
+          renderListesPage();
+        });
+      }
+      var dossierBtns = document.querySelectorAll('[data-filter-dossier]');
+      for (var i = 0; i < dossierBtns.length; i++) {
+        dossierBtns[i].addEventListener('click', function() {
+          filterDossier = this.dataset.filterDossier;
+          renderListesPage();
+        });
+      }
+    }
+
+    function toggleMenu(btn) {
+      var menu = btn.nextElementSibling;
+      var isVisible = menu.style.display === 'block';
+      menu.style.display = isVisible ? 'none' : 'block';
+      if (!isVisible) {
+        document.addEventListener('click', function close(e) {
+          if (!btn.contains(e.target)) {
+            menu.style.display = 'none';
+            document.removeEventListener('click', close);
+          }
         });
       }
     }
@@ -878,8 +712,7 @@
           html += '<div class="catalogue-card fade-up" ' + (!showGestionCatalogue ? 'onclick="copierNom(\'' + escapeHtml(a.nom) + '\')"' : '') + '><div class="catalogue-card-emoji">' + (a.emoji || '🛍️') + '</div><div class="catalogue-card-name">' + escapeHtml(a.nom) + '</div>';
           if (a.categorie) html += '<div class="catalogue-card-cat">' + escapeHtml(a.categorie) + '</div>';
           if (showGestionCatalogue) {
-            html += '<button class="edit-btn" onclick="event.stopPropagation();modifierProduitPrompt(\'' + a.id + '\',\'' + escapeHtml(a.nom) + '\',\'' + escapeHtml(a.categorie || '') + '\',\'' + escapeHtml(a.emoji || '🛍️') + '\')">✏️</button>';
-            html += '<button class="delete-btn" onclick="event.stopPropagation();supprimerProduit(\'' + a.id + '\',\'' + escapeHtml(a.nom) + '\')">🗑️</button>';
+            html += '<button class="edit-btn" onclick="event.stopPropagation();supprimerProduit(\'' + a.id + '\',\'' + escapeHtml(a.nom) + '\')">🗑️</button>';
           }
           html += '</div>';
         }
@@ -903,11 +736,25 @@
       }
       var btnAjout = document.getElementById('btn-ajouter-produit');
       if (btnAjout) {
-        btnAjout.addEventListener('click', function() { ajouterProduitPrompt(); });
+        btnAjout.addEventListener('click', function() {
+          var nom = prompt("Nom du produit :");
+          if (nom) {
+            var categorie = prompt("Catégorie :", "");
+            var emoji = prompt("Émoji :", "🛍️");
+            ajouterProduit(nom, categorie, emoji);
+          }
+        });
       }
       var btnPremier = document.getElementById('btn-premier-produit');
       if (btnPremier) {
-        btnPremier.addEventListener('click', function() { ajouterProduitPrompt(); });
+        btnPremier.addEventListener('click', function() {
+          var nom = prompt("Nom du produit :");
+          if (nom) {
+            var categorie = prompt("Catégorie :", "");
+            var emoji = prompt("Émoji :", "🛍️");
+            ajouterProduit(nom, categorie, emoji);
+          }
+        });
       }
       var btnGestion = document.getElementById('btn-mode-gestion');
       if (btnGestion) {
@@ -918,25 +765,38 @@
       }
     }
 
-    function ajouterProduitPrompt() {
-      var nom = prompt("Nom du produit :");
-      if (!nom) return;
-      var categorie = prompt("Catégorie :", "");
-      var emoji = prompt("Émoji :", "🛍️");
-      ajouterProduit(nom, categorie, emoji);
-    }
-
-    function modifierProduitPrompt(id, oldNom, oldCategorie, oldEmoji) {
-      var nom = prompt("Modifier le nom :", oldNom);
-      if (!nom) return;
-      var categorie = prompt("Modifier la catégorie :", oldCategorie);
-      var emoji = prompt("Modifier l'émoji :", oldEmoji);
-      modifierProduit(id, nom, categorie, emoji);
-    }
-
     function copierNom(nom) {
       navigator.clipboard.writeText(nom);
       showToast('📋 "' + nom + '" copié !', false);
+    }
+
+    function renderProfilPage() {
+      var user = auth.currentUser;
+      var initiales = (user.displayName || user.email || 'U').split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().slice(0,2);
+      var html = '<div class="fade-up"><h2 class="section-title">👤 Mon Profil</h2><div style="display:flex;align-items:center;gap:1rem;margin-bottom:2rem"><div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#a78bfa);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;color:#fff">' + initiales + '</div><div><div style="font-weight:700">' + escapeHtml(user.displayName || 'Utilisateur') + '</div><div style="color:var(--text2);font-size:0.88rem">' + escapeHtml(user.email) + '</div></div></div><div class="card"><h3 style="font-size:0.95rem;margin-bottom:1rem;color:var(--text2)">✏️ Modifier le prénom</h3><form id="form-update-name"><div class="form-group"><label class="form-label">Prénom</label><input type="text" id="display-name" value="' + escapeHtml(user.displayName || '') + '"></div><button type="submit" class="btn btn-primary">Enregistrer</button></form></div><div class="card"><h3 style="font-size:0.95rem;margin-bottom:1rem;color:var(--text2)">ℹ️ Informations</h3><div style="font-size:0.88rem;color:var(--text2)"><div>📧 ' + escapeHtml(user.email) + '</div><div>🆔 <span style="font-family:monospace">' + user.uid + '</span></div></div></div><button id="btn-logout" class="btn btn-danger" style="width:100%">🚪 Se déconnecter</button></div>';
+      document.getElementById('main-content').innerHTML = html;
+      var formName = document.getElementById('form-update-name');
+      if (formName) {
+        formName.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          var newName = document.getElementById('display-name').value.trim();
+          if (newName) {
+            try {
+              await auth.currentUser.updateProfile({ displayName: newName });
+              showToast('✅ Prénom mis à jour', false);
+              renderProfilPage();
+            } catch(err) {
+              showToast('❌ Erreur', true);
+            }
+          }
+        });
+      }
+      var btnLogout = document.getElementById('btn-logout');
+      if (btnLogout) {
+        btnLogout.addEventListener('click', async function() {
+          await auth.signOut();
+        });
+      }
     }
 
     function showPage(page) {
@@ -947,6 +807,69 @@
       if (page === 'listes') renderListesPage();
       else if (page === 'catalogue') renderCataloguePage();
       else if (page === 'profil') renderProfilPage();
+    }
+
+    async function handleAuth(e) {
+      e.preventDefault();
+      var email = document.getElementById('auth-email').value;
+      var password = document.getElementById('auth-password').value;
+      var submitBtn = document.getElementById('auth-submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Chargement...';
+      try {
+        if (isLoginMode) {
+          await auth.signInWithEmailAndPassword(email, password);
+          showToast('✅ Connecté !', false);
+        } else {
+          var confirm = document.getElementById('auth-confirm').value;
+          if (password !== confirm) {
+            showToast('❌ Mots de passe différents', true);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Se connecter';
+            return;
+          }
+          if (password.length < 6) {
+            showToast('❌ 6 caractères minimum', true);
+            submitBtn.disabled = false;
+            submitBtn.textContent = "S'inscrire";
+            return;
+          }
+          await auth.createUserWithEmailAndPassword(email, password);
+          showToast('✅ Compte créé !', false);
+        }
+      } catch (err) {
+        var msg = 'Erreur';
+        if (err.code === 'auth/invalid-email') msg = 'Email invalide';
+        else if (err.code === 'auth/user-not-found') msg = 'Compte non trouvé';
+        else if (err.code === 'auth/wrong-password') msg = 'Mot de passe incorrect';
+        else if (err.code === 'auth/email-already-in-use') msg = 'Email déjà utilisé';
+        showToast('❌ ' + msg, true);
+      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = isLoginMode ? 'Se connecter' : "S'inscrire";
+    }
+
+    function switchAuthMode() {
+      isLoginMode = !isLoginMode;
+      document.getElementById('auth-subtitle').textContent = isLoginMode ? 'Retrouvez vos listes' : 'Créez votre compte';
+      document.getElementById('auth-confirm-group').style.display = isLoginMode ? 'none' : 'block';
+      document.getElementById('forgot-password-btn').style.display = isLoginMode ? 'inline-block' : 'none';
+      document.getElementById('auth-submit-btn').textContent = isLoginMode ? 'Se connecter' : "S'inscrire";
+      document.getElementById('switch-auth-mode').textContent = isLoginMode ? 'Créer un compte' : 'Déjà un compte ? Se connecter';
+    }
+
+    async function handleForgotPassword() {
+      var email = document.getElementById('auth-email').value;
+      if (!email) {
+        showToast('❌ Entrez votre email', true);
+        return;
+      }
+      try {
+        await auth.sendPasswordResetEmail(email);
+        showToast('📧 Email envoyé !', false);
+      } catch(e) {
+        showToast('❌ Email non trouvé', true);
+      }
     }
 
     auth.onAuthStateChanged(async function(user) {
@@ -980,7 +903,6 @@
     window.renderListesPage = renderListesPage;
     window.renommerListe = renommerListe;
     window.dupliquerListe = dupliquerListe;
-    window.deplacerListe = deplacerListe;
     window.supprimerListe = supprimerListe;
     window.terminerListe = terminerListe;
     window.reactiverListe = reactiverListe;
@@ -992,10 +914,7 @@
     window.closeModal = closeModal;
     window.copierNom = copierNom;
     window.ajouterProduit = ajouterProduit;
-    window.modifierProduit = modifierProduit;
     window.supprimerProduit = supprimerProduit;
-    window.ajouterProduitPrompt = ajouterProduitPrompt;
-    window.modifierProduitPrompt = modifierProduitPrompt;
   </script>
 </body>
 </html>
