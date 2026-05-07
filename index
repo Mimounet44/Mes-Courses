@@ -581,14 +581,15 @@
     // ==================== CONFIGURATION FIREBASE ====================
     // ⚠️ REMPLACEZ CES VALEURS par celles de votre projet Firebase
     // Rendez-vous sur https://console.firebase.google.com/ > Paramètres du projet > Vos applications
-    const firebaseConfig = {
-      apiKey: "VOTRE_API_KEY",
-      authDomain: "VOTRE_PROJECT.firebaseapp.com",
-      projectId: "VOTRE_PROJECT_ID",
-      storageBucket: "VOTRE_PROJECT.appspot.com",
-      messagingSenderId: "VOTRE_SENDER_ID",
-      appId: "VOTRE_APP_ID"
-    };
+    
+const firebaseConfig = {
+  apiKey: "AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
+  authDomain: "mes-courses-cf52d.firebaseapp.com",
+  projectId: "mes-courses-cf52d",
+  storageBucket: "mes-courses-cf52d.firebasestorage.app",
+  messagingSenderId: "248641691402",
+  appId: "1:248641691402:web:f36ad91dc0045d1edf24f3"
+};
 
     // Initialisation
     firebase.initializeApp(firebaseConfig);
