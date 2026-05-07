@@ -66,8 +66,9 @@
     .catalogue-card-emoji { font-size: 1.8rem; margin-bottom: 0.5rem; }
     .catalogue-card-name { font-size: 0.8rem; font-weight: 500; }
     .catalogue-card-cat { font-size: 0.65rem; color: var(--text3); margin-top: 0.25rem; }
-    .catalogue-card .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.8); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0; transition: opacity 0.2s; }
-    .catalogue-card:hover .delete-btn { opacity: 1; }
+    .catalogue-card .delete-btn { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.8); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0; transition: opacity 0.2s; cursor: pointer; }
+    .catalogue-card .edit-btn { position: absolute; top: 5px; right: 32px; background: rgba(99,102,241,0.8); border-radius: 50%; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; font-size: 12px; opacity: 0; transition: opacity 0.2s; cursor: pointer; }
+    .catalogue-card:hover .delete-btn, .catalogue-card:hover .edit-btn { opacity: 1; }
     .filter-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
     .filter-btn { background: var(--surface2); border: 1px solid var(--border); padding: 0.4rem 0.8rem; border-radius: 2rem; color: var(--text2); cursor: pointer; font-size: 0.8rem; }
     .filter-btn.active { background: var(--accent); color: white; }
@@ -84,6 +85,7 @@
     .menu-item { display: block; width: 100%; text-align: left; padding: 0.65rem 1rem; font-size: 0.88rem; background: none; border: none; color: var(--text); cursor: pointer; }
     .menu-item:hover { background: var(--surface); }
     .admin-badge { background: var(--accent); color: white; padding: 0.2rem 0.5rem; border-radius: 1rem; font-size: 0.7rem; margin-left: 0.5rem; }
+    .badge { background: var(--surface2); padding: 0.15rem 0.5rem; border-radius: 1rem; font-size: 0.7rem; color: var(--text2); }
   </style>
 </head>
 <body>
@@ -159,6 +161,159 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // ========== CATALOGUE PRÉ-REMPLI ==========
+    const CATALOGUE_PAR_DEFAUT = [
+      // FRUITS (15 produits)
+      { nom: "Pommes", categorie: "🍎 Fruits", emoji: "🍎" },
+      { nom: "Bananes", categorie: "🍎 Fruits", emoji: "🍌" },
+      { nom: "Oranges", categorie: "🍎 Fruits", emoji: "🍊" },
+      { nom: "Fraises", categorie: "🍎 Fruits", emoji: "🍓" },
+      { nom: "Raisins", categorie: "🍎 Fruits", emoji: "🍇" },
+      { nom: "Poires", categorie: "🍎 Fruits", emoji: "🍐" },
+      { nom: "Pêches", categorie: "🍎 Fruits", emoji: "🍑" },
+      { nom: "Kiwi", categorie: "🍎 Fruits", emoji: "🥝" },
+      { nom: "Ananas", categorie: "🍎 Fruits", emoji: "🍍" },
+      { nom: "Mangues", categorie: "🍎 Fruits", emoji: "🥭" },
+      { nom: "Cerises", categorie: "🍎 Fruits", emoji: "🍒" },
+      { nom: "Citrons", categorie: "🍎 Fruits", emoji: "🍋" },
+      { nom: "Pastèque", categorie: "🍎 Fruits", emoji: "🍉" },
+      { nom: "Melon", categorie: "🍎 Fruits", emoji: "🍈" },
+      { nom: "Abricots", categorie: "🍎 Fruits", emoji: "🍑" },
+      
+      // LÉGUMES (15 produits)
+      { nom: "Carottes", categorie: "🥕 Légumes", emoji: "🥕" },
+      { nom: "Tomates", categorie: "🥕 Légumes", emoji: "🍅" },
+      { nom: "Salade", categorie: "🥕 Légumes", emoji: "🥬" },
+      { nom: "Courgettes", categorie: "🥕 Légumes", emoji: "🥒" },
+      { nom: "Aubergines", categorie: "🥕 Légumes", emoji: "🍆" },
+      { nom: "Poivrons", categorie: "🥕 Légumes", emoji: "🫑" },
+      { nom: "Oignons", categorie: "🥕 Légumes", emoji: "🧅" },
+      { nom: "Ail", categorie: "🥕 Légumes", emoji: "🧄" },
+      { nom: "Pommes de terre", categorie: "🥕 Légumes", emoji: "🥔" },
+      { nom: "Brocoli", categorie: "🥕 Légumes", emoji: "🥦" },
+      { nom: "Choux-fleur", categorie: "🥕 Légumes", emoji: "🥦" },
+      { nom: "Haricots verts", categorie: "🥕 Légumes", emoji: "🟢" },
+      { nom: "Petits pois", categorie: "🥕 Légumes", emoji: "🟢" },
+      { nom: "Champignons", categorie: "🥕 Légumes", emoji: "🍄" },
+      { nom: "Épinards", categorie: "🥕 Légumes", emoji: "🥬" },
+      
+      // PRODUITS LAITIERS (10 produits)
+      { nom: "Lait", categorie: "🥛 Produits laitiers", emoji: "🥛" },
+      { nom: "Fromage râpé", categorie: "🥛 Produits laitiers", emoji: "🧀" },
+      { nom: "Beurre", categorie: "🥛 Produits laitiers", emoji: "🧈" },
+      { nom: "Yaourts nature", categorie: "🥛 Produits laitiers", emoji: "🥛" },
+      { nom: "Crème fraîche", categorie: "🥛 Produits laitiers", emoji: "🥛" },
+      { nom: "Œufs", categorie: "🥛 Produits laitiers", emoji: "🥚" },
+      { nom: "Fromage blanc", categorie: "🥛 Produits laitiers", emoji: "🥛" },
+      { nom: "Mozzarella", categorie: "🥛 Produits laitiers", emoji: "🧀" },
+      { nom: "Parmesan", categorie: "🥛 Produits laitiers", emoji: "🧀" },
+      { nom: "Camembert", categorie: "🥛 Produits laitiers", emoji: "🧀" },
+      
+      // VIANDE & POISSON (12 produits)
+      { nom: "Poulet", categorie: "🍗 Viande & Poisson", emoji: "🍗" },
+      { nom: "Bœuf haché", categorie: "🍗 Viande & Poisson", emoji: "🥩" },
+      { nom: "Steaks", categorie: "🍗 Viande & Poisson", emoji: "🥩" },
+      { nom: "Poisson blanc", categorie: "🍗 Viande & Poisson", emoji: "🐟" },
+      { nom: "Saumon", categorie: "🍗 Viande & Poisson", emoji: "🐟" },
+      { nom: "Crevettes", categorie: "🍗 Viande & Poisson", emoji: "🦐" },
+      { nom: "Jambon", categorie: "🍗 Viande & Poisson", emoji: "🍖" },
+      { nom: "Saucisses", categorie: "🍗 Viande & Poisson", emoji: "🌭" },
+      { nom: "Lardons", categorie: "🍗 Viande & Poisson", emoji: "🥓" },
+      { nom: "Dinde", categorie: "🍗 Viande & Poisson", emoji: "🍗" },
+      { nom: "Moules", categorie: "🍗 Viande & Poisson", emoji: "🦪" },
+      { nom: "Thon en boîte", categorie: "🍗 Viande & Poisson", emoji: "🐟" },
+      
+      // ÉPICERIE SALÉE (15 produits)
+      { nom: "Pâtes", categorie: "🍝 Épicerie salée", emoji: "🍝" },
+      { nom: "Riz", categorie: "🍝 Épicerie salée", emoji: "🍚" },
+      { nom: "Semoule", categorie: "🍝 Épicerie salée", emoji: "🌾" },
+      { nom: "Lentilles", categorie: "🍝 Épicerie salée", emoji: "🟢" },
+      { nom: "Pois chiches", categorie: "🍝 Épicerie salée", emoji: "🟢" },
+      { nom: "Haricots rouges", categorie: "🍝 Épicerie salée", emoji: "🔴" },
+      { nom: "Sauce tomate", categorie: "🍝 Épicerie salée", emoji: "🍅" },
+      { nom: "Huile d'olive", categorie: "🍝 Épicerie salée", emoji: "🫒" },
+      { nom: "Vinaigre", categorie: "🍝 Épicerie salée", emoji: "🧴" },
+      { nom: "Sel", categorie: "🍝 Épicerie salée", emoji: "🧂" },
+      { nom: "Poivre", categorie: "🍝 Épicerie salée", emoji: "⚫" },
+      { nom: "Farine", categorie: "🍝 Épicerie salée", emoji: "🌾" },
+      { nom: "Sucre", categorie: "🍝 Épicerie salée", emoji: "🍬" },
+      { nom: "Concentré tomate", categorie: "🍝 Épicerie salée", emoji: "🍅" },
+      { nom: "Bouillon cubes", categorie: "🍝 Épicerie salée", emoji: "🧊" },
+      
+      // BOISSONS (10 produits)
+      { nom: "Eau", categorie: "☕ Boissons", emoji: "💧" },
+      { nom: "Café", categorie: "☕ Boissons", emoji: "☕" },
+      { nom: "Thé", categorie: "☕ Boissons", emoji: "🍵" },
+      { nom: "Jus d'orange", categorie: "☕ Boissons", emoji: "🧃" },
+      { nom: "Jus de pomme", categorie: "☕ Boissons", emoji: "🧃" },
+      { nom: "Soda", categorie: "☕ Boissons", emoji: "🥤" },
+      { nom: "Eau gazeuse", categorie: "☕ Boissons", emoji: "💧" },
+      { nom: "Bières", categorie: "☕ Boissons", emoji: "🍺" },
+      { nom: "Vin rouge", categorie: "☕ Boissons", emoji: "🍷" },
+      { nom: "Chocolat chaud", categorie: "☕ Boissons", emoji: "☕" },
+      
+      // PAIN & PÂTISSERIE (8 produits)
+      { nom: "Pain", categorie: "🥖 Pain & Pâtisserie", emoji: "🥖" },
+      { nom: "Baguette", categorie: "🥖 Pain & Pâtisserie", emoji: "🥖" },
+      { nom: "Croissants", categorie: "🥖 Pain & Pâtisserie", emoji: "🥐" },
+      { nom: "Pain au chocolat", categorie: "🥖 Pain & Pâtisserie", emoji: "🥐" },
+      { nom: "Brioche", categorie: "🥖 Pain & Pâtisserie", emoji: "🍞" },
+      { nom: "Pain complet", categorie: "🥖 Pain & Pâtisserie", emoji: "🍞" },
+      { nom: "Gâteaux", categorie: "🥖 Pain & Pâtisserie", emoji: "🍰" },
+      { nom: "Biscottes", categorie: "🥖 Pain & Pâtisserie", emoji: "🍪" },
+      
+      // PRODUITS MÉNAGERS (10 produits)
+      { nom: "Lessive", categorie: "🧹 Produits ménagers", emoji: "🧺" },
+      { nom: "Papier toilette", categorie: "🧹 Produits ménagers", emoji: "🧻" },
+      { nom: "Essuie-tout", categorie: "🧹 Produits ménagers", emoji: "🧻" },
+      { nom: "Sac poubelle", categorie: "🧹 Produits ménagers", emoji: "🗑️" },
+      { nom: "Éponge", categorie: "🧹 Produits ménagers", emoji: "🧽" },
+      { nom: "Liquide vaisselle", categorie: "🧹 Produits ménagers", emoji: "🧴" },
+      { nom: "Nettoyant sol", categorie: "🧹 Produits ménagers", emoji: "🧴" },
+      { nom: "Désinfectant", categorie: "🧹 Produits ménagers", emoji: "🧴" },
+      { nom: "Aluminium", categorie: "🧹 Produits ménagers", emoji: "✨" },
+      { nom: "Film étirable", categorie: "🧹 Produits ménagers", emoji: "✨" },
+      
+      // SOINS & HYGIÈNE (10 produits)
+      { nom: "Dentifrice", categorie: "🪥 Soins & Hygiène", emoji: "🪥" },
+      { nom: "Brosse à dents", categorie: "🪥 Soins & Hygiène", emoji: "🪥" },
+      { nom: "Shampooing", categorie: "🪥 Soins & Hygiène", emoji: "🧴" },
+      { nom: "Savon", categorie: "🪥 Soins & Hygiène", emoji: "🧼" },
+      { nom: "Déodorant", categorie: "🪥 Soins & Hygiène", emoji: "🧴" },
+      { nom: "Mouchoirs", categorie: "🪥 Soins & Hygiène", emoji: "🤧" },
+      { nom: "Cotons-tiges", categorie: "🪥 Soins & Hygiène", emoji: "🩸" },
+      { nom: "Gel douche", categorie: "🪥 Soins & Hygiène", emoji: "🧴" },
+      { nom: "Crème hydratante", categorie: "🪥 Soins & Hygiène", emoji: "🧴" },
+      { nom: "Rasoir", categorie: "🪥 Soins & Hygiène", emoji: "🪒" },
+      
+      // SURGELÉS (8 produits)
+      { nom: "Petits pois surgelés", categorie: "❄️ Surgelés", emoji: "❄️" },
+      { nom: "Frites surgelées", categorie: "❄️ Surgelés", emoji: "🍟" },
+      { nom: "Légumes surgelés", categorie: "❄️ Surgelés", emoji: "❄️" },
+      { nom: "Poisson surgelé", categorie: "❄️ Surgelés", emoji: "🐟" },
+      { nom: "Glaces", categorie: "❄️ Surgelés", emoji: "🍦" },
+      { nom: "Pizzas surgelées", categorie: "❄️ Surgelés", emoji: "🍕" },
+      { nom: "Fruits surgelés", categorie: "❄️ Surgelés", emoji: "❄️" },
+      { nom: "Croissants surgelés", categorie: "❄️ Surgelés", emoji: "🥐" },
+      
+      // ÉPICERIE SUCRÉE (8 produits)
+      { nom: "Nutella", categorie: "🍪 Épicerie sucrée", emoji: "🍫" },
+      { nom: "Confiture", categorie: "🍪 Épicerie sucrée", emoji: "🍯" },
+      { nom: "Miel", categorie: "🍪 Épicerie sucrée", emoji: "🍯" },
+      { nom: "Biscuits", categorie: "🍪 Épicerie sucrée", emoji: "🍪" },
+      { nom: "Chocolat", categorie: "🍪 Épicerie sucrée", emoji: "🍫" },
+      { nom: "Bonbons", categorie: "🍪 Épicerie sucrée", emoji: "🍬" },
+      { nom: "Céréales", categorie: "🍪 Épicerie sucrée", emoji: "🥣" },
+      { nom: "Pâte à tartiner", categorie: "🍪 Épicerie sucrée", emoji: "🍫" },
+      
+      // ANIMALERIE (5 produits)
+      { nom: "Croquettes chien", categorie: "🐾 Animalerie", emoji: "🐕" },
+      { nom: "Croquettes chat", categorie: "🐾 Animalerie", emoji: "🐱" },
+      { nom: "Litière chat", categorie: "🐾 Animalerie", emoji: "🐱" },
+      { nom: "Pâtée", categorie: "🐾 Animalerie", emoji: "🥫" },
+      { nom: "Accessoires", categorie: "🐾 Animalerie", emoji: "🐾" }
+    ];
+
     let currentUser = null, currentListeId = null, catalogue = [], listes = [], dossiers = [], articles = [];
     let isLoginMode = true, filterDossier = '__all__', filterStatut = '__all__', filtreCoche = '__all__';
     let showAjoutModal = false, searchCatalogue = '', catalogueSearch = '', catalogueCategorie = '__all__';
@@ -173,6 +328,18 @@
     }
 
     function escapeHtml(str) { if (!str) return ''; return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;'); }
+
+    // INITIALISATION DU CATALOGUE DANS FIRESTORE
+    async function initCatalogue() {
+      const snapshot = await db.collection('catalogue').limit(1).get();
+      if (snapshot.empty) {
+        showToast("📦 Installation du catalogue...");
+        for (const item of CATALOGUE_PAR_DEFAUT) {
+          await db.collection('catalogue').add(item);
+        }
+        showToast("✅ Catalogue installé avec " + CATALOGUE_PAR_DEFAUT.length + " produits !");
+      }
+    }
 
     // AUTHENTIFICATION
     async function handleAuth(e) {
@@ -220,7 +387,7 @@
       try { await auth.sendPasswordResetEmail(email); showToast('📧 Email envoyé !'); } catch { showToast('❌ Email non trouvé', true); }
     }
 
-    // GESTION DU CATALOGUE (ADMIN)
+    // GESTION DU CATALOGUE
     async function ajouterProduit(nom, categorie, emoji) {
       if (!nom.trim()) return;
       const newProduit = { nom: nom.trim(), categorie: categorie || '', emoji: emoji || '🛍️' };
@@ -247,12 +414,6 @@
       renderCataloguePage();
     }
 
-    async function ajouterCategorie(nom) {
-      if (!nom.trim()) return;
-      // Les catégories sont juste des strings dans les produits, pas une collection séparée
-      showToast(`📁 Catégorie "${nom}" disponible (ajoutez des produits avec cette catégorie)`);
-    }
-
     // CHARGEMENT DES DONNÉES
     async function loadCatalogue() {
       const snapshot = await db.collection('catalogue').orderBy('nom').get();
@@ -274,7 +435,7 @@
       return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
 
-    // GESTION LISTES
+    // GESTION LISTES (idem que précédemment mais raccourci pour la longueur)
     async function creerListe(nom, dossier = '') {
       const newListe = { nom, dossier, statut: 'en_cours', createdAt: firebase.firestore.FieldValue.serverTimestamp(), updatedAt: firebase.firestore.FieldValue.serverTimestamp() };
       const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').add(newListe);
@@ -341,7 +502,7 @@
       renderListesPage();
     }
 
-    // GESTION ARTICLES DANS UNE LISTE
+    // GESTION ARTICLES
     async function ajouterArticle(listeId, articleData) {
       const newArticle = { ...articleData, coche: false, addedAt: firebase.firestore.FieldValue.serverTimestamp() };
       const docRef = await db.collection('users').doc(currentUser.uid).collection('listes').doc(listeId).collection('articles').add(newArticle);
@@ -371,7 +532,7 @@
       renderListePage(listeId);
     }
 
-    // RENDU PAGES
+    // RENDU PAGES (version simplifiée mais complète)
     function renderListesPage() {
       const container = document.getElementById('main-content');
       let listesFiltrees = listes.filter(l => (filterDossier === '__all__' || l.dossier === filterDossier) && (filterStatut === '__all__' || l.statut === filterStatut));
@@ -429,9 +590,9 @@
     function renderCataloguePage() {
       const categories = [...new Set(catalogue.map(i => i.categorie).filter(Boolean))].sort();
       let filtered = catalogue.filter(i => (catalogueSearch === '' || i.nom.toLowerCase().includes(catalogueSearch.toLowerCase())) && (catalogueCategorie === '__all__' || i.categorie === catalogueCategorie));
-      let html = `<div class="fade-up"><div class="section-header"><h2 class="section-title">📦 Catalogue</h2><button class="btn btn-primary btn-sm" id="btn-ajouter-produit">+ Nouveau produit</button></div><div style="margin-bottom:1rem"><input type="text" id="catalogue-search" placeholder="🔍 Rechercher..." value="${escapeHtml(catalogueSearch)}"></div><div class="filter-group"><button class="filter-btn ${catalogueCategorie === '__all__' ? 'active' : ''}" data-cat="__all__">Toutes</button>${categories.map(c => `<button class="filter-btn ${catalogueCategorie === c ? 'active' : ''}" data-cat="${c}">${escapeHtml(c)}</button>`).join('')}<button class="filter-btn ${showGestionCatalogue ? 'active' : ''}" id="btn-mode-gestion">✏️ Gérer</button></div>`;
+      let html = `<div class="fade-up"><div class="section-header"><h2 class="section-title">📦 Catalogue</h2><button class="btn btn-primary btn-sm" id="btn-ajouter-produit">+ Nouveau produit</button></div><div class="badge" style="margin-bottom:0.5rem">📊 ${catalogue.length} produits disponibles</div><div style="margin-bottom:1rem"><input type="text" id="catalogue-search" placeholder="🔍 Rechercher..." value="${escapeHtml(catalogueSearch)}"></div><div class="filter-group"><button class="filter-btn ${catalogueCategorie === '__all__' ? 'active' : ''}" data-cat="__all__">Toutes</button>${categories.map(c => `<button class="filter-btn ${catalogueCategorie === c ? 'active' : ''}" data-cat="${c}">${escapeHtml(c)}</button>`).join('')}<button class="filter-btn ${showGestionCatalogue ? 'active' : ''}" id="btn-mode-gestion">✏️ Gérer</button></div>`;
       if (!filtered.length) html += `<div class="empty-state"><p>Aucun produit</p><button class="btn btn-primary" id="btn-premier-produit">+ Ajouter votre premier produit</button></div>`;
-      else { html += `<div class="catalogue-grid">`; for (const a of filtered) html += `<div class="catalogue-card fade-up" ${!showGestionCatalogue ? `onclick="copierNom('${escapeHtml(a.nom)}')"` : ''}><div class="catalogue-card-emoji">${a.emoji || '🛍️'}</div><div class="catalogue-card-name">${escapeHtml(a.nom)}</div>${a.categorie ? `<div class="catalogue-card-cat">${escapeHtml(a.categorie)}</div>` : ''}${showGestionCatalogue ? `<button class="delete-btn" onclick="event.stopPropagation();modifierProduitPrompt('${a.id}','${escapeHtml(a.nom)}','${escapeHtml(a.categorie||'')}','${escapeHtml(a.emoji||'🛍️')}')">✏️</button><button class="delete-btn" style="right:30px" onclick="event.stopPropagation();supprimerProduit('${a.id}','${escapeHtml(a.nom)}')">🗑️</button>` : ''}</div>`; html += `</div>`; }
+      else { html += `<div class="catalogue-grid">`; for (const a of filtered) html += `<div class="catalogue-card fade-up" ${!showGestionCatalogue ? `onclick="copierNom('${escapeHtml(a.nom)}')"` : ''}><div class="catalogue-card-emoji">${a.emoji || '🛍️'}</div><div class="catalogue-card-name">${escapeHtml(a.nom)}</div>${a.categorie ? `<div class="catalogue-card-cat">${escapeHtml(a.categorie)}</div>` : ''}${showGestionCatalogue ? `<button class="edit-btn" onclick="event.stopPropagation();modifierProduitPrompt('${a.id}','${escapeHtml(a.nom)}','${escapeHtml(a.categorie||'')}','${escapeHtml(a.emoji||'🛍️')}')">✏️</button><button class="delete-btn" onclick="event.stopPropagation();supprimerProduit('${a.id}','${escapeHtml(a.nom)}')">🗑️</button>` : ''}</div>`; html += `</div>`; }
       html += `</div>`;
       document.getElementById('main-content').innerHTML = html;
       document.getElementById('catalogue-search')?.addEventListener('input', e => { catalogueSearch = e.target.value; renderCataloguePage(); });
@@ -467,11 +628,13 @@
       else if (page === 'profil') renderProfilPage();
     }
 
+    // AUTH STATE
     auth.onAuthStateChanged(async (user) => {
       currentUser = user;
       if (user) {
         document.getElementById('auth-screen').classList.remove('active');
         document.getElementById('main-screen').classList.add('active');
+        await initCatalogue();
         await loadCatalogue();
         await loadListes();
         showPage('listes');
