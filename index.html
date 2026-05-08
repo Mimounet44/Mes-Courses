@@ -212,15 +212,7 @@ select option{background:#fff;color:var(--text)}
     <div class="auth-logo">🛒</div>
     <h1 class="auth-title">Mes Courses</h1>
     <p class="auth-sub">Gérez vos courses en famille</p>
-    <div class="tabs">
-      <button class="tab on" onclick="setTab('login')">Connexion</button>
-      <button class="tab" onclick="setTab('register')">Inscription</button>
-    </div>
     <div id="auth-err" class="auth-error"></div>
-    <div id="f-prenom" class="form-group" style="display:none">
-      <label class="form-label">Prénom</label>
-      <input id="i-prenom" placeholder="Ex : Marie" autocomplete="given-name"/>
-    </div>
     <div class="form-group">
       <label class="form-label">Email</label>
       <input id="i-email" type="email" placeholder="email@exemple.com" autocomplete="email"/>
@@ -229,7 +221,7 @@ select option{background:#fff;color:var(--text)}
       <label class="form-label">Mot de passe</label>
       <input id="i-pwd" type="password" placeholder="••••••••" autocomplete="current-password"/>
     </div>
-    <button class="btn btn-primary btn-full" id="auth-btn" onclick="doAuth()">Se connecter</button>
+    <button class="btn btn-primary btn-full" onclick="doAuth()">Se connecter</button>
   </div>
 </div>
 
@@ -343,6 +335,15 @@ select option{background:#fff;color:var(--text)}
       <div class="form-group"><label class="form-label">Mot de passe actuel</label><input id="p-pwd-cur" type="password" placeholder="••••••••"/></div>
       <div class="form-group"><label class="form-label">Nouveau mot de passe</label><input id="p-pwd-new" type="password" placeholder="6 caractères min."/></div>
       <button class="btn btn-primary btn-sm" onclick="updatePwd()">Modifier</button>
+    </div>
+    <!-- Gérer les membres -->
+    <div class="card" style="margin-bottom:.7rem">
+      <div style="font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:.75rem">👨‍👩‍👧 Ajouter un membre</div>
+      <p style="font-size:.82rem;color:var(--text2);margin-bottom:.75rem;line-height:1.5">Créez un compte pour un membre de la famille. Il pourra se connecter avec ces identifiants.</p>
+      <div class="form-group"><label class="form-label">Prénom</label><input id="m-prenom" placeholder="Ex : Sophie"/></div>
+      <div class="form-group"><label class="form-label">Email</label><input id="m-email" type="email" placeholder="sophie@exemple.com"/></div>
+      <div class="form-group"><label class="form-label">Mot de passe</label><input id="m-pwd" type="password" placeholder="6 caractères min."/></div>
+      <button class="btn btn-primary btn-sm" onclick="creerMembre()">➕ Créer le compte</button>
     </div>
     <button class="btn btn-danger btn-full" style="margin-top:.5rem" onclick="doLogout()">🚪 Se déconnecter</button>
   </div>
@@ -475,7 +476,8 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 
 /* ══════ CATÉGORIES ══════ */
-const CATS = [
+// Catégories par défaut (utilisées si l'utilisateur n'en a pas encore dans Firestore)
+const CATS_DEFAULT = [
   {id:'legumes',     label:'🥦 Légumes'},
   {id:'fruits',      label:'🍎 Fruits'},
   {id:'viande',      label:'🥩 Viande'},
@@ -489,12 +491,112 @@ const CATS = [
   {id:'entretien',   label:'🧹 Entretien'},
   {id:'autre',       label:'📦 Autre'},
 ];
+let CATS = [...CATS_DEFAULT]; // sera remplacé par les catégories Firestore si elles existent
+
+// ══════ PRODUITS PAR DÉFAUT ══════
+const PRODUITS_DEFAULT = [
+  // Légumes
+  {nom:'Carottes',categorie:'legumes'},{nom:'Pommes de terre',categorie:'legumes'},
+  {nom:'Tomates',categorie:'legumes'},{nom:'Oignons',categorie:'legumes'},
+  {nom:'Courgettes',categorie:'legumes'},{nom:'Poireaux',categorie:'legumes'},
+  {nom:'Aubergines',categorie:'legumes'},{nom:'Poivrons',categorie:'legumes'},
+  {nom:'Champignons',categorie:'legumes'},{nom:'Salade verte',categorie:'legumes'},
+  {nom:'Épinards',categorie:'legumes'},{nom:'Brocolis',categorie:'legumes'},
+  {nom:'Haricots verts',categorie:'legumes'},{nom:'Petits pois',categorie:'legumes'},
+  {nom:'Céleri',categorie:'legumes'},{nom:'Radis',categorie:'legumes'},
+  {nom:'Betteraves',categorie:'legumes'},{nom:'Ail',categorie:'legumes'},
+  {nom:'Échalotes',categorie:'legumes'},{nom:'Concombre',categorie:'legumes'},
+  // Fruits
+  {nom:'Pommes',categorie:'fruits'},{nom:'Bananes',categorie:'fruits'},
+  {nom:'Oranges',categorie:'fruits'},{nom:'Citrons',categorie:'fruits'},
+  {nom:'Poires',categorie:'fruits'},{nom:'Fraises',categorie:'fruits'},
+  {nom:'Raisins',categorie:'fruits'},{nom:'Pêches',categorie:'fruits'},
+  {nom:'Abricots',categorie:'fruits'},{nom:'Kiwis',categorie:'fruits'},
+  {nom:'Ananas',categorie:'fruits'},{nom:'Mangues',categorie:'fruits'},
+  {nom:'Melons',categorie:'fruits'},{nom:'Pastèque',categorie:'fruits'},
+  {nom:'Cerises',categorie:'fruits'},{nom:'Framboises',categorie:'fruits'},
+  // Viande
+  {nom:'Poulet entier',categorie:'viande'},{nom:'Escalopes de poulet',categorie:'viande'},
+  {nom:'Cuisses de poulet',categorie:'viande'},{nom:'Steaks hachés',categorie:'viande'},
+  {nom:'Côtes de porc',categorie:'viande'},{nom:'Rôti de bœuf',categorie:'viande'},
+  {nom:'Lardons',categorie:'viande'},{nom:'Saucisses',categorie:'viande'},
+  {nom:'Merguez',categorie:'viande'},{nom:'Côtelettes d'agneau',categorie:'viande'},
+  {nom:'Dinde',categorie:'viande'},{nom:'Veau',categorie:'viande'},
+  {nom:'Jambon blanc',categorie:'viande'},{nom:'Jambon sec',categorie:'viande'},
+  // Poisson
+  {nom:'Saumon',categorie:'poisson'},{nom:'Cabillaud',categorie:'poisson'},
+  {nom:'Thon en boîte',categorie:'poisson'},{nom:'Sardines en boîte',categorie:'poisson'},
+  {nom:'Crevettes',categorie:'poisson'},{nom:'Moules',categorie:'poisson'},
+  {nom:'Lieu noir',categorie:'poisson'},{nom:'Truite',categorie:'poisson'},
+  {nom:'Daurade',categorie:'poisson'},{nom:'Bar',categorie:'poisson'},
+  {nom:'Noix de Saint-Jacques',categorie:'poisson'},{nom:'Calamars',categorie:'poisson'},
+  // Laitage & Œufs
+  {nom:'Lait demi-écrémé',categorie:'laitage'},{nom:'Lait entier',categorie:'laitage'},
+  {nom:'Beurre',categorie:'laitage'},{nom:'Crème fraîche',categorie:'laitage'},
+  {nom:'Crème liquide',categorie:'laitage'},{nom:'Yaourts nature',categorie:'laitage'},
+  {nom:'Yaourts aux fruits',categorie:'laitage'},{nom:'Fromage blanc',categorie:'laitage'},
+  {nom:'Emmental râpé',categorie:'laitage'},{nom:'Camembert',categorie:'laitage'},
+  {nom:'Brie',categorie:'laitage'},{nom:'Chèvre',categorie:'laitage'},
+  {nom:'Roquefort',categorie:'laitage'},{nom:'Parmesan',categorie:'laitage'},
+  {nom:'Mozzarella',categorie:'laitage'},{nom:'Œufs',categorie:'laitage'},
+  // Épicerie
+  {nom:'Pâtes',categorie:'epicerie'},{nom:'Riz',categorie:'epicerie'},
+  {nom:'Farine',categorie:'epicerie'},{nom:'Sucre',categorie:'epicerie'},
+  {nom:'Sel',categorie:'epicerie'},{nom:'Poivre',categorie:'epicerie'},
+  {nom:'Huile d'olive',categorie:'epicerie'},{nom:'Huile de tournesol',categorie:'epicerie'},
+  {nom:'Vinaigre',categorie:'epicerie'},{nom:'Moutarde',categorie:'epicerie'},
+  {nom:'Ketchup',categorie:'epicerie'},{nom:'Mayonnaise',categorie:'epicerie'},
+  {nom:'Sauce tomate',categorie:'epicerie'},{nom:'Concentré de tomate',categorie:'epicerie'},
+  {nom:'Boîtes de tomates pelées',categorie:'epicerie'},{nom:'Lentilles',categorie:'epicerie'},
+  {nom:'Pois chiches',categorie:'epicerie'},{nom:'Haricots rouges',categorie:'epicerie'},
+  {nom:'Bouillon de légumes',categorie:'epicerie'},{nom:'Bouillon de poulet',categorie:'epicerie'},
+  {nom:'Chocolat noir',categorie:'epicerie'},{nom:'Chocolat au lait',categorie:'epicerie'},
+  {nom:'Confiture',categorie:'epicerie'},{nom:'Miel',categorie:'epicerie'},
+  {nom:'Céréales petit-déjeuner',categorie:'epicerie'},{nom:'Flocons d'avoine',categorie:'epicerie'},
+  {nom:'Café',categorie:'epicerie'},{nom:'Thé',categorie:'epicerie'},
+  {nom:'Herbes de Provence',categorie:'epicerie'},{nom:'Curry',categorie:'epicerie'},
+  {nom:'Paprika',categorie:'epicerie'},{nom:'Cumin',categorie:'epicerie'},
+  {nom:'Chips',categorie:'epicerie'},{nom:'Biscuits apéritif',categorie:'epicerie'},
+  {nom:'Conserves de maïs',categorie:'epicerie'},
+  // Boulangerie
+  {nom:'Pain de mie',categorie:'boulangerie'},{nom:'Baguette',categorie:'boulangerie'},
+  {nom:'Croissants',categorie:'boulangerie'},{nom:'Pains au chocolat',categorie:'boulangerie'},
+  {nom:'Biscottes',categorie:'boulangerie'},{nom:'Pain complet',categorie:'boulangerie'},
+  {nom:'Brioches',categorie:'boulangerie'},{nom:'Gâteaux',categorie:'boulangerie'},
+  // Surgelés
+  {nom:'Légumes surgelés',categorie:'surgeles'},{nom:'Frites surgelées',categorie:'surgeles'},
+  {nom:'Poisson pané',categorie:'surgeles'},{nom:'Pizzas surgelées',categorie:'surgeles'},
+  {nom:'Glaces',categorie:'surgeles'},{nom:'Sorbet',categorie:'surgeles'},
+  {nom:'Quiches surgelées',categorie:'surgeles'},{nom:'Nuggets',categorie:'surgeles'},
+  // Boissons
+  {nom:'Eau minérale',categorie:'boissons'},{nom:'Eau pétillante',categorie:'boissons'},
+  {nom:'Jus d'orange',categorie:'boissons'},{nom:'Jus de pomme',categorie:'boissons'},
+  {nom:'Sirop',categorie:'boissons'},{nom:'Coca-Cola',categorie:'boissons'},
+  {nom:'Limonade',categorie:'boissons'},{nom:'Bière',categorie:'boissons'},
+  {nom:'Vin rouge',categorie:'boissons'},{nom:'Vin blanc',categorie:'boissons'},
+  {nom:'Rosé',categorie:'boissons'},{nom:'Champagne',categorie:'boissons'},
+  // Hygiène
+  {nom:'Shampoing',categorie:'hygiene'},{nom:'Après-shampoing',categorie:'hygiene'},
+  {nom:'Gel douche',categorie:'hygiene'},{nom:'Savon',categorie:'hygiene'},
+  {nom:'Déodorant',categorie:'hygiene'},{nom:'Dentifrice',categorie:'hygiene'},
+  {nom:'Brosse à dents',categorie:'hygiene'},{nom:'Rasoir',categorie:'hygiene'},
+  {nom:'Crème hydratante',categorie:'hygiene'},{nom:'Coton',categorie:'hygiene'},
+  {nom:'Maquillage',categorie:'hygiene'},{nom:'Protection solaire',categorie:'hygiene'},
+  {nom:'Couches',categorie:'hygiene'},{nom:'Lingettes',categorie:'hygiene'},
+  {nom:'Papier toilette',categorie:'hygiene'},{nom:'Mouchoirs',categorie:'hygiene'},
+  // Entretien
+  {nom:'Liquide vaisselle',categorie:'entretien'},{nom:'Pastilles lave-vaisselle',categorie:'entretien'},
+  {nom:'Lessive',categorie:'entretien'},{nom:'Assouplissant',categorie:'entretien'},
+  {nom:'Nettoyant multi-surfaces',categorie:'entretien'},{nom:'Nettoyant WC',categorie:'entretien'},
+  {nom:'Éponges',categorie:'entretien'},{nom:'Sacs poubelle',categorie:'entretien'},
+  {nom:'Papier essuie-tout',categorie:'entretien'},{nom:'Film alimentaire',categorie:'entretien'},
+  {nom:'Papier aluminium',categorie:'entretien'},{nom:'Sacs congélation',categorie:'entretien'},
+];
 const UNITES = ['','kg','g','L','cl','pièce(s)','boîte(s)','sachet(s)','bouteille(s)','paquet(s)'];
-const catLabel = id => (CATS.find(c=>c.id===id)||CATS.at(-1)).label;
+const catLabel = id => (CATS.find(c=>c.id===id)||{label:'📦 '+id}).label;
 
 /* ══════ STATE ══════ */
 let UID = null;
-let authTab = 'login';
 let activePage = 'catalogue';
 let activeListeId = null;
 
@@ -548,38 +650,23 @@ document.addEventListener('click', e => {
 });
 
 /* ══════ AUTH ══════ */
-window.setTab = function(tab){
-  authTab = tab;
-  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('on', i===(tab==='login'?0:1)));
-  document.getElementById('f-prenom').style.display = tab==='register' ? 'block' : 'none';
-  document.getElementById('auth-btn').textContent = tab==='login' ? 'Se connecter' : 'Créer mon compte';
-  document.getElementById('auth-err').style.display = 'none';
-};
+
 
 window.doAuth = async function(){
-  const email  = document.getElementById('i-email').value.trim();
-  const pwd    = document.getElementById('i-pwd').value;
-  const errEl  = document.getElementById('auth-err');
+  const email = document.getElementById('i-email').value.trim();
+  const pwd   = document.getElementById('i-pwd').value;
+  const errEl = document.getElementById('auth-err');
   errEl.style.display = 'none';
   const MSGS = {
-    'auth/user-not-found':      'Aucun compte avec cet email.',
-    'auth/wrong-password':      'Mot de passe incorrect.',
-    'auth/invalid-credential':  'Email ou mot de passe incorrect.',
-    'auth/email-already-in-use':'Email déjà utilisé.',
-    'auth/weak-password':       'Mot de passe trop court (6 car. min).',
-    'auth/invalid-email':       'Email invalide.',
+    'auth/user-not-found':     'Aucun compte avec cet email.',
+    'auth/wrong-password':     'Mot de passe incorrect.',
+    'auth/invalid-credential': 'Email ou mot de passe incorrect.',
+    'auth/invalid-email':      'Email invalide.',
   };
   try {
-    if(authTab === 'login'){
-      await signInWithEmailAndPassword(auth, email, pwd);
-    } else {
-      const prenom = document.getElementById('i-prenom').value.trim();
-      if(!prenom){ errEl.textContent='Entrez votre prénom.'; errEl.style.display='block'; return; }
-      const cred = await createUserWithEmailAndPassword(auth, email, pwd);
-      await updateProfile(cred.user, { displayName: prenom });
-    }
+    await signInWithEmailAndPassword(auth, email, pwd);
   } catch(err){
-    errEl.textContent = MSGS[err.code] || err.message;
+    errEl.textContent = MSGS[err.code] || 'Identifiants incorrects.';
     errEl.style.display = 'block';
   }
 };
@@ -1213,6 +1300,42 @@ window.updatePwd = async function(){
     document.getElementById('p-pwd-new').value='';
     toast('✅ Mot de passe modifié');
   }catch(e){ toast(e.code==='auth/wrong-password'?'❌ Mot de passe actuel incorrect':'❌ Erreur : '+e.message); }
+};
+
+window.creerMembre = async function(){
+  const prenom = document.getElementById('m-prenom').value.trim();
+  const email  = document.getElementById('m-email').value.trim();
+  const pwd    = document.getElementById('m-pwd').value;
+  if(!prenom||!email||!pwd){ toast('⚠️ Remplissez tous les champs'); return; }
+  if(pwd.length<6){ toast('⚠️ Mot de passe trop court (6 car. min)'); return; }
+
+  // Sauvegarder l'utilisateur courant
+  const currentUser = auth.currentUser;
+
+  try{
+    // Créer le nouveau compte (Firebase connecte automatiquement le nouvel utilisateur)
+    const cred = await createUserWithEmailAndPassword(auth, email, pwd);
+    await updateProfile(cred.user, { displayName: prenom });
+
+    // Reconnecter l'utilisateur admin
+    // Note: Firebase déconnecte l'admin lors de createUser — on affiche juste un message
+    toast('✅ Compte créé pour ' + prenom + ' ! Reconnectez-vous.');
+
+    // Vider les champs
+    document.getElementById('m-prenom').value = '';
+    document.getElementById('m-email').value  = '';
+    document.getElementById('m-pwd').value    = '';
+
+    // Forcer la déconnexion pour que l'admin se reconnecte
+    await signOut(auth);
+  } catch(err){
+    const MSGS = {
+      'auth/email-already-in-use': 'Cet email est déjà utilisé.',
+      'auth/invalid-email':        'Email invalide.',
+      'auth/weak-password':        'Mot de passe trop court.',
+    };
+    toast('❌ ' + (MSGS[err.code]||err.message));
+  }
 };
 
 window.doLogout = async function(){
