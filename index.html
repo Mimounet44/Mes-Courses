@@ -41,23 +41,25 @@ input:focus,select:focus{border-color:var(--accent)}
 .cat-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem .2rem .3rem}
 .cat-title{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);display:flex;align-items:center;gap:.5rem}
 .cat-title::after{content:'';flex:1;height:1.5px;background:var(--border)}
-.article-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:.8rem;margin-bottom:.5rem;transition:all .18s}
+.article-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:.6rem .8rem;margin-bottom:.5rem}
 .article-card.done{opacity:.6;background:#f8fafc}
-.article-top{display:flex;align-items:center;gap:.65rem}
-.article-qty{display:flex;align-items:center;gap:.5rem;margin-top:.5rem;padding-left:2rem}
-.qty-input{width:80px;text-align:center;padding:.4rem .3rem;font-weight:700}
-.qty-unite{width:auto;min-width:90px;padding:.4rem .5rem}
-.liste-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.65rem;cursor:pointer;transition:all .18s}
-.liste-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.1)}
+.article-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+.article-info{display:flex;align-items:center;gap:.5rem;flex:1;flex-wrap:wrap}
+.article-name{font-weight:600;font-size:.9rem;min-width:100px}
+.article-qty-controls{display:flex;align-items:center;gap:.4rem}
+.qty-input{width:65px;text-align:center;padding:.3rem .2rem;font-weight:700}
+.qty-unite{width:auto;min-width:85px;padding:.3rem .4rem;font-size:.75rem}
+.liste-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.65rem;cursor:pointer}
+.liste-card:hover{border-color:var(--accent);transform:translateY(-2px)}
 .liste-nom{font-weight:800;margin-bottom:.25rem;font-size:1rem}
 .badge{display:inline-block;padding:.15rem .6rem;border-radius:20px;font-size:.65rem;font-weight:700;margin-left:.5rem}
 .badge-green{background:#dcfce7;color:var(--green)}
 .badge-blue{background:#eef3fe;color:var(--accent)}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
 .overlay.show{display:flex}
-.modal{background:var(--card);border-radius:24px;padding:1.5rem;width:90%;max-width:400px;animation:slideUp .25s ease;max-height:85vh;overflow-y:auto}
+.modal{background:var(--card);border-radius:24px;padding:1.5rem;width:90%;max-width:400px;max-height:85vh;overflow-y:auto}
 .modal-title{font-weight:900;font-size:1.1rem;margin-bottom:.5rem}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;border-radius:40px;padding:.6rem 1.4rem;font-size:.85rem;font-weight:600;z-index:400;display:none;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;border-radius:40px;padding:.6rem 1.4rem;font-size:.85rem;font-weight:600;z-index:400;display:none;white-space:nowrap}
 @keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 .empty{text-align:center;padding:2rem;color:var(--text3)}
@@ -82,7 +84,6 @@ input:focus,select:focus{border-color:var(--accent)}
 </div>
 
 <div id="app-screen" style="display:none">
-  <!-- Page Catalogue -->
   <div id="page-catalogue" class="page show">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
       <div style="font-size:1.5rem;font-weight:900">📋 Catalogue</div>
@@ -106,7 +107,6 @@ input:focus,select:focus{border-color:var(--accent)}
     <div id="cat-list"></div>
   </div>
 
-  <!-- Page Listes -->
   <div id="page-listes" class="page">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
       <div style="font-size:1.5rem;font-weight:900">🛍️ Mes listes</div>
@@ -133,7 +133,6 @@ input:focus,select:focus{border-color:var(--accent)}
     <div id="listes-list"></div>
   </div>
 
-  <!-- Page Profil -->
   <div id="page-profil" class="page">
     <div style="font-size:1.5rem;font-weight:900;margin-bottom:1rem">👤 Mon profil</div>
     <div class="card" style="display:flex;align-items:center;gap:1rem">
@@ -167,12 +166,12 @@ input:focus,select:focus{border-color:var(--accent)}
     <button class="btn btn-danger btn-full" id="logout-btn">🚪 Se déconnecter</button>
   </div>
 
-  <!-- Page Détail Liste -->
   <div id="page-detail" class="subpage">
-    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
       <button id="close-detail-btn" style="color:var(--text2);font-weight:700;display:flex;align-items:center;gap:.3rem">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Retour
       </button>
+      <button id="print-list-btn" class="btn btn-outline btn-sm">🖨️ Imprimer</button>
     </div>
     <div id="detail-header"></div>
     <div class="card" id="add-section">
@@ -192,67 +191,16 @@ input:focus,select:focus{border-color:var(--accent)}
     <div id="detail-articles"></div>
   </div>
 
-  <!-- Navigation -->
   <nav class="bottom-nav">
-    <button class="nav-btn on" id="nav-catalogue">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="9" y="3" width="6" height="4" rx="1"/>
-        <path d="M5 7h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7z"/>
-      </svg>
-      <span>Catalogue</span>
-    </button>
-    <button class="nav-btn" id="nav-listes">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M4 4h16v16H4z"/>
-        <path d="M8 8h8M8 12h6M8 16h4"/>
-      </svg>
-      <span>Mes listes</span>
-    </button>
-    <button class="nav-btn" id="nav-profil">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-        <circle cx="12" cy="7" r="4"/>
-      </svg>
-      <span>Profil</span>
-    </button>
+    <button class="nav-btn on" id="nav-catalogue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M5 7h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7z"/></svg><span>Catalogue</span></button>
+    <button class="nav-btn" id="nav-listes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h6M8 16h4"/></svg><span>Mes listes</span></button>
+    <button class="nav-btn" id="nav-profil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></button>
   </nav>
 </div>
 
-<!-- Modals -->
-<div id="categories-modal" class="overlay">
-  <div class="modal">
-    <div class="modal-title">🏷️ Gérer les catégories</div>
-    <p style="color:var(--text2);font-size:.8rem;margin-bottom:1rem">Ajoutez, modifiez ou supprimez vos catégories</p>
-    <div class="frow" style="margin-bottom:1rem">
-      <input id="new-cat-name" placeholder="Nouvelle catégorie">
-      <button class="btn btn-primary btn-sm" id="add-cat-btn" style="flex:none">+</button>
-    </div>
-    <div id="categories-list" style="max-height:300px;overflow:auto"></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:1rem">
-      <button class="btn btn-outline" id="close-cats-modal">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<div id="confirm-modal" class="overlay">
-  <div class="modal">
-    <div class="modal-title" id="confirm-title"></div>
-    <p id="confirm-msg" style="margin:.5rem 0 1rem"></p>
-    <div style="display:flex;gap:.5rem;justify-content:flex-end">
-      <button class="btn btn-outline" id="confirm-no">Annuler</button>
-      <button class="btn btn-danger" id="confirm-yes">Supprimer</button>
-    </div>
-  </div>
-</div>
-
-<div id="listes-modal" class="overlay">
-  <div class="modal">
-    <div class="modal-title">Choisir une liste</div>
-    <div id="listes-choix" style="margin:1rem 0"></div>
-    <button class="btn btn-outline" id="close-listes-modal" style="width:100%">Fermer</button>
-  </div>
-</div>
-
+<div id="categories-modal" class="overlay"><div class="modal"><div class="modal-title">🏷️ Gérer les catégories</div><p style="color:var(--text2);font-size:.8rem;margin-bottom:1rem">Ajoutez, modifiez ou supprimez vos catégories</p><div class="frow" style="margin-bottom:1rem"><input id="new-cat-name" placeholder="Nouvelle catégorie"><button class="btn btn-primary btn-sm" id="add-cat-btn" style="flex:none">+</button></div><div id="categories-list" style="max-height:300px;overflow:auto"></div><div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="btn btn-outline" id="close-cats-modal">Fermer</button></div></div></div>
+<div id="confirm-modal" class="overlay"><div class="modal"><div class="modal-title" id="confirm-title"></div><p id="confirm-msg" style="margin:.5rem 0 1rem"></p><div style="display:flex;gap:.5rem;justify-content:flex-end"><button class="btn btn-outline" id="confirm-no">Annuler</button><button class="btn btn-danger" id="confirm-yes">Supprimer</button></div></div></div>
+<div id="listes-modal" class="overlay"><div class="modal"><div class="modal-title">Choisir une liste</div><div id="listes-choix" style="margin:1rem 0"></div><button class="btn btn-outline" id="close-listes-modal" style="width:100%">Fermer</button></div></div>
 <div class="toast" id="toast">Message</div>
 
 <script type="module">
@@ -291,24 +239,53 @@ const DEFAULT_CATEGORIES = [
 ];
 let categories = [...DEFAULT_CATEGORIES];
 
+// 80+ produits bien répartis dans les catégories
 const DEFAULT_PRODUITS = [
+  // Légumes (15)
   { nom: 'Carottes', categorie: 'legumes' }, { nom: 'Tomates', categorie: 'legumes' }, { nom: 'Courgettes', categorie: 'legumes' },
   { nom: 'Poivrons', categorie: 'legumes' }, { nom: 'Aubergines', categorie: 'legumes' }, { nom: 'Oignons', categorie: 'legumes' },
   { nom: 'Ail', categorie: 'legumes' }, { nom: 'Salade', categorie: 'legumes' }, { nom: 'Concombre', categorie: 'legumes' },
+  { nom: 'Pommes de terre', categorie: 'legumes' }, { nom: 'Brocolis', categorie: 'legumes' }, { nom: 'Choux-fleurs', categorie: 'legumes' },
+  { nom: 'Haricots verts', categorie: 'legumes' }, { nom: 'Petits pois', categorie: 'legumes' }, { nom: 'Épinards', categorie: 'legumes' },
+  // Fruits (12)
   { nom: 'Pommes', categorie: 'fruits' }, { nom: 'Bananes', categorie: 'fruits' }, { nom: 'Oranges', categorie: 'fruits' },
   { nom: 'Fraises', categorie: 'fruits' }, { nom: 'Raisins', categorie: 'fruits' }, { nom: 'Citrons', categorie: 'fruits' },
+  { nom: 'Poires', categorie: 'fruits' }, { nom: 'Pêches', categorie: 'fruits' }, { nom: 'Abricots', categorie: 'fruits' },
+  { nom: 'Kiwis', categorie: 'fruits' }, { nom: 'Mangues', categorie: 'fruits' }, { nom: 'Ananas', categorie: 'fruits' },
+  // Viande (10)
   { nom: 'Poulet', categorie: 'viande' }, { nom: 'Steaks hachés', categorie: 'viande' }, { nom: "Côtelettes d'agneau", categorie: 'viande' },
-  { nom: 'Saucisses', categorie: 'viande' }, { nom: 'Jambon', categorie: 'viande' },
+  { nom: 'Saucisses', categorie: 'viande' }, { nom: 'Jambon blanc', categorie: 'viande' }, { nom: 'Rôti de boeuf', categorie: 'viande' },
+  { nom: 'Escalopes de dinde', categorie: 'viande' }, { nom: 'Merguez', categorie: 'viande' }, { nom: 'Lardons', categorie: 'viande' },
+  { nom: 'Côtes de porc', categorie: 'viande' },
+  // Poisson (8)
   { nom: 'Saumon', categorie: 'poisson' }, { nom: 'Cabillaud', categorie: 'poisson' }, { nom: 'Thon en boîte', categorie: 'poisson' },
+  { nom: 'Sardines', categorie: 'poisson' }, { nom: 'Maquereaux', categorie: 'poisson' }, { nom: 'Crevettes', categorie: 'poisson' },
+  { nom: 'Moules', categorie: 'poisson' }, { nom: 'Lieu noir', categorie: 'poisson' },
+  // Laitage & Œufs (10)
   { nom: 'Lait', categorie: 'laitage' }, { nom: 'Œufs', categorie: 'laitage' }, { nom: 'Beurre', categorie: 'laitage' },
-  { nom: 'Yaourts', categorie: 'laitage' }, { nom: 'Fromage râpé', categorie: 'laitage' },
+  { nom: 'Yaourts nature', categorie: 'laitage' }, { nom: 'Yaourts aux fruits', categorie: 'laitage' }, { nom: 'Fromage râpé', categorie: 'laitage' },
+  { nom: 'Camembert', categorie: 'laitage' }, { nom: 'Crème fraîche', categorie: 'laitage' }, { nom: 'Mozzarella', categorie: 'laitage' },
+  { nom: 'Parmesan', categorie: 'laitage' },
+  // Épicerie (15)
   { nom: 'Pâtes', categorie: 'epicerie' }, { nom: 'Riz', categorie: 'epicerie' }, { nom: 'Farine', categorie: 'epicerie' },
-  { nom: 'Sucre', categorie: 'epicerie' }, { nom: 'Sel', categorie: 'epicerie' }, { nom: "Huile d'olive", categorie: 'epicerie' },
-  { nom: 'Café', categorie: 'epicerie' }, { nom: 'Thé', categorie: 'epicerie' },
+  { nom: 'Sucre', categorie: 'epicerie' }, { nom: 'Sel', categorie: 'epicerie' }, { nom: 'Poivre', categorie: 'epicerie' },
+  { nom: "Huile d'olive", categorie: 'epicerie' }, { nom: 'Vinaigre', categorie: 'epicerie' }, { nom: 'Café', categorie: 'epicerie' },
+  { nom: 'Thé', categorie: 'epicerie' }, { nom: 'Moutarde', categorie: 'epicerie' }, { nom: 'Ketchup', categorie: 'epicerie' },
+  { nom: 'Mayonnaise', categorie: 'epicerie' }, { nom: 'Concentré de tomate', categorie: 'epicerie' }, { nom: 'Bouillon cubes', categorie: 'epicerie' },
+  // Boulangerie (6)
   { nom: 'Pain', categorie: 'boulangerie' }, { nom: 'Baguette', categorie: 'boulangerie' }, { nom: 'Croissants', categorie: 'boulangerie' },
-  { nom: 'Eau', categorie: 'boissons' }, { nom: "Jus d'orange", categorie: 'boissons' },
+  { nom: 'Pains au chocolat', categorie: 'boulangerie' }, { nom: 'Brioche', categorie: 'boulangerie' }, { nom: 'Biscottes', categorie: 'boulangerie' },
+  // Boissons (8)
+  { nom: 'Eau plate', categorie: 'boissons' }, { nom: 'Eau pétillante', categorie: 'boissons' }, { nom: "Jus d'orange", categorie: 'boissons' },
+  { nom: 'Jus de pomme', categorie: 'boissons' }, { nom: 'Coca-Cola', categorie: 'boissons' }, { nom: 'Limonade', categorie: 'boissons' },
+  { nom: 'Bière', categorie: 'boissons' }, { nom: 'Vin rouge', categorie: 'boissons' },
+  // Hygiène (8)
   { nom: 'Shampoing', categorie: 'hygiene' }, { nom: 'Dentifrice', categorie: 'hygiene' }, { nom: 'Papier toilette', categorie: 'hygiene' },
-  { nom: 'Liquide vaisselle', categorie: 'entretien' }, { nom: 'Lessive', categorie: 'entretien' }, { nom: 'Sacs poubelle', categorie: 'entretien' }
+  { nom: 'Gel douche', categorie: 'hygiene' }, { nom: 'Déodorant', categorie: 'hygiene' }, { nom: 'Brosse à dents', categorie: 'hygiene' },
+  { nom: 'Savon', categorie: 'hygiene' }, { nom: 'Mouchoirs', categorie: 'hygiene' },
+  // Entretien (6)
+  { nom: 'Liquide vaisselle', categorie: 'entretien' }, { nom: 'Lessive', categorie: 'entretien' }, { nom: 'Sacs poubelle', categorie: 'entretien' },
+  { nom: 'Nettoyant multi-usages', categorie: 'entretien' }, { nom: 'Éponges', categorie: 'entretien' }, { nom: 'Papier aluminium', categorie: 'entretien' }
 ];
 
 function toast(msg) {
@@ -339,6 +316,7 @@ document.getElementById('nav-catalogue').onclick = () => goPage('catalogue');
 document.getElementById('nav-listes').onclick = () => goPage('listes');
 document.getElementById('nav-profil').onclick = () => goPage('profil');
 document.getElementById('close-detail-btn').onclick = () => closeDetail();
+document.getElementById('print-list-btn').onclick = () => printListe();
 
 window.goPage = function(page) {
   document.querySelectorAll('.page, .subpage').forEach(p => p.classList.remove('show'));
@@ -365,6 +343,25 @@ window.closeDetail = function() {
   if (unsubArt) { unsubArt(); unsubArt = null; }
   activeListeId = null;
   goPage('listes');
+};
+
+window.printListe = function() {
+  const liste = listes.find(l => l.id === activeListeId);
+  if (!liste || !articles.length) { toast('Liste vide'); return; }
+  const date = new Date().toLocaleDateString('fr-FR');
+  let body = '';
+  for (const cat of categories) {
+    const items = articles.filter(a => a.categorie === cat.id);
+    if (!items.length) continue;
+    body += `<div class="cat">${cat.label}</div>`;
+    for (const a of items) {
+      body += `<div class="item"><div class="box"></div><div class="nom">${a.nom}</div><div class="qty">${a.quantite || 1} ${a.unite || ''}</div></div>`;
+    }
+  }
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${liste.nom}</title><style>body{font-family:sans-serif;padding:2cm}.cat{font-size:12px;font-weight:800;margin:16px 0 6px;border-bottom:1px solid #ccc}.item{display:flex;align-items:center;gap:12px;padding:6px 0}.box{width:16px;height:16px;border:2px solid #999;border-radius:3px}.nom{flex:1}.qty{color:#666}</style></head><body><h1>🛒 ${liste.nom}</h1><div style="margin-bottom:20px">📅 ${date} • ${articles.length} article(s)</div>${body}</body></html>`);
+  win.document.close();
+  win.print();
 };
 
 // Gestion catalogue
@@ -445,6 +442,12 @@ window.addFast = async function(e, produitId, nom, cat) {
 function renderCatalogue() {
   const search = document.getElementById('c-search')?.value.toLowerCase() || '';
   const filtered = catalogue.filter(p => p.nom.toLowerCase().includes(search));
+  
+  if (!filtered.length) {
+    document.getElementById('cat-list').innerHTML = '<div class="empty"><div class="empty-icon">🛒</div><p>Aucun produit trouvé</p></div>';
+    return;
+  }
+  
   let html = '';
   for (const cat of categories) {
     const items = filtered.filter(p => p.categorie === cat.id);
@@ -461,7 +464,7 @@ function renderCatalogue() {
     }
     html += `</div>`;
   }
-  document.getElementById('cat-list').innerHTML = html || '<div class="empty"><div class="empty-icon">🛒</div><p>Aucun produit trouvé</p></div>';
+  document.getElementById('cat-list').innerHTML = html;
 }
 
 // Gestion listes
@@ -534,7 +537,7 @@ window.addDossier = async function() {
   toast(`Dossier "${nom}" créé`);
 };
 window.delDossier = async function(id, nom) {
-  confirmAction('Supprimer', `Supprimer le dossier "${nom}" ? (Les listes resteront sans dossier)`, async () => { await deleteDoc(doc(db, 'users', UID, 'dossiers', id)); });
+  confirmAction('Supprimer', `Supprimer le dossier "${nom}" ?`, async () => { await deleteDoc(doc(db, 'users', UID, 'dossiers', id)); });
 };
 function updateDossierSelects() {
   const opts = '<option value="">Sans dossier</option>' + dossiers.map(d => `<option value="${d.nom}">${d.nom}</option>`).join('');
@@ -695,15 +698,19 @@ function renderDetail() {
       const units = ['', 'kg', 'g', 'L', 'cl', 'pièce(s)', 'boîte(s)', 'sachet(s)', 'bouteille(s)'];
       const unitOptions = units.map(u => `<option value="${u}" ${a.unite === u ? 'selected' : ''}>${u || '—'}</option>`).join('');
       html += `<div class="article-card ${a.coche ? 'done' : ''}">
-        <div class="article-top">
+        <div class="article-row">
           <div class="chk ${a.coche ? 'on' : ''}" onclick="${isTerminee ? '' : `toggleCheck('${a.id}',${a.coche})`}"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div>
-          <span style="flex:1;font-weight:600">${a.nom}</span>
+          <div class="article-info">
+            <span class="article-name">${a.nom}</span>
+            ${!isTerminee ? `
+              <div class="article-qty-controls">
+                <input type="number" step="0.5" min="0" value="${a.quantite || 1}" class="qty-input" onchange="changeQuantity('${a.id}',this.value)">
+                <select class="qty-unite" onchange="changeUnit('${a.id}',this.value)">${unitOptions}</select>
+              </div>
+            ` : `<span style="font-size:.75rem;color:var(--text2)">${a.quantite || 1} ${a.unite || ''}</span>`}
+          </div>
           ${!isTerminee ? `<button class="btn btn-danger btn-sm" onclick="deleteArticle('${a.id}','${a.nom.replace(/'/g,"\\'")}')">🗑</button>` : ''}
         </div>
-        ${!isTerminee ? `<div class="article-qty">
-          <input type="number" step="0.5" min="0" value="${a.quantite || 1}" class="qty-input" onchange="changeQuantity('${a.id}',this.value)">
-          <select class="qty-unite" onchange="changeUnit('${a.id}',this.value)">${unitOptions}</select>
-        </div>` : `<div style="font-size:.75rem;padding-left:2rem;color:var(--text2)">${a.quantite || 1} ${a.unite || ''}</div>`}
       </div>`;
     }
   }
@@ -771,6 +778,18 @@ window.doLogout = async function() {
   toast('👋 Déconnecté');
 };
 
+// Fonction pour initialiser le catalogue par défaut
+async function initializeDefaultCatalogue() {
+  const catSnap = await getDocs(collection(db, 'users', UID, 'catalogue'));
+  if (catSnap.empty) {
+    toast('Chargement du catalogue...');
+    for (const p of DEFAULT_PRODUITS) {
+      await addDoc(collection(db, 'users', UID, 'catalogue'), { ...p, createdAt: serverTimestamp() });
+    }
+    toast(`✅ ${DEFAULT_PRODUITS.length} produits chargés !`);
+  }
+}
+
 // Listeners Firebase
 function startListeners() {
   unsubCat = onSnapshot(collection(db, 'users', UID, 'catalogue'), snap => {
@@ -820,14 +839,7 @@ onAuthStateChanged(auth, async user => {
     document.getElementById('app-screen').style.display = 'flex';
     updateProfilUI();
     startListeners();
-    
-    const catSnap = await getDocs(collection(db, 'users', UID, 'catalogue'));
-    if (catSnap.empty) {
-      for (const p of DEFAULT_PRODUITS) {
-        await addDoc(collection(db, 'users', UID, 'catalogue'), { ...p, createdAt: serverTimestamp() });
-      }
-      toast('Catalogue chargé avec succès !');
-    }
+    await initializeDefaultCatalogue();
     goPage('catalogue');
   } else {
     stopListeners();
