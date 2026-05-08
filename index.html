@@ -172,6 +172,21 @@ a{text-decoration:none;color:inherit}
 /* ═══════════════════════════════════════════ LOADING */
 .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin:3rem auto}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ IMPRESSION ══════════════════════════════════════════ */
+@media print {
+  body { background: #fff !important; color: #000 !important; font-family: Arial, sans-serif; }
+  .bottom-nav, .back-header, #detail-add-section, .btn, .progress-bar { display: none !important; }
+  .inner-page { display: block !important; padding: 0 !important; }
+  .page { display: none !important; }
+  #page-detail { display: block !important; }
+  .card { border: 1px solid #ccc !important; background: #fff !important; margin-bottom: .4rem !important; box-shadow: none !important; }
+  .cat-header { color: #333 !important; border-bottom: 1px solid #ccc; }
+  .chk-label { color: #000 !important; }
+  .chk-label.done { color: #999 !important; }
+  #detail-header h2 { font-size: 1.4rem; }
+  @page { margin: 1.5cm; }
+}
 </style>
 </head>
 <body>
@@ -557,12 +572,12 @@ onAuthStateChanged(auth, user=>{
 /* ────────────────────────────────────── SUBSCRIPTIONS */
 function subscribeAll(){
   // Catalogue
-  unsubCat=onSnapshot(query(col('users',uid,'catalogue'),orderBy('categorie'),orderBy('nom')),snap=>{
+  unsubCat=onSnapshot(col('users',uid,'catalogue'),snap=>{
     catalogue=snap.docs.map(d=>({id:d.id,...d.data()}));
     renderCatalogue();
   });
   // Listes
-  unsubListes=onSnapshot(query(col('users',uid,'listes'),orderBy('createdAt','desc')),snap=>{
+  unsubListes=onSnapshot(col('users',uid,'listes'),snap=>{
     listes=snap.docs.map(d=>({id:d.id,...d.data()}));
     renderListes();
     if(currentListeId) renderDetailHeader();
@@ -579,7 +594,7 @@ function unsubAll(){
 function subscribeArticles(listeId){
   if(unsubArticles) unsubArticles();
   unsubArticles=onSnapshot(
-    query(col('users',uid,'listes',listeId,'articles'),orderBy('categorie'),orderBy('nom')),
+    col('users',uid,'listes',listeId,'articles'),
     snap=>{
       articles=snap.docs.map(d=>({id:d.id,...d.data()}));
       renderDetailArticles();
@@ -634,92 +649,44 @@ function updateSelectionBar(){
 }
 
 window.ouvrirModalAjoutListe=function(){
-
-  if(selectionCat.size===0){
-    toast('⚠️ Sélectionnez au moins un produit');
-    return;
-  }
-
   const lEnCours=listes.filter(l=>l.statut==='en_cours');
-
+  console.log('Listes en cours:', lEnCours.length, 'Selection:', [...selectionCat], 'Catalogue:', catalogue.length);
   if(lEnCours.length===0){
     toast('⚠️ Créez d\'abord une liste dans l\'onglet Mes listes');
     return;
   }
-
   if(lEnCours.length===1){
-    ajouterSelectionAListe(lEnCours[0].id,lEnCours[0].nom);
+    ajouterSelectionAListe(lEnCours[0].id, lEnCours[0].nom);
     return;
   }
-
   const el=document.getElementById('modal-listes-choix');
-
-  el.innerHTML=lEnCours.map(l=>`
-    <button
-      class="btn btn-ghost"
-      style="justify-content:flex-start;text-align:left"
-      onclick="ajouterSelectionAListe('${l.id}','${l.nom.replace(/'/g,"\\'")}')"
-    >
-      🛍️ ${l.nom}
-    </button>
-  `).join('');
-
+  el.innerHTML=lEnCours.map(l=>`<button class="btn btn-ghost" style="justify-content:flex-start;text-align:left" onclick="ajouterSelectionAListe('${l.id}','${l.nom.replace(/'/g,"\'")}')">&#128722; ${l.nom}</button>`).join('');
   openModal('modal-add-liste');
 };
 
 window.ajouterSelectionAListe=async function(listeId,listNom){
-
   closeModal('modal-add-liste');
-
-  const selProduits = catalogue.filter(p => selectionCat.has(p.id));
-
-  if(!selProduits.length){
-    toast('⚠️ Aucun produit sélectionné');
-    return;
-  }
-
+  const selProduits=catalogue.filter(p=>selectionCat.has(p.id));
+  console.log('Ajout dans liste:', listeId, listNom, 'Produits:', selProduits.map(p=>p.nom));
+  if(!selProduits.length){toast('⚠️ Aucun produit sélectionné');return;}
+  let ajoutes=0;
   try{
-
-    const snap = await getDocs(
-      col('users',uid,'listes',listeId,'articles')
-    );
-
-    const existants = snap.docs.map(
-      d => d.data().nom.toLowerCase()
-    );
-
-    let ajoutes = 0;
-
+    const snap=await getDocs(col('users',uid,'listes',listeId,'articles'));
+    const existants=snap.docs.map(d=>d.data().nom.toLowerCase());
     for(const p of selProduits){
-
-      if(existants.includes(p.nom.toLowerCase())){
-        continue;
+      if(!existants.includes(p.nom.toLowerCase())){
+        await addDoc(col('users',uid,'listes',listeId,'articles'),{
+          nom:p.nom,categorie:p.categorie,quantite:1,unite:'',coche:false,createdAt:serverTimestamp()
+        });
+        ajoutes++;
+        console.log('Ajouté OK:', p.nom);
       }
-
-      await addDoc(
-        col('users',uid,'listes',listeId,'articles'),
-        {
-          nom:p.nom,
-          categorie:p.categorie,
-          quantite:1,
-          unite:'',
-          coche:false,
-          createdAt:serverTimestamp()
-        }
-      );
-
-      ajoutes++;
     }
-
-    selectionCat.clear();
-    updateSelectionBar();
-    renderCatalogue();
-
-    toast(`✅ ${ajoutes} produit(s) ajouté(s) à "${listNom}"`);
-
+    selectionCat.clear(); updateSelectionBar(); renderCatalogue();
+    toast('✅ '+ajoutes+' produit(s) ajouté(s) à "'+listNom+'"');
   }catch(err){
-    console.error(err);
-    toast('❌ Erreur lors de l\'ajout');
+    console.error('Erreur Firestore:', err);
+    toast('❌ Erreur: '+err.message);
   }
 };
 
@@ -959,68 +926,31 @@ function renderDossierSelects(){
 
 /* ────────────────────────────────────── DETAIL (liste ouverte) */
 function renderDetailHeader(){
-
   const liste=listes.find(l=>l.id===currentListeId);
-
   if(!liste) return;
-
-  const total=articles.length;
-  const coches=articles.filter(a=>a.coche).length;
+  const total=articles.length, coches=articles.filter(a=>a.coche).length;
   const pct=total?Math.round(coches/total*100):0;
-
   const addSec=document.getElementById('detail-add-section');
-
-  if(addSec){
-    addSec.style.display=liste.statut==='terminee'?'none':'block';
-  }
-
+  if(addSec) addSec.style.display=liste.statut==='terminee'?'none':'block';
   document.getElementById('detail-header').innerHTML=`
-
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.8rem;flex-wrap:wrap">
-
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;margin-bottom:.8rem">
       <div>
-        <h2 style="font-family:var(--ff);font-size:1.3rem;font-weight:800">
-          ${liste.nom}
-        </h2>
-
-        ${liste.dossier?
-          `<div style="font-size:.75rem;color:var(--t3)">
-            📁 ${liste.dossier}
-          </div>`
-        :''}
+        <h2 style="font-family:var(--ff);font-size:1.3rem;font-weight:800">${liste.nom}</h2>
+        ${liste.dossier?`<div style="font-size:.75rem;color:var(--t3)">📁 ${liste.dossier}</div>`:''}
       </div>
-
-      <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-
-        <button class="btn btn-primary btn-sm" onclick="imprimerListe()">
-          🖨️ Imprimer
-        </button>
-
-        <button
-          class="btn btn-sm ${liste.statut==='terminee'?'btn-ghost':'btn-success'}"
-          onclick="validerListe('${liste.id}','${liste.statut}')"
-        >
+      <div style="display:flex;gap:.4rem;align-items:center">
+        <button class="btn btn-ghost btn-sm" onclick="imprimerListe()" title="Imprimer">🖨️ Imprimer</button>
+        <button class="btn btn-sm ${liste.statut==='terminee'?'btn-ghost':'btn-success'}" onclick="validerListe('${liste.id}','${liste.statut}')">
           ${liste.statut==='terminee'?'🔄 Réouvrir':'✅ Terminer'}
         </button>
-
       </div>
-
     </div>
-
-    ${total>0?
-      `
-      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--t3);margin-bottom:.25rem">
-        <span>${coches}/${total} articles</span>
-        <span>${pct}%</span>
-      </div>
-
-      <div class="progress-bar">
-        <div class="progress-fill" style="width:${pct}%"></div>
-      </div>
-
-      <div style="margin-bottom:.8rem"></div>
-      `
-    :''}
+    ${total>0?`
+    <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--t3);margin-bottom:.25rem">
+      <span>${coches}/${total} articles</span><span>${pct}%</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="margin-bottom:.8rem"></div>`:''}
   `;
 }
 
@@ -1126,95 +1056,6 @@ function renderDetailArticles(){
   document.getElementById('detail-articles').innerHTML=html;
 }
 
-
-window.imprimerListe=function(){
-
-  const liste=listes.find(l=>l.id===currentListeId);
-
-  if(!liste) return;
-
-  let contenu=`
-    <html>
-    <head>
-      <title>${liste.nom}</title>
-
-      <style>
-
-        body{
-          font-family:Arial,sans-serif;
-          padding:20px;
-          color:#111;
-        }
-
-        h1{
-          font-size:28px;
-          margin-bottom:25px;
-        }
-
-        .cat{
-          margin-top:25px;
-          margin-bottom:10px;
-          font-size:18px;
-          font-weight:bold;
-          border-bottom:2px solid #ddd;
-          padding-bottom:4px;
-        }
-
-        .item{
-          padding:8px 0;
-          border-bottom:1px solid #eee;
-          font-size:16px;
-        }
-
-      </style>
-
-    </head>
-
-    <body>
-      <h1>🛒 ${liste.nom}</h1>
-  `;
-
-  const grouped={};
-
-  CATS.forEach(c=>grouped[c.id]=[]);
-
-  articles.forEach(a=>{
-    (grouped[a.categorie]||(grouped['autre'])).push(a);
-  });
-
-  CATS.forEach(cat=>{
-
-    const items=grouped[cat.id]||[];
-
-    if(!items.length) return;
-
-    contenu += `<div class="cat">${cat.label}</div>`;
-
-    items.forEach(a=>{
-
-      contenu += `
-        <div class="item">
-          ☐ ${a.nom} — ${a.quantite || 1} ${a.unite || ''}
-        </div>
-      `;
-
-    });
-
-  });
-
-  contenu += `
-      </body>
-    </html>
-  `;
-
-  const win = window.open('', '_blank');
-
-  win.document.write(contenu);
-  win.document.close();
-  win.focus();
-  win.print();
-};
-
 /* ────────────────────────────────────── PROFIL */
 function updateProfilUI(){
   const user=auth.currentUser; if(!user) return;
@@ -1265,6 +1106,61 @@ function confirm2(title,msg,onOk){
 
 /* ────────────────────────────────────── ENTER KEY su auth */
 document.getElementById('inp-pwd').addEventListener('keydown',e=>{if(e.key==='Enter') handleAuth()});
+
+window.imprimerListe=function(){
+  const liste=listes.find(l=>l.id===currentListeId);
+  if(!liste||!articles.length){toast('⚠️ Liste vide, rien à imprimer');return;}
+
+  // Grouper par catégorie
+  const grouped={};
+  CATS.forEach(c=>grouped[c.id]=[]);
+  articles.forEach(a=>{ (grouped[a.categorie]||(grouped['autre'])).push(a); });
+
+  let html = '<html><head><meta charset="UTF-8">';
+  html += '<style>body{font-family:Arial,sans-serif;padding:1.5cm;color:#000}';
+  html += 'h1{font-size:1.4rem;margin-bottom:.3rem}';
+  html += '.meta{font-size:.8rem;color:#666;margin-bottom:1.2rem}';
+  html += '.cat{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#666;margin:.9rem 0 .3rem;border-bottom:1px solid #ccc;padding-bottom:.2rem}';
+  html += '.item{display:flex;align-items:center;gap:.6rem;padding:.35rem 0;border-bottom:1px dotted #eee}';
+  html += '.box{width:16px;height:16px;border:1.5px solid #999;border-radius:3px;flex-shrink:0}';
+  html += '.nom{flex:1;font-size:.92rem}';
+  html += '.qty{font-size:.82rem;color:#555;white-space:nowrap}';
+  html += '.done .nom{text-decoration:line-through;color:#aaa}';
+  html += '.done .box{background:#ccc}';
+  html += '</style></head><body>';
+  html += '<h1>🛒 ' + liste.nom + '</h1>';
+
+  const date = new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  const total = articles.length;
+  const coches = articles.filter(a=>a.coche).length;
+  html += '<div class="meta">' + date + ' • ' + total + ' articles';
+  if(coches>0) html += ' • ' + coches + ' coché(s)';
+  html += '</div>';
+
+  CATS.forEach(cat=>{
+    const items = grouped[cat.id]||[];
+    if(!items.length) return;
+    html += '<div class="cat">' + cat.label + '</div>';
+    items.forEach(a=>{
+      const done = a.coche ? 'done' : '';
+      const qty = (a.quantite||1) + (a.unite?' '+a.unite:'');
+      html += '<div class="item ' + done + '">';
+      html += '<div class="box"></div>';
+      html += '<span class="nom">' + a.nom + '</span>';
+      html += '<span class="qty">' + qty + '</span>';
+      html += '</div>';
+    });
+  });
+
+  html += '</body></html>';
+
+  const win = window.open('','_blank','width=700,height=900');
+  win.document.write(html);
+  win.document.close();
+  win.focus();
+  setTimeout(()=>{ win.print(); },400);
+};
+
 </script>
 </body>
 </html>
