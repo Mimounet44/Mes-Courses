@@ -3,203 +3,160 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-<meta name="mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="theme-color" content="#f5f7fa"/>
 <title>Mes Courses 🛒</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
-/* ════════════════════════════ VARIABLES & RESET */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#f5f7fa;
-  --card:#ffffff;
-  --card2:#f0f3f8;
-  --border:#e2e8f2;
-  --border2:#cdd5e0;
-  --accent:#3b7ff5;
-  --accent-light:#eef3fe;
-  --accent-dark:#2563cc;
-  --green:#16a34a;
-  --green-light:#dcfce7;
-  --red:#dc2626;
-  --red-light:#fee2e2;
-  --orange:#ea580c;
-  --text:#1e293b;
-  --text2:#64748b;
-  --text3:#94a3b8;
-  --nav-h:64px;
-  --r:14px;
-  --rs:8px;
-  --ff:'Nunito',sans-serif;
-  --shadow:0 2px 12px rgba(0,0,0,.08);
-  --shadow-lg:0 8px 32px rgba(0,0,0,.12);
-}
-html{font-size:16px;-webkit-text-size-adjust:100%}
-body{background:var(--bg);color:var(--text);font-family:var(--ff);min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-button{cursor:pointer;border:none;background:none;font-family:var(--ff);font-size:1rem;transition:all .16s;-webkit-tap-highlight-color:transparent}
-input,select{font-family:var(--ff);font-size:.95rem;color:var(--text);background:var(--card);border:1.5px solid var(--border);border-radius:var(--rs);padding:.6rem .85rem;outline:none;transition:border-color .18s,box-shadow .18s;width:100%}
-input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,127,245,.12)}
-input::placeholder{color:var(--text3)}
-select option{background:#fff;color:var(--text)}
-
-/* ════════════════════════════ LAYOUT */
-#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.2rem;background:linear-gradient(160deg,#eef3fe 0%,#f5f7fa 50%,#fef9ec 100%)}
-#app-screen{display:none;flex-direction:column;min-height:100vh}
-.page{display:none;padding:1.2rem 1rem calc(var(--nav-h)+1.2rem);max-width:620px;margin:0 auto;width:100%;animation:fadeUp .25s ease both}
-.page.show{display:block}
-.subpage{display:none;padding:1.2rem 1rem calc(var(--nav-h)+1.2rem);max-width:620px;margin:0 auto;width:100%;animation:fadeUp .25s ease both}
-.subpage.show{display:block}
-
-/* ════════════════════════════ AUTH */
-.auth-card{background:var(--card);border-radius:20px;padding:2rem 1.5rem;width:100%;max-width:380px;box-shadow:var(--shadow-lg)}
-.auth-logo{width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,#3b7ff5,#60a5fa);display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 1.2rem;box-shadow:0 6px 24px rgba(59,127,245,.35)}
-.auth-title{text-align:center;font-size:1.8rem;font-weight:900;color:var(--text);margin-bottom:.3rem}
-.auth-sub{text-align:center;color:var(--text2);font-size:.9rem;margin-bottom:1.6rem}
-.form-group{margin-bottom:.85rem}
-.form-label{display:block;font-size:.78rem;font-weight:700;color:var(--text2);margin-bottom:.35rem;text-transform:uppercase;letter-spacing:.04em}
-.auth-error{background:var(--red-light);color:var(--red);border-radius:var(--rs);padding:.65rem .9rem;font-size:.83rem;font-weight:600;margin-bottom:.9rem;display:none}
-
-/* ════════════════════════════ BOUTONS */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.35rem;padding:.6rem 1.1rem;border-radius:var(--rs);font-weight:700;font-size:.88rem;white-space:nowrap;transition:all .16s;cursor:pointer}
-.btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(59,127,245,.3)}
-.btn-primary:hover{background:var(--accent-dark);transform:translateY(-1px);box-shadow:0 4px 16px rgba(59,127,245,.4)}
-.btn-primary:active{transform:translateY(0)}
-.btn-ghost{color:var(--text2);background:transparent}
-.btn-ghost:hover{background:var(--card2);color:var(--text)}
-.btn-danger{background:var(--red-light);color:var(--red)}
-.btn-danger:hover{background:#fca5a5;color:var(--red)}
-.btn-success{background:var(--green-light);color:var(--green)}
-.btn-success:hover{background:#bbf7d0}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text2)}
-.btn-outline:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-.btn-sm{padding:.32rem .65rem;font-size:.78rem;border-radius:6px}
-.btn-full{width:100%;padding:.75rem}
-.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;box-shadow:var(--shadow)}
-.card+.card{margin-top:.6rem}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1.5px solid var(--border);display:flex;align-items:center;justify-content:space-around;z-index:100}
-.nav-btn{display:flex;flex-direction:column;align-items:center;gap:.22rem;padding:.4rem 1.4rem;border-radius:10px;color:var(--text3);font-size:.67rem;font-weight:700;letter-spacing:.03em;transition:all .18s}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#f5f7fa;--card:#fff;--border:#e2e8f2;--accent:#3b7ff5;--green:#16a34a;--red:#dc2626;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;--nav-h:64px;--r:14px;--rs:8px;--ff:'Nunito',sans-serif;--shadow:0 2px 12px rgba(0,0,0,.08)}
+body{background:var(--bg);font-family:var(--ff);min-height:100vh}
+button{cursor:pointer;border:none;background:none;font-family:var(--ff)}
+input,select{font-family:var(--ff);padding:.6rem .85rem;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--card);width:100%}
+.btn{display:inline-flex;align-items:center;gap:.35rem;padding:.6rem 1.1rem;border-radius:var(--rs);font-weight:700}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-danger{background:#fee2e2;color:var(--red)}
+.btn-sm{padding:.32rem .65rem;font-size:.78rem}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;margin-bottom:.6rem}
+.page,.subpage{display:none;padding:1.2rem 1rem calc(var(--nav-h)+1.2rem);max-width:620px;margin:0 auto}
+.page.show,.subpage.show{display:block}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:rgba(255,255,255,.95);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;z-index:100}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:.2rem;color:var(--text3);font-size:.65rem;font-weight:700}
 .nav-btn.on{color:var(--accent)}
-.nav-btn svg{width:24px;height:24px;stroke-width:1.8}
-.nav-btn.on svg{stroke-width:2.5}
-.page-title{font-size:1.4rem;font-weight:900;color:var(--text);display:flex;align-items:center;gap:.5rem;margin-bottom:1.1rem}
-.back-row{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem}
-.back-btn{display:flex;align-items:center;gap:.3rem;color:var(--text2);font-size:.85rem;font-weight:700;padding:.2rem 0}
-.back-btn:hover{color:var(--accent)}
-.back-btn svg{width:18px;height:18px}
-.cat-group{margin-bottom:.2rem}
-.cat-title{font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;color:var(--text3);padding:.9rem .2rem .35rem;display:flex;align-items:center;gap:.5rem}
-.cat-title::after{content:'';flex:1;height:1.5px;background:var(--border)}
-.prod-row{display:flex;align-items:center;gap:.6rem;padding:.6rem .75rem;border-radius:var(--rs);transition:background .14s;cursor:default}
-.prod-row:hover{background:var(--card2)}
-.prod-nom{flex:1;font-size:.93rem;font-weight:600;color:var(--text)}
-.chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0;cursor:pointer}
-.chk.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,127,245,.15)}
-.chk svg{opacity:0;transition:opacity .15s;width:13px;height:13px}
+.nav-btn svg{width:22px;height:22px}
+.prod-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem}
+.prod-nom{flex:1;font-weight:600}
+.chk{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.chk.on{background:var(--accent);border-color:var(--accent)}
+.chk svg{opacity:0;width:13px;height:13px}
 .chk.on svg{opacity:1}
-.chk-label{flex:1;font-size:.93rem;font-weight:600}
-.chk-label.done{text-decoration:line-through;color:var(--text3);font-weight:400}
-.sel-bar{background:var(--accent);color:#fff;border-radius:var(--r);padding:.8rem 1rem;display:none;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:.8rem;box-shadow:0 4px 16px rgba(59,127,245,.3)}
+.sel-bar{background:var(--accent);color:#fff;border-radius:var(--r);padding:.8rem;display:none;justify-content:space-between;margin-bottom:.8rem}
 .sel-bar.show{display:flex}
-.sel-count{font-weight:800;font-size:.9rem}
-.article-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:.8rem .9rem;margin-bottom:.5rem}
+.cat-title{font-size:.7rem;font-weight:800;color:var(--text3);padding:.8rem .2rem .3rem;display:flex;gap:.5rem}
+.cat-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.article-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:.8rem;margin-bottom:.5rem}
 .article-card.done{opacity:.6}
-.article-card.done .chk-label{text-decoration:line-through;color:var(--text3);font-weight:400}
-.article-top{display:flex;align-items:center;gap:.65rem}
-.article-qty{display:flex;align-items:center;gap:.4rem;margin-top:.4rem;padding-left:2.1rem}
-.qty-btn{width:28px;height:28px;border-radius:6px;background:var(--card2);border:1.5px solid var(--border);color:var(--text);font-size:1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:700}
-.qty-btn:hover{background:var(--border)}
-.qty-val{min-width:32px;text-align:center;font-weight:700;font-size:.9rem}
-.qty-unite{background:var(--card2);border:1.5px solid var(--border);border-radius:6px;padding:.25rem .5rem;font-size:.78rem;color:var(--text2);width:auto;cursor:pointer}
-.liste-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.65rem;cursor:pointer;transition:all .18s}
-.liste-card:hover{border-color:var(--accent);transform:translateY(-1px)}
-.liste-card.terminee{border-color:var(--green);background:linear-gradient(135deg,#fff 0%,#f0fdf4 100%)}
-.liste-nom{font-size:1rem;font-weight:800;margin-bottom:.25rem}
-.liste-meta{font-size:.76rem;color:var(--text3);display:flex;gap:.6rem;flex-wrap:wrap}
-.badge{display:inline-flex;align-items:center;gap:.2rem;padding:.15rem .55rem;border-radius:20px;font-size:.7rem;font-weight:700}
-.badge-green{background:var(--green-light);color:var(--green)}
-.badge-blue{background:var(--accent-light);color:var(--accent)}
-.progress{height:4px;background:var(--card2);border-radius:2px;overflow:hidden;margin:.5rem 0 0}
-.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s ease}
-.overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);backdrop-filter:blur(4px);z-index:200;display:none;align-items:flex-end;justify-content:center;padding:.8rem}
-@media(min-width:480px){.overlay{align-items:center}}
+.article-top{display:flex;align-items:center;gap:.6rem}
+.article-qty{display:flex;align-items:center;gap:.4rem;margin-top:.4rem;padding-left:2rem}
+.qty-btn{width:28px;height:28px;border-radius:6px;background:#f0f3f8;border:1px solid var(--border);font-weight:700}
+.liste-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.6rem;cursor:pointer}
+.liste-nom{font-weight:800;margin-bottom:.2rem}
+.badge{display:inline-block;padding:.1rem .5rem;border-radius:20px;font-size:.65rem;font-weight:700;margin-left:.5rem}
+.badge-green{background:#dcfce7;color:var(--green)}
+.badge-blue{background:#eef3fe;color:var(--accent)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center}
 .overlay.show{display:flex}
-.modal{background:var(--card);border-radius:20px;padding:1.5rem;width:100%;max-width:400px;box-shadow:var(--shadow-lg)}
-.modal-title{font-size:1.05rem;font-weight:900;margin-bottom:.3rem}
-.modal-sub{font-size:.85rem;color:var(--text2);margin-bottom:1.1rem}
-.modal-actions{display:flex;gap:.6rem;justify-content:flex-end;margin-top:1.2rem}
-.toast{position:fixed;bottom:calc(var(--nav-h) + .8rem);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;border-radius:30px;padding:.55rem 1.3rem;font-size:.84rem;font-weight:700;z-index:400;white-space:nowrap;pointer-events:none;display:none}
-.empty{text-align:center;padding:3.5rem 1rem;color:var(--text2)}
-.empty-icon{font-size:3.5rem;margin-bottom:.8rem;opacity:.35}
-.avatar{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:900;color:#fff}
-.ddmenu{position:absolute;right:0;top:calc(100% + 4px);background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);min-width:170px;box-shadow:var(--shadow-lg);z-index:50;overflow:hidden;display:none}
-.ddmenu.show{display:block}
-.dditem{display:block;width:100%;text-align:left;padding:.65rem 1rem;font-size:.85rem;font-weight:600;color:var(--text);cursor:pointer}
-.dditem:hover{background:var(--card2)}
-.dditem.danger{color:var(--red)}
-.frow{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
-.frow>input,.frow>select{flex:1;min-width:0}
-.add-section{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:.9rem}
-.add-toggle{display:flex;align-items:center;justify-content:center;gap:.4rem;width:100%;padding:.8rem;font-weight:700;font-size:.88rem;color:var(--accent)}
-.add-toggle:hover{background:var(--accent-light)}
-.add-body{padding:0 1rem 1rem;display:none}
-.add-body.show{display:block}
-.add-sep{height:1.5px;background:var(--border);margin:.8rem 0}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal{background:var(--card);border-radius:20px;padding:1.5rem;width:90%;max-width:380px}
+.modal-title{font-weight:900;margin-bottom:.5rem}
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;border-radius:30px;padding:.5rem 1.2rem;font-size:.8rem;z-index:400;display:none}
 </style>
 </head>
 <body>
-<div id="auth-screen">
-  <div class="auth-card">
-    <div class="auth-logo">🛒</div>
-    <h1 class="auth-title">Mes Courses</h1>
-    <p class="auth-sub">Gérez vos courses en famille</p>
-    <div id="auth-err" class="auth-error"></div>
-    <div class="form-group"><label class="form-label">Email</label><input id="i-email" type="email" placeholder="email@exemple.com"/></div>
-    <div class="form-group"><label class="form-label">Mot de passe</label><input id="i-pwd" type="password" placeholder="••••••••"/></div>
-    <button class="btn btn-primary btn-full" id="auth-btn">Se connecter</button>
+
+<div id="auth-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem">
+  <div class="card" style="max-width:380px;width:100%;text-align:center">
+    <div style="font-size:3rem;margin-bottom:1rem">🛒</div>
+    <h1 style="font-size:1.8rem;margin-bottom:.3rem">Mes Courses</h1>
+    <p style="color:var(--text2);margin-bottom:1.5rem">Gérez vos courses en famille</p>
+    <div id="auth-err" style="background:#fee2e2;color:var(--red);border-radius:8px;padding:.6rem;margin-bottom:1rem;display:none"></div>
+    <input id="i-email" type="email" placeholder="Email" style="margin-bottom:.8rem">
+    <input id="i-pwd" type="password" placeholder="Mot de passe" style="margin-bottom:1rem">
+    <button class="btn btn-primary" id="auth-btn" style="width:100%">Se connecter</button>
   </div>
 </div>
-<div id="app-screen">
+
+<div id="app-screen" style="display:none">
+  <!-- Page Catalogue -->
   <div id="page-catalogue" class="page show">
-    <div class="page-title">📋 Catalogue</div>
-    <div class="card" style="margin-bottom:.9rem"><div class="frow"><input id="c-nom" placeholder="Nom du produit…" style="flex:2"/><select id="c-cat"></select><button class="btn btn-primary" id="add-produit-btn" style="flex:none">+ Ajouter</button></div></div>
-    <div class="sel-bar" id="sel-bar"><span class="sel-count" id="sel-count">0 sélectionné(s)</span><div style="display:flex;gap:.5rem"><button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:#fff" id="clear-sel-btn">Annuler</button><button class="btn btn-sm" style="background:#fff;color:var(--accent)" id="add-sel-liste-btn">➕ Ajouter à la liste</button></div></div>
-    <input id="c-search" placeholder="🔍 Rechercher un produit…" style="margin-bottom:.8rem"/>
+    <div class="page-title" style="font-size:1.4rem;font-weight:900;margin-bottom:1rem">📋 Catalogue</div>
+    <div class="card">
+      <div style="display:flex;gap:.5rem">
+        <input id="c-nom" placeholder="Nom du produit" style="flex:2">
+        <select id="c-cat" style="flex:1"></select>
+        <button class="btn btn-primary" id="add-produit-btn">+</button>
+      </div>
+    </div>
+    <div class="sel-bar" id="sel-bar">
+      <span id="sel-count">0 sélectionné(s)</span>
+      <div><button class="btn btn-sm" id="clear-sel-btn" style="background:#fff2;color:#fff">Annuler</button>
+      <button class="btn btn-sm" id="add-sel-liste-btn" style="background:#fff;color:var(--accent)">Ajouter</button></div>
+    </div>
+    <input id="c-search" placeholder="🔍 Rechercher" style="margin-bottom:.8rem">
     <div id="cat-list"></div>
   </div>
+
+  <!-- Page Listes -->
   <div id="page-listes" class="page">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem"><div class="page-title" style="margin-bottom:0">🛍️ Mes listes</div><button class="btn btn-outline btn-sm" id="toggle-dossier-btn">📁 Dossier</button></div>
-    <div id="dossier-form" class="card" style="display:none;margin-bottom:.8rem"><div class="frow"><input id="i-dossier" placeholder="Nom du dossier…"/><button class="btn btn-primary" id="add-dossier-btn">Créer</button><button class="btn btn-ghost" id="close-dossier-btn">✕</button></div><div id="dossiers-tags"></div></div>
-    <div class="card" style="margin-bottom:.9rem"><div class="frow"><input id="i-liste" placeholder="Nom de la liste…"/><select id="i-liste-dossier"></select><button class="btn btn-primary" id="add-liste-btn">+ Créer</button></div></div>
-    <div style="display:flex;gap:.5rem;margin-bottom:.9rem;flex-wrap:wrap"><select id="f-statut" style="width:auto;flex:none;font-size:.82rem"><option value="">Toutes</option><option value="en_cours">En cours</option><option value="terminee">Terminées</option></select><select id="f-dossier" style="width:auto;flex:none;font-size:.82rem"><option value="">Tous les dossiers</option></select></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+      <div class="page-title" style="font-size:1.4rem;font-weight:900">🛍️ Mes listes</div>
+      <button class="btn btn-sm" id="toggle-dossier-btn" style="border:1px solid var(--border)">📁 Dossier</button>
+    </div>
+    <div id="dossier-form" class="card" style="display:none">
+      <div style="display:flex;gap:.5rem">
+        <input id="i-dossier" placeholder="Nouveau dossier">
+        <button class="btn btn-primary btn-sm" id="add-dossier-btn">Créer</button>
+      </div>
+      <div id="dossiers-tags" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem"></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;gap:.5rem">
+        <input id="i-liste" placeholder="Nom de la liste">
+        <select id="i-liste-dossier" style="width:auto"></select>
+        <button class="btn btn-primary" id="add-liste-btn">+</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+      <select id="f-statut" style="width:auto"><option value="">Toutes</option><option value="en_cours">En cours</option><option value="terminee">Terminées</option></select>
+      <select id="f-dossier" style="width:auto"><option value="">Tous</option></select>
+    </div>
     <div id="listes-list"></div>
   </div>
-  <div id="page-profil" class="page">
-    <div class="page-title">👤 Mon profil</div>
-    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem"><div class="avatar" id="p-avatar">?</div><div><div id="p-nom" style="font-weight:800;font-size:1.05rem"></div><div id="p-email" style="color:var(--text2);font-size:.85rem"></div></div></div>
-    <div class="card" style="margin-bottom:.7rem"><div style="font-size:.75rem;font-weight:800;text-transform:uppercase;margin-bottom:.75rem">✏️ Modifier le prénom</div><div class="frow"><input id="p-new-nom" placeholder="Nouveau prénom"/><button class="btn btn-primary" id="update-nom-btn" style="flex:none">Sauvegarder</button></div></div>
-    <div class="card" style="margin-bottom:.7rem"><div style="font-size:.75rem;font-weight:800;text-transform:uppercase;margin-bottom:.75rem">🔒 Changer le mot de passe</div><div class="form-group"><label class="form-label">Mot de passe actuel</label><input id="p-pwd-cur" type="password"/></div><div class="form-group"><label class="form-label">Nouveau mot de passe</label><input id="p-pwd-new" type="password"/></div><button class="btn btn-primary btn-sm" id="update-pwd-btn">Modifier</button></div>
-    <div class="card" style="margin-bottom:.7rem"><div style="font-size:.75rem;font-weight:800;text-transform:uppercase;margin-bottom:.75rem">👨‍👩‍👧 Ajouter un membre</div><p style="font-size:.82rem;color:var(--text2);margin-bottom:.75rem">Créez un compte pour un membre de la famille.</p><div class="form-group"><label class="form-label">Prénom</label><input id="m-prenom"/></div><div class="form-group"><label class="form-label">Email</label><input id="m-email" type="email"/></div><div class="form-group"><label class="form-label">Mot de passe</label><input id="m-pwd" type="password"/></div><button class="btn btn-primary btn-sm" id="creer-membre-btn">➕ Créer le compte</button></div>
-    <button class="btn btn-danger btn-full" style="margin-top:.5rem" id="logout-btn">🚪 Se déconnecter</button>
+
+  <!-- Page Détail Liste -->
+  <div id="page-detail" class="subpage">
+    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+      <button id="close-detail-btn" style="color:var(--text2);font-weight:700">← Retour</button>
+    </div>
+    <div id="detail-header"></div>
+    <div class="card" id="add-section">
+      <button id="toggle-add-panel" style="width:100%;text-align:center;color:var(--accent);font-weight:700">+ Ajouter des produits</button>
+      <div id="add-body" style="display:none;margin-top:.8rem">
+        <input id="d-search" placeholder="Rechercher..." style="margin-bottom:.5rem">
+        <div id="d-cat-list" style="max-height:200px;overflow:auto"></div>
+        <div style="height:1px;background:var(--border);margin:.8rem 0"></div>
+        <div style="display:flex;gap:.5rem">
+          <input id="d-man-nom" placeholder="Nouveau produit">
+          <select id="d-man-cat" style="width:auto"></select>
+          <button class="btn btn-primary btn-sm" id="add-manuel-btn">+</button>
+        </div>
+      </div>
+    </div>
+    <div id="detail-articles"></div>
   </div>
-  <div id="page-detail" class="subpage"><div class="back-row"><button class="back-btn" id="close-detail-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Mes listes</button></div><div id="detail-header"></div><div class="add-section" id="add-section"><button class="add-toggle" id="toggle-add-panel"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>Ajouter des produits</button><div class="add-body" id="add-body"><div style="font-size:.75rem;font-weight:800;text-transform:uppercase;margin-bottom:.5rem">Depuis le catalogue</div><input id="d-search" placeholder="🔍 Rechercher…" style="margin-bottom:.6rem"/><div id="d-cat-list" style="max-height:220px;overflow-y:auto;margin-bottom:.5rem"></div><div class="add-sep"></div><div style="font-size:.75rem;font-weight:800;text-transform:uppercase;margin-bottom:.5rem">Ajouter manuellement</div><div class="frow"><input id="d-man-nom" placeholder="Nom du produit…"/><select id="d-man-cat"></select><button class="btn btn-primary" id="add-manuel-btn" style="flex:none">+ Ajouter</button></div></div></div><div id="detail-articles"></div></div>
-  <nav class="bottom-nav"><button class="nav-btn on" id="nav-catalogue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h4"/></svg>Catalogue</button><button class="nav-btn" id="nav-listes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>Mes listes</button><button class="nav-btn" id="nav-profil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</button></nav>
+
+  <!-- Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn on" id="nav-catalogue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M5 7h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7z"/></svg>Catalogue</button>
+    <button class="nav-btn" id="nav-listes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h6M8 16h4"/></svg>Mes listes</button>
+  </nav>
 </div>
-<div class="overlay" id="m-confirm"><div class="modal"><div class="modal-title" id="m-confirm-title"></div><div class="modal-sub" id="m-confirm-msg"></div><div class="modal-actions"><button class="btn btn-ghost" id="confirm-cancel-btn">Annuler</button><button class="btn btn-danger" id="m-confirm-ok">Supprimer</button></div></div></div>
-<div class="overlay" id="m-listes"><div class="modal"><div class="modal-title">Choisir une liste</div><div class="modal-sub">Dans quelle liste ajouter les produits sélectionnés ?</div><div id="m-listes-choix"></div><div class="modal-actions"><button class="btn btn-ghost" id="close-listes-modal">Annuler</button></div></div></div>
-<div class="overlay" id="m-deplacer"><div class="modal"><div class="modal-title">Déplacer vers un dossier</div><div id="m-deplacer-choix" style="margin-bottom:1rem"></div><div class="modal-actions"><button class="btn btn-ghost" id="close-deplacer-modal">Annuler</button></div></div></div>
-<div class="toast" id="toast"></div>
+
+<div id="confirm-modal" class="overlay"><div class="modal"><div class="modal-title" id="confirm-title"></div><p id="confirm-msg" style="margin-bottom:1rem"></p><div style="display:flex;gap:.5rem;justify-content:flex-end"><button class="btn" id="confirm-no">Annuler</button><button class="btn btn-danger" id="confirm-yes">Confirmer</button></div></div></div>
+<div id="listes-modal" class="overlay"><div class="modal"><div class="modal-title">Choisir une liste</div><div id="listes-choix" style="margin:1rem 0"></div><button class="btn" id="close-listes-modal">Fermer</button></div></div>
+<div class="toast" id="toast">Message</div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-const FB = { apiKey:"AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY", authDomain:"mes-courses-cf52d.firebaseapp.com", projectId:"mes-courses-cf52d", storageBucket:"mes-courses-cf52d.firebasestorage.app", messagingSenderId:"248641691402", appId:"1:248641691402:web:f36ad91dc0045d1edf24f3" };
+const FB = {
+  apiKey: "AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
+  authDomain: "mes-courses-cf52d.firebaseapp.com",
+  projectId: "mes-courses-cf52d",
+  storageBucket: "mes-courses-cf52d.firebasestorage.app",
+  messagingSenderId: "248641691402",
+  appId: "1:248641691402:web:f36ad91dc0045d1edf24f3"
+};
+
 const app = initializeApp(FB);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -210,532 +167,442 @@ let catalogue = [];
 let listes = [];
 let dossiers = [];
 let articles = [];
-let sel = new Set();
-let unsCat = null, unsListes = null, unsDoss = null, unsArt = null;
+let selectedIds = new Set();
+let unsubCat = null, unsubListes = null, unsubDoss = null, unsubArt = null;
 
-const CATS_DEFAULT = [
-  {id:'legumes',label:'🥦 Légumes'},{id:'fruits',label:'🍎 Fruits'},{id:'viande',label:'🥩 Viande'},
-  {id:'poisson',label:'🐟 Poisson'},{id:'laitage',label:'🥛 Laitage & Œufs'},{id:'epicerie',label:'🥫 Épicerie'},
-  {id:'boulangerie',label:'🥖 Boulangerie'},{id:'surgeles',label:'🧊 Surgelés'},{id:'boissons',label:'🥤 Boissons'},
-  {id:'hygiene',label:'🧴 Hygiène'},{id:'entretien',label:'🧹 Entretien'},{id:'autre',label:'📦 Autre'}
+const CATEGORIES = [
+  { id: 'legumes', label: '🥦 Légumes' }, { id: 'fruits', label: '🍎 Fruits' },
+  { id: 'viande', label: '🥩 Viande' }, { id: 'poisson', label: '🐟 Poisson' },
+  { id: 'laitage', label: '🥛 Laitage' }, { id: 'epicerie', label: '🥫 Épicerie' },
+  { id: 'boulangerie', label: '🥖 Boulangerie' }, { id: 'autre', label: '📦 Autre' }
 ];
-let CATS = [...CATS_DEFAULT];
-
-const uCol = (...p) => collection(db, 'users', UID, ...p);
-const uDoc = (...p) => doc(db, 'users', UID, ...p);
 
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2500);
+  setTimeout(() => t.style.display = 'none', 2000);
 }
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('show');
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+
+let confirmCallback = null;
+document.getElementById('confirm-yes').onclick = () => { if (confirmCallback) confirmCallback(); closeModal('confirm-modal'); };
+document.getElementById('confirm-no').onclick = () => { closeModal('confirm-modal'); };
+document.getElementById('close-listes-modal').onclick = () => closeModal('listes-modal');
+
+function confirmAction(title, msg, callback) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent = msg;
+  confirmCallback = callback;
+  openModal('confirm-modal');
 }
 
-function openModal(id) {
-  document.getElementById(id).classList.add('show');
-}
+// Navigation
+document.getElementById('nav-catalogue').onclick = () => { goPage('catalogue'); };
+document.getElementById('nav-listes').onclick = () => { goPage('listes'); };
+document.getElementById('close-detail-btn').onclick = () => closeDetail();
 
-// Fonctions exposées globalement
 window.goPage = function(page) {
-  document.querySelectorAll('.page,.subpage').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.page, .subpage').forEach(p => p.classList.remove('show'));
+  document.getElementById(`page-${page}`).classList.add('show');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
-  document.getElementById('page-' + page).classList.add('show');
-  document.getElementById('nav-' + page).classList.add('on');
+  document.getElementById(`nav-${page}`).classList.add('on');
 };
 
 window.openDetail = function(listeId) {
   activeListeId = listeId;
-  articles = [];
-  document.querySelectorAll('.page,.subpage').forEach(p => p.classList.remove('show'));
-  document.getElementById('page-detail').classList.add('show');
-  document.getElementById('add-body').classList.remove('show');
-  document.getElementById('d-search').value = '';
-  renderDetailHeader();
-  if (unsArt) unsArt();
-  unsArt = onSnapshot(uCol('listes', listeId, 'articles'), snap => {
+  if (unsubArt) unsubArt();
+  unsubArt = onSnapshot(collection(db, 'users', UID, 'listes', listeId, 'articles'), snap => {
     articles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    articles.sort((a, b) => a.categorie.localeCompare(b.categorie) || a.nom.localeCompare(b.nom));
-    renderDetailArticles();
-    renderDetailCat();
+    renderDetail();
   });
+  document.querySelectorAll('.page, .subpage').forEach(p => p.classList.remove('show'));
+  document.getElementById('page-detail').classList.add('show');
+  document.getElementById('add-body').style.display = 'none';
+  renderDetailHeader();
+  renderAvailableProducts();
 };
 
 window.closeDetail = function() {
-  if (unsArt) { unsArt(); unsArt = null; }
+  if (unsubArt) { unsubArt(); unsubArt = null; }
   activeListeId = null;
-  articles = [];
-  window.goPage('listes');
+  goPage('listes');
 };
 
-window.toggleSel = function(id) {
-  sel.has(id) ? sel.delete(id) : sel.add(id);
-  updateSelBar();
-  renderCat();
-};
-
-window.clearSel = function() {
-  sel.clear();
-  updateSelBar();
-  renderCat();
-};
-
-window.addSelToListe = function() {
-  const lEC = listes.filter(l => l.statut === 'en_cours');
-  if (!lEC.length) { toast('⚠️ Créez d\'abord une liste dans "Mes listes"'); return; }
-  if (lEC.length === 1) { doAddSelToListe(lEC[0].id, lEC[0].nom); return; }
-  document.getElementById('m-listes-choix').innerHTML = lEC.map(l => `<button class="btn btn-outline" style="justify-content:flex-start" onclick="doAddSelToListe('${l.id}','${l.nom.replace(/'/g,"\\'")}')">🛒 ${l.nom}</button>`).join('');
-  openModal('m-listes');
-};
-
-window.doAddSelToListe = async function(listeId, listNom) {
-  closeModal('m-listes');
-  const produits = catalogue.filter(p => sel.has(p.id));
-  if (!produits.length) return;
-  const snap = await getDocs(uCol('listes', listeId, 'articles'));
-  const existants = snap.docs.map(d => d.data().nom.toLowerCase());
-  let nb = 0;
-  for (const p of produits) {
-    if (!existants.includes(p.nom.toLowerCase())) {
-      await addDoc(uCol('listes', listeId, 'articles'), { nom: p.nom, categorie: p.categorie, quantite: 1, unite: '', coche: false, createdAt: serverTimestamp() });
-      nb++;
-    }
-  }
-  sel.clear();
-  updateSelBar();
-  renderCat();
-  toast(`✅ ${nb} produit(s) ajouté(s) à "${listNom}"`);
-};
-
-window.addRapide = async function(e, produitId, nom, cat) {
-  e.stopPropagation();
-  const lEC = listes.filter(l => l.statut === 'en_cours');
-  if (!lEC.length) { toast('⚠️ Créez d\'abord une liste'); return; }
-  const snap = await getDocs(uCol('listes', lEC[0].id, 'articles'));
-  if (snap.docs.some(d => d.data().nom.toLowerCase() === nom.toLowerCase())) { toast('⚠️ Déjà dans la liste'); return; }
-  await addDoc(uCol('listes', lEC[0].id, 'articles'), { nom, categorie: cat, quantite: 1, unite: '', coche: false, createdAt: serverTimestamp() });
-  toast(`✅ "${nom}" ajouté à "${lEC[0].nom}"`);
-};
-
-window.delProduit = function(id, nom) {
-  confirmAction(`Supprimer "${nom}" ?`, 'Ce produit sera supprimé du catalogue.', async () => {
-    await deleteDoc(uDoc('catalogue', id));
-    sel.delete(id);
-    updateSelBar();
-    toast('🗑️ Produit supprimé');
-  });
-};
-
+// Gestion catalogue
 window.addProduit = async function() {
   const nom = document.getElementById('c-nom').value.trim();
   const cat = document.getElementById('c-cat').value;
-  if (!nom) { toast('⚠️ Entrez un nom'); return; }
-  if (catalogue.some(p => p.nom.toLowerCase() === nom.toLowerCase())) { toast('⚠️ Ce produit existe déjà'); return; }
-  await addDoc(uCol('catalogue'), { nom, categorie: cat, createdAt: serverTimestamp() });
+  if (!nom) return;
+  if (catalogue.some(p => p.nom === nom)) { toast('Déjà existant'); return; }
+  await addDoc(collection(db, 'users', UID, 'catalogue'), { nom, categorie: cat, createdAt: serverTimestamp() });
   document.getElementById('c-nom').value = '';
-  toast(`✅ "${nom}" ajouté`);
+  toast('Produit ajouté');
 };
 
+window.delProduit = function(id, nom) {
+  confirmAction('Supprimer', `Supprimer "${nom}" ?`, async () => {
+    await deleteDoc(doc(db, 'users', UID, 'catalogue', id));
+    selectedIds.delete(id);
+    updateSelBar();
+    toast('Produit supprimé');
+  });
+};
+
+window.toggleSel = function(id) {
+  selectedIds.has(id) ? selectedIds.delete(id) : selectedIds.add(id);
+  updateSelBar();
+  renderCatalogue();
+};
+
+window.clearSel = function() { selectedIds.clear(); updateSelBar(); renderCatalogue(); };
+function updateSelBar() { 
+  const bar = document.getElementById('sel-bar');
+  bar.classList.toggle('show', selectedIds.size > 0);
+  document.getElementById('sel-count').textContent = `${selectedIds.size} sélectionné(s)`;
+}
+
+window.addSelectedToList = async function() {
+  const activeLists = listes.filter(l => l.statut === 'en_cours');
+  if (!activeLists.length) { toast('Créez d\'abord une liste'); return; }
+  if (activeLists.length === 1) return addToSpecificList(activeLists[0].id, activeLists[0].nom);
+  const container = document.getElementById('listes-choix');
+  container.innerHTML = activeLists.map(l => `<button class="btn" style="width:100%;margin-bottom:.5rem;border:1px solid var(--border)" onclick="addToSpecificList('${l.id}','${l.nom.replace(/'/g,"\\'")}')">${l.nom}</button>`).join('');
+  openModal('listes-modal');
+};
+
+window.addToSpecificList = async function(listeId, listNom) {
+  closeModal('listes-modal');
+  const produits = catalogue.filter(p => selectedIds.has(p.id));
+  const snap = await getDocs(collection(db, 'users', UID, 'listes', listeId, 'articles'));
+  const existing = new Set(snap.docs.map(d => d.data().nom));
+  let added = 0;
+  for (const p of produits) {
+    if (!existing.has(p.nom)) {
+      await addDoc(collection(db, 'users', UID, 'listes', listeId, 'articles'), {
+        nom: p.nom, categorie: p.categorie, quantite: 1, unite: '', coche: false
+      });
+      added++;
+    }
+  }
+  selectedIds.clear();
+  updateSelBar();
+  renderCatalogue();
+  toast(`${added} produit(s) ajouté(s) à "${listNom}"`);
+};
+
+window.addFast = async function(e, produitId, nom, cat) {
+  e.stopPropagation();
+  const activeLists = listes.filter(l => l.statut === 'en_cours');
+  if (!activeLists.length) { toast('Créez une liste d\'abord'); return; }
+  const liste = activeLists[0];
+  const snap = await getDocs(collection(db, 'users', UID, 'listes', liste.id, 'articles'));
+  if (snap.docs.some(d => d.data().nom === nom)) { toast('Déjà dans la liste'); return; }
+  await addDoc(collection(db, 'users', UID, 'listes', liste.id, 'articles'), {
+    nom, categorie: cat, quantite: 1, unite: '', coche: false
+  });
+  toast(`"${nom}" ajouté à "${liste.nom}"`);
+};
+
+function renderCatalogue() {
+  const search = document.getElementById('c-search')?.value.toLowerCase() || '';
+  const filtered = catalogue.filter(p => p.nom.toLowerCase().includes(search));
+  let html = '';
+  for (const cat of CATEGORIES) {
+    const items = filtered.filter(p => p.categorie === cat.id);
+    if (!items.length) continue;
+    html += `<div class="cat-title">${cat.label}</div>`;
+    for (const p of items) {
+      const isSel = selectedIds.has(p.id);
+      html += `<div class="prod-row">
+        <div class="chk ${isSel ? 'on' : ''}" onclick="toggleSel('${p.id}')"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div>
+        <span class="prod-nom">${p.nom}</span>
+        <button class="btn btn-sm" style="color:var(--accent)" onclick="addFast(event,'${p.id}','${p.nom.replace(/'/g,"\\'")}','${p.categorie}')">+ Liste</button>
+        <button class="btn btn-danger btn-sm" onclick="delProduit('${p.id}','${p.nom.replace(/'/g,"\\'")}')">🗑</button>
+      </div>`;
+    }
+  }
+  document.getElementById('cat-list').innerHTML = html || '<div class="empty" style="text-align:center;padding:2rem">Aucun produit</div>';
+}
+
+// Gestion listes
 window.addListe = async function() {
   const nom = document.getElementById('i-liste').value.trim();
   const dossier = document.getElementById('i-liste-dossier').value;
-  if (!nom) { toast('⚠️ Entrez un nom'); return; }
-  const ref = await addDoc(uCol('listes'), { nom, dossier, statut: 'en_cours', createdAt: serverTimestamp() });
+  if (!nom) return;
+  const ref = await addDoc(collection(db, 'users', UID, 'listes'), { nom, dossier, statut: 'en_cours', createdAt: serverTimestamp() });
   document.getElementById('i-liste').value = '';
-  toast(`✅ Liste "${nom}" créée`);
-  window.openDetail(ref.id);
+  openDetail(ref.id);
 };
 
-window.validerListe = async function(id, statut) {
-  const nouveau = statut === 'terminee' ? 'en_cours' : 'terminee';
-  await updateDoc(uDoc('listes', id), { statut: nouveau });
-  toast(nouveau === 'terminee' ? '✅ Courses terminées !' : '🔄 Liste réouverte');
+window.toggleListeStatus = async function(id, current) {
+  const newStatus = current === 'terminee' ? 'en_cours' : 'terminee';
+  await updateDoc(doc(db, 'users', UID, 'listes', id), { statut: newStatus });
+  toast(newStatus === 'terminee' ? 'Liste terminée !' : 'Liste réouverte');
   if (activeListeId === id) renderDetailHeader();
 };
 
-window.renommerListe = async function(id, ancien) {
-  const nouveau = prompt('Nouveau nom :', ancien);
-  if (!nouveau || !nouveau.trim()) return;
-  await updateDoc(uDoc('listes', id), { nom: nouveau.trim() });
-  toast('✏️ Liste renommée');
+window.renommerListe = async function(id, oldName) {
+  const newName = prompt('Nouveau nom :', oldName);
+  if (!newName?.trim()) return;
+  await updateDoc(doc(db, 'users', UID, 'listes', id), { nom: newName.trim() });
 };
 
-window.dupliquerListe = async function(id) {
-  const liste = listes.find(l => l.id === id);
-  if (!liste) return;
-  const newRef = await addDoc(uCol('listes'), { nom: liste.nom + ' (copie)', dossier: liste.dossier || '', statut: 'en_cours', createdAt: serverTimestamp() });
-  const snap = await getDocs(uCol('listes', id, 'articles'));
-  for (const d of snap.docs) {
-    const a = d.data();
-    await addDoc(uCol('listes', newRef.id, 'articles'), { nom: a.nom, categorie: a.categorie, quantite: a.quantite || 1, unite: a.unite || '', coche: false, createdAt: serverTimestamp() });
-  }
-  toast('✅ Liste dupliquée');
-};
-
-window.deplacerListe = function(id) {
-  const choix = document.getElementById('m-deplacer-choix');
-  choix.innerHTML = [`<button class="btn btn-outline" style="justify-content:flex-start" onclick="doDeplacer('${id}','')">📋 Sans dossier</button>`, ...dossiers.map(d => `<button class="btn btn-outline" style="justify-content:flex-start" onclick="doDeplacer('${id}','${d.nom.replace(/'/g,"\\'")}')">📁 ${d.nom}</button>`)].join('');
-  openModal('m-deplacer');
-};
-
-window.doDeplacer = async function(id, dossier) {
-  closeModal('m-deplacer');
-  await updateDoc(uDoc('listes', id), { dossier });
-  toast('📁 Liste déplacée');
-};
-
-window.supprimerListe = function(id, nom) {
-  confirmAction(`Supprimer "${nom}" ?`, 'Cette liste et tous ses articles seront supprimés.', async () => {
-    const snap = await getDocs(uCol('listes', id, 'articles'));
+window.supprimerListe = async function(id, nom) {
+  confirmAction('Supprimer', `Supprimer "${nom}" ?`, async () => {
+    const articlesRef = collection(db, 'users', UID, 'listes', id, 'articles');
+    const snap = await getDocs(articlesRef);
     const batch = writeBatch(db);
-    snap.docs.forEach(d => batch.delete(d.ref));
-    batch.delete(uDoc('listes', id));
+    for (const d of snap.docs) batch.delete(d.ref);
+    batch.delete(doc(db, 'users', UID, 'listes', id));
     await batch.commit();
-    toast('🗑️ Liste supprimée');
-    if (activeListeId === id) window.closeDetail();
+    if (activeListeId === id) closeDetail();
+    toast('Liste supprimée');
   });
 };
 
-window.addDossier = async function() {
-  const nom = document.getElementById('i-dossier').value.trim();
-  if (!nom) { toast('⚠️ Entrez un nom'); return; }
-  if (dossiers.some(d => d.nom.toLowerCase() === nom.toLowerCase())) { toast('⚠️ Ce dossier existe déjà'); return; }
-  await addDoc(uCol('dossiers'), { nom, createdAt: serverTimestamp() });
-  document.getElementById('i-dossier').value = '';
-  toast(`📁 Dossier "${nom}" créé`);
-};
+function renderListes() {
+  const fStatut = document.getElementById('f-statut').value;
+  const fDossier = document.getElementById('f-dossier').value;
+  let filtered = listes;
+  if (fStatut) filtered = filtered.filter(l => l.statut === fStatut);
+  if (fDossier) filtered = filtered.filter(l => l.dossier === fDossier);
+  let html = '';
+  for (const l of filtered) {
+    const badge = l.statut === 'terminee' ? '<span class="badge badge-green">✓ Terminée</span>' : '<span class="badge badge-blue">En cours</span>';
+    html += `<div class="liste-card" onclick="openDetail('${l.id}')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><div class="liste-nom">${l.nom} ${badge}</div><div style="font-size:.7rem;color:var(--text2)">${l.dossier ? '📁 ' + l.dossier : ''}</div></div>
+        <div><button class="btn btn-sm" style="border:1px solid var(--border)" onclick="event.stopPropagation();renommerListe('${l.id}','${l.nom.replace(/'/g,"\\'")}')">✏️</button>
+        <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();supprimerListe('${l.id}','${l.nom.replace(/'/g,"\\'")}')">🗑</button></div>
+      </div>
+    </div>`;
+  }
+  document.getElementById('listes-list').innerHTML = html || '<div style="text-align:center;padding:2rem">Aucune liste</div>';
+}
 
-window.delDossier = function(id, nom) {
-  confirmAction(`Supprimer le dossier "${nom}" ?`, 'Les listes resteront sans dossier.', async () => {
-    await deleteDoc(uDoc('dossiers', id));
-    toast('🗑️ Dossier supprimé');
-  });
-};
-
+// Dossiers
 window.toggleDossierForm = function() {
   const f = document.getElementById('dossier-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
 };
-
-window.addFromCat = async function(id, nom, cat) {
-  if (articles.find(a => a.nom.toLowerCase() === nom.toLowerCase())) { toast('⚠️ Déjà dans la liste'); return; }
-  await addDoc(uCol('listes', activeListeId, 'articles'), { nom, categorie: cat, quantite: 1, unite: '', coche: false, createdAt: serverTimestamp() });
-  toast(`✅ "${nom}" ajouté`);
+window.addDossier = async function() {
+  const nom = document.getElementById('i-dossier').value.trim();
+  if (!nom) return;
+  if (dossiers.some(d => d.nom === nom)) { toast('Déjà existe'); return; }
+  await addDoc(collection(db, 'users', UID, 'dossiers'), { nom, createdAt: serverTimestamp() });
+  document.getElementById('i-dossier').value = '';
+  toast(`Dossier "${nom}" créé`);
 };
-
-window.addManuel = async function() {
-  const nom = document.getElementById('d-man-nom').value.trim();
-  const cat = document.getElementById('d-man-cat').value;
-  if (!nom) { toast('⚠️ Entrez un nom'); return; }
-  await addDoc(uCol('listes', activeListeId, 'articles'), { nom, categorie: cat, quantite: 1, unite: '', coche: false, createdAt: serverTimestamp() });
-  document.getElementById('d-man-nom').value = '';
-  toast(`✅ "${nom}" ajouté`);
+window.delDossier = async function(id, nom) {
+  confirmAction('Supprimer', `Supprimer "${nom}" ?`, async () => { await deleteDoc(doc(db, 'users', UID, 'dossiers', id)); });
 };
-
-window.cocherArticle = async function(id, val) {
-  await updateDoc(uDoc('listes', activeListeId, 'articles', id), { coche: val });
-};
-
-window.changeQty = async function(id, delta) {
-  const art = articles.find(a => a.id === id);
-  if (!art) return;
-  await updateDoc(uDoc('listes', activeListeId, 'articles', id), { quantite: Math.max(0.5, (art.quantite || 1) + delta) });
-};
-
-window.changeUnite = async function(id, val) {
-  await updateDoc(uDoc('listes', activeListeId, 'articles', id), { unite: val });
-};
-
-window.delArticle = function(id, nom) {
-  confirmAction(`Retirer "${nom}" ?`, 'Cet article sera retiré de cette liste.', async () => {
-    await deleteDoc(uDoc('listes', activeListeId, 'articles', id));
-    toast('🗑️ Article retiré');
-  });
-};
-
-window.toggleAddPanel = function() {
-  document.getElementById('add-body').classList.toggle('show');
-  renderDetailCat();
-};
-
-window.printListe = function() {
-  const liste = listes.find(l => l.id === activeListeId);
-  if (!liste || !articles.length) { toast('⚠️ Liste vide'); return; }
-  let body = '';
-  CATS.forEach(cat => {
-    const items = articles.filter(a => a.categorie === cat.id);
-    if (!items.length) return;
-    body += `<div class="cat">${cat.label}</div>`;
-    items.forEach(a => { body += `<div class="item"><div class="box"></div><span class="nom">${a.nom}</span><span class="qty">${a.quantite || 1}${a.unite ? ' ' + a.unite : ''}</span></div>`; });
-  });
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${liste.nom}</title><style>body{font-family:sans-serif;padding:2cm}.cat{font-size:10px;font-weight:800;margin:16px 0 6px}.item{display:flex;gap:10px;padding:7px 0}.box{width:16px;height:16px;border:2px solid #999}.nom{flex:1}</style></head><body><h1>🛒 ${liste.nom}</h1>${body}</body></html>`);
-  win.document.close();
-  win.print();
-};
-
-window.updateNom = async function() {
-  const nom = document.getElementById('p-new-nom').value.trim();
-  if (!nom) { toast('⚠️ Entrez un prénom'); return; }
-  await updateProfile(auth.currentUser, { displayName: nom });
-  updateProfilUI();
-  toast('✅ Prénom mis à jour');
-};
-
-window.updatePwd = async function() {
-  const cur = document.getElementById('p-pwd-cur').value;
-  const nw = document.getElementById('p-pwd-new').value;
-  if (!cur || !nw) { toast('⚠️ Remplissez les deux champs'); return; }
-  if (nw.length < 6) { toast('⚠️ 6 caractères minimum'); return; }
-  const cred = EmailAuthProvider.credential(auth.currentUser.email, cur);
-  await reauthenticateWithCredential(auth.currentUser, cred);
-  await updatePassword(auth.currentUser, nw);
-  document.getElementById('p-pwd-cur').value = '';
-  document.getElementById('p-pwd-new').value = '';
-  toast('✅ Mot de passe modifié');
-};
-
-window.creerMembre = async function() {
-  const prenom = document.getElementById('m-prenom').value.trim();
-  const email = document.getElementById('m-email').value.trim();
-  const pwd = document.getElementById('m-pwd').value;
-  if (!prenom || !email || !pwd) { toast('⚠️ Remplissez tous les champs'); return; }
-  if (pwd.length < 6) { toast('⚠️ Mot de passe trop court'); return; }
-  const userCred = await createUserWithEmailAndPassword(auth, email, pwd);
-  await updateProfile(userCred.user, { displayName: prenom });
-  toast(`✅ Compte créé pour ${prenom} !`);
-  document.getElementById('m-prenom').value = '';
-  document.getElementById('m-email').value = '';
-  document.getElementById('m-pwd').value = '';
-  await signOut(auth);
-};
-
-window.doLogout = async function() {
-  await signOut(auth);
-  toast('👋 À bientôt !');
-};
-
-// Fonctions internes
-function confirmAction(title, msg, onOk) {
-  document.getElementById('m-confirm-title').textContent = title;
-  document.getElementById('m-confirm-msg').textContent = msg;
-  const btn = document.getElementById('m-confirm-ok');
-  const newBtn = btn.cloneNode(true);
-  btn.parentNode.replaceChild(newBtn, btn);
-  newBtn.onclick = () => { closeModal('m-confirm'); onOk(); };
-  openModal('m-confirm');
+function updateDossierSelects() {
+  const opts = '<option value="">Sans dossier</option>' + dossiers.map(d => `<option value="${d.nom}">${d.nom}</option>`).join('');
+  document.getElementById('i-liste-dossier').innerHTML = opts;
+  document.getElementById('f-dossier').innerHTML = '<option value="">Tous</option>' + dossiers.map(d => `<option value="${d.nom}">📁 ${d.nom}</option>`).join('');
+  const tagsDiv = document.getElementById('dossiers-tags');
+  tagsDiv.innerHTML = dossiers.map(d => `<div style="display:flex;align-items:center;gap:.3rem;background:#f0f3f8;border-radius:20px;padding:.2rem .6rem"><span>📁 ${d.nom}</span><button onclick="delDossier('${d.id}','${d.nom.replace(/'/g,"\\'")}')" style="color:var(--red)">✕</button></div>`).join('');
 }
 
-function updateSelBar() {
-  const bar = document.getElementById('sel-bar');
-  bar.classList.toggle('show', sel.size > 0);
-  document.getElementById('sel-count').textContent = sel.size + ' sélectionné(s)';
-}
-
-function updateAllCategorySelects() {
-  const opts = CATS.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
-  const cCat = document.getElementById('c-cat');
-  const dManCat = document.getElementById('d-man-cat');
-  if (cCat) cCat.innerHTML = opts;
-  if (dManCat) dManCat.innerHTML = opts;
-}
-
-function renderCat() {
-  const search = document.getElementById('c-search')?.value.toLowerCase() || '';
-  const filtered = catalogue.filter(p => p.nom.toLowerCase().includes(search));
-  if (!filtered.length) {
-    document.getElementById('cat-list').innerHTML = '<div class="empty"><div class="empty-icon">🛒</div><p>Aucun produit</p></div>';
-    return;
-  }
-  const groups = {};
-  CATS.forEach(c => groups[c.id] = []);
-  filtered.forEach(p => { if (groups[p.categorie]) groups[p.categorie].push(p); else groups['autre'].push(p); });
-  const lEC = listes.filter(l => l.statut === 'en_cours');
-  let html = '';
-  CATS.forEach(cat => {
-    const items = groups[cat.id] || [];
-    if (!items.length) return;
-    html += `<div class="cat-group"><div class="cat-title"><span>${cat.label}</span></div>`;
-    items.forEach(p => {
-      const isSel = sel.has(p.id);
-      const ne = p.nom.replace(/'/g, "\\'");
-      html += `<div class="prod-row"><div class="chk ${isSel ? 'on' : ''}" onclick="toggleSel('${p.id}')"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div><span class="prod-nom">${p.nom}</span>${lEC.length ? `<button class="btn btn-primary btn-sm" onclick="addRapide(event,'${p.id}','${ne}','${p.categorie}')">+ Liste</button>` : ''}<button class="btn btn-danger btn-sm" onclick="delProduit('${p.id}','${ne}')">🗑️</button></div>`;
-    });
-    html += '</div>';
-  });
-  document.getElementById('cat-list').innerHTML = html;
-}
-
-function renderListes() {
-  const fStatut = document.getElementById('f-statut')?.value || '';
-  const fDossier = document.getElementById('f-dossier')?.value;
-  let filtered = listes.slice();
-  if (fStatut) filtered = filtered.filter(l => l.statut === fStatut);
-  if (fDossier && fDossier !== '') filtered = filtered.filter(l => l.dossier === fDossier);
-  const el = document.getElementById('listes-list');
-  if (!filtered.length) { el.innerHTML = '<div class="empty"><div class="empty-icon">🛍️</div><p>Créez votre première liste</p></div>'; return; }
-  let html = '';
-  filtered.forEach(l => {
-    const badge = l.statut === 'terminee' ? '<span class="badge badge-green">✓ Terminée</span>' : '<span class="badge badge-blue">En cours</span>';
-    const ne = l.nom.replace(/'/g, "\\'");
-    html += `<div class="liste-card ${l.statut === 'terminee' ? 'terminee' : ''}" onclick="openDetail('${l.id}')"><div style="display:flex;justify-content:space-between"><div><div class="liste-nom">${l.nom} ${badge}</div><div class="liste-meta">${l.dossier ? '📁 ' + l.dossier : ''}</div></div><div class="ddwrap" style="position:relative" onclick="event.stopPropagation()"><button class="btn btn-ghost btn-sm" onclick="this.nextElementSibling.classList.toggle('show')" style="font-size:1.2rem">⋮</button><div class="ddmenu"><button class="dditem" onclick="renommerListe('${l.id}','${ne}')">✏️ Renommer</button><button class="dditem" onclick="dupliquerListe('${l.id}')">📋 Dupliquer</button><button class="dditem" onclick="deplacerListe('${l.id}')">📁 Déplacer</button><button class="dditem" onclick="validerListe('${l.id}','${l.statut}')">${l.statut === 'terminee' ? '🔄 Réouvrir' : '✅ Terminer'}</button><button class="dditem danger" onclick="supprimerListe('${l.id}','${ne}')">🗑️ Supprimer</button></div></div></div></div>`;
-  });
-  el.innerHTML = html;
-}
-
-function renderDossierSelects() {
-  const opts = '<option value="">Sans dossier</option>' + dossiers.map(d => `<option value="${d.nom.replace(/"/g, '&quot;')}">${d.nom}</option>`).join('');
-  const s1 = document.getElementById('i-liste-dossier');
-  const s2 = document.getElementById('f-dossier');
-  if (s1) s1.innerHTML = opts;
-  if (s2) s2.innerHTML = '<option value="">Tous les dossiers</option>' + dossiers.map(d => `<option value="${d.nom}">📁 ${d.nom}</option>`).join('');
-}
-
-function renderDossierTags() {
-  const el = document.getElementById('dossiers-tags');
-  if (!el) return;
-  el.innerHTML = dossiers.map(d => `<div style="display:flex;align-items:center;gap:.25rem;background:var(--card2);border-radius:20px;padding:.2rem .7rem"><span>📁 ${d.nom}</span><button onclick="delDossier('${d.id}','${d.nom.replace(/'/g,"\\'")}')" style="color:var(--red);background:none;border:none;">✕</button></div>`).join('');
-}
-
+// Détail liste
 function renderDetailHeader() {
   const liste = listes.find(l => l.id === activeListeId);
   if (!liste) return;
   const total = articles.length;
-  const coches = articles.filter(a => a.coche).length;
-  const pct = total ? Math.round(coches / total * 100) : 0;
-  const termine = liste.statut === 'terminee';
-  document.getElementById('add-section').style.display = termine ? 'none' : 'block';
-  document.getElementById('detail-header').innerHTML = `<div style="display:flex;justify-content:space-between"><div><h2 style="font-size:1.3rem;font-weight:900">${liste.nom}</h2></div><div><button class="btn btn-outline btn-sm" onclick="printListe()">🖨️</button><button class="btn btn-sm ${termine ? 'btn-ghost' : 'btn-success'}" onclick="validerListe('${liste.id}','${liste.statut}')">${termine ? '🔄 Réouvrir' : '✅ Terminer'}</button></div></div>${total ? `<div>${coches}/${total} (${pct}%)</div><div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>` : ''}`;
+  const checked = articles.filter(a => a.coche).length;
+  const pct = total ? Math.round(checked/total*100) : 0;
+  document.getElementById('detail-header').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem">
+      <h2 style="font-size:1.3rem">${liste.nom}</h2>
+      <button class="btn ${liste.statut === 'terminee' ? 'btn-primary' : 'btn-success'}" style="padding:.3rem .8rem" onclick="toggleListeStatus('${liste.id}','${liste.statut}')">${liste.statut === 'terminee' ? 'Réouvrir' : 'Terminer'}</button>
+    </div>
+    ${total ? `<div>${checked}/${total} (${pct}%)</div><div style="height:4px;background:#e2e8f2;border-radius:2px;margin:.5rem 0"><div style="width:${pct}%;height:100%;background:var(--green);border-radius:2px"></div></div>` : ''}
+  `;
 }
 
-function renderDetailCat() {
+window.toggleAddPanel = function() {
+  const body = document.getElementById('add-body');
+  body.style.display = body.style.display === 'none' ? 'block' : 'none';
+  if (body.style.display === 'block') renderAvailableProducts();
+};
+
+window.renderAvailableProducts = function() {
   const search = document.getElementById('d-search')?.value.toLowerCase() || '';
-  const dispo = catalogue.filter(p => !articles.find(a => a.nom.toLowerCase() === p.nom.toLowerCase()) && p.nom.toLowerCase().includes(search));
+  const existingNames = new Set(articles.map(a => a.nom));
+  const available = catalogue.filter(p => !existingNames.has(p.nom) && p.nom.toLowerCase().includes(search));
   let html = '';
-  CATS.forEach(cat => {
-    const items = dispo.filter(p => p.categorie === cat.id);
-    if (!items.length) return;
-    html += `<div class="cat-title"><span>${cat.label}</span></div>`;
-    items.forEach(p => {
-      html += `<div class="prod-row" style="cursor:pointer" onclick="addFromCat('${p.id}','${p.nom.replace(/'/g,"\\'")}','${p.categorie}')"><span style="color:var(--accent);font-weight:800">+</span><span>${p.nom}</span></div>`;
-    });
-  });
-  document.getElementById('d-cat-list').innerHTML = html || '<p style="padding:.3rem 0">Aucun produit disponible</p>';
-}
+  for (const cat of CATEGORIES) {
+    const items = available.filter(p => p.categorie === cat.id);
+    if (!items.length) continue;
+    html += `<div class="cat-title">${cat.label}</div>`;
+    for (const p of items) {
+      html += `<div class="prod-row" style="cursor:pointer" onclick="addToCurrentList('${p.id}','${p.nom.replace(/'/g,"\\'")}','${p.categorie}')"><span style="color:var(--accent);font-weight:800">+</span><span>${p.nom}</span></div>`;
+    }
+  }
+  document.getElementById('d-cat-list').innerHTML = html || '<p style="padding:.5rem;color:var(--text2)">Aucun produit disponible</p>';
+};
 
-function renderDetailArticles() {
+window.addToCurrentList = async function(id, nom, cat) {
+  await addDoc(collection(db, 'users', UID, 'listes', activeListeId, 'articles'), {
+    nom, categorie: cat, quantite: 1, unite: '', coche: false
+  });
+  toast(`"${nom}" ajouté`);
+};
+
+window.addManualProduct = async function() {
+  const nom = document.getElementById('d-man-nom').value.trim();
+  const cat = document.getElementById('d-man-cat').value;
+  if (!nom) return;
+  await addDoc(collection(db, 'users', UID, 'listes', activeListeId, 'articles'), {
+    nom, categorie: cat, quantite: 1, unite: '', coche: false
+  });
+  document.getElementById('d-man-nom').value = '';
+  toast(`"${nom}" ajouté`);
+};
+
+window.toggleCheck = async function(id, current) {
+  await updateDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id), { coche: !current });
+};
+
+window.changeQuantity = async function(id, delta) {
+  const art = articles.find(a => a.id === id);
+  if (!art) return;
+  await updateDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id), { quantite: Math.max(0.5, (art.quantite || 1) + delta) });
+};
+
+window.changeUnit = async function(id, unit) {
+  await updateDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id), { unite: unit });
+};
+
+window.deleteArticle = function(id, nom) {
+  confirmAction('Retirer', `Retirer "${nom}" de la liste ?`, async () => {
+    await deleteDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id));
+  });
+};
+
+function renderDetail() {
   renderDetailHeader();
   const liste = listes.find(l => l.id === activeListeId);
-  const termine = liste?.statut === 'terminee';
-  if (!articles.length) { document.getElementById('detail-articles').innerHTML = '<div class="empty"><div class="empty-icon">🛍️</div><p>Liste vide</p></div>'; return; }
+  const isTerminee = liste?.statut === 'terminee';
   let html = '';
-  CATS.forEach(cat => {
+  for (const cat of CATEGORIES) {
     const items = articles.filter(a => a.categorie === cat.id);
-    if (!items.length) return;
-    html += `<div class="cat-title"><span>${cat.label}</span></div>`;
-    items.forEach(a => {
-      const uniteOpts = ['', 'kg', 'g', 'L', 'cl', 'pièce(s)', 'boîte(s)', 'sachet(s)', 'bouteille(s)', 'paquet(s)'].map(u => `<option value="${u}" ${(a.unite || '') === u ? 'selected' : ''}>${u || '—'}</option>`).join('');
-      html += `<div class="article-card ${a.coche ? 'done' : ''}"><div class="article-top"><div class="chk ${a.coche ? 'on' : ''}" onclick="${termine ? '' : 'cocherArticle(\'' + a.id + '\',' + (a.coche ? 'false' : 'true') + ')'}"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div><span class="chk-label ${a.coche ? 'done' : ''}">${a.nom}</span>${!termine ? `<button class="btn btn-danger btn-sm" onclick="delArticle('${a.id}','${a.nom.replace(/'/g,"\\'")}')">🗑️</button>` : ''}</div>${!termine ? `<div class="article-qty"><button class="qty-btn" onclick="changeQty('${a.id}',-1)">−</button><span class="qty-val">${a.quantite || 1}</span><button class="qty-btn" onclick="changeQty('${a.id}',1)">+</button><select class="qty-unite" onchange="changeUnite('${a.id}',this.value)">${uniteOpts}</select></div>` : `<div style="font-size:.78rem;padding-left:2rem">${a.quantite || 1} ${a.unite || ''}</div>`}</div>`;
-    });
-  });
-  document.getElementById('detail-articles').innerHTML = html;
+    if (!items.length) continue;
+    html += `<div class="cat-title">${cat.label}</div>`;
+    for (const a of items) {
+      const units = ['', 'kg', 'g', 'L', 'cl', 'pièce(s)', 'boîte(s)'];
+      const unitOptions = units.map(u => `<option value="${u}" ${a.unite === u ? 'selected' : ''}>${u || '—'}</option>`).join('');
+      html += `<div class="article-card ${a.coche ? 'done' : ''}">
+        <div class="article-top">
+          <div class="chk ${a.coche ? 'on' : ''}" onclick="${isTerminee ? '' : `toggleCheck('${a.id}',${a.coche})`}"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div>
+          <span style="flex:1;font-weight:600">${a.nom}</span>
+          ${!isTerminee ? `<button class="btn btn-danger btn-sm" onclick="deleteArticle('${a.id}','${a.nom.replace(/'/g,"\\'")}')">🗑</button>` : ''}
+        </div>
+        ${!isTerminee ? `<div class="article-qty">
+          <button class="qty-btn" onclick="changeQuantity('${a.id}',-1)">−</button>
+          <span class="qty-val">${a.quantite || 1}</span>
+          <button class="qty-btn" onclick="changeQuantity('${a.id}',1)">+</button>
+          <select class="qty-unite" onchange="changeUnit('${a.id}',this.value)">${unitOptions}</select>
+        </div>` : `<div style="font-size:.75rem;padding-left:2rem;color:var(--text2)">${a.quantite || 1} ${a.unite || ''}</div>`}
+      </div>`;
+    }
+  }
+  document.getElementById('detail-articles').innerHTML = html || '<div style="text-align:center;padding:2rem">Liste vide</div>';
+  renderAvailableProducts();
 }
 
-function updateProfilUI() {
-  const user = auth.currentUser;
-  if (!user) return;
-  const nom = user.displayName || user.email || '?';
-  document.getElementById('p-avatar').textContent = nom.slice(0, 2).toUpperCase();
-  document.getElementById('p-nom').textContent = user.displayName || 'Utilisateur';
-  document.getElementById('p-email').textContent = user.email;
-  document.getElementById('p-new-nom').value = user.displayName || '';
-}
-
+// Listeners
 function startListeners() {
-  unsCat = onSnapshot(uCol('catalogue'), snap => { catalogue = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderCat(); });
-  unsListes = onSnapshot(uCol('listes'), snap => { listes = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderListes(); renderDossierSelects(); if (activeListeId) renderDetailHeader(); });
-  unsDoss = onSnapshot(uCol('dossiers'), snap => { dossiers = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderDossierSelects(); renderDossierTags(); });
+  unsubCat = onSnapshot(collection(db, 'users', UID, 'catalogue'), snap => {
+    catalogue = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderCatalogue();
+    if (document.getElementById('add-body')?.style.display === 'block') renderAvailableProducts();
+  });
+  unsubListes = onSnapshot(collection(db, 'users', UID, 'listes'), snap => {
+    listes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderListes();
+    if (activeListeId) renderDetailHeader();
+  });
+  unsubDoss = onSnapshot(collection(db, 'users', UID, 'dossiers'), snap => {
+    dossiers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    updateDossierSelects();
+  });
 }
 
 function stopListeners() {
-  if (unsCat) unsCat();
-  if (unsListes) unsListes();
-  if (unsDoss) unsDoss();
-  if (unsArt) unsArt();
+  if (unsubCat) unsubCat();
+  if (unsubListes) unsubListes();
+  if (unsubDoss) unsubDoss();
+  if (unsubArt) unsubArt();
 }
 
-// Écouteur d'authentification
-onAuthStateChanged(auth, user => {
+// Auth
+document.getElementById('auth-btn').onclick = async () => {
+  const email = document.getElementById('i-email').value.trim();
+  const pwd = document.getElementById('i-pwd').value;
+  const errDiv = document.getElementById('auth-err');
+  errDiv.style.display = 'none';
+  try {
+    await signInWithEmailAndPassword(auth, email, pwd);
+  } catch (e) {
+    errDiv.textContent = 'Email ou mot de passe incorrect';
+    errDiv.style.display = 'block';
+  }
+};
+document.getElementById('i-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('auth-btn').click(); });
+
+onAuthStateChanged(auth, async user => {
   if (user) {
     UID = user.uid;
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'flex';
-    updateProfilUI();
     startListeners();
-    window.goPage('catalogue');
-    // Ajout des produits par défaut si besoin
-    setTimeout(async () => {
-      const existing = await getDocs(uCol('catalogue'));
-      if (existing.empty) {
-        const produitsDef = [
-          { nom: 'Carottes', categorie: 'legumes' }, { nom: 'Tomates', categorie: 'legumes' }, { nom: 'Pommes', categorie: 'fruits' },
-          { nom: 'Bananes', categorie: 'fruits' }, { nom: 'Poulet', categorie: 'viande' }, { nom: 'Saumon', categorie: 'poisson' },
-          { nom: 'Lait', categorie: 'laitage' }, { nom: 'Œufs', categorie: 'laitage' }, { nom: 'Pâtes', categorie: 'epicerie' },
-          { nom: 'Pain', categorie: 'boulangerie' }, { nom: 'Eau', categorie: 'boissons' }, { nom: "Côtelettes d'agneau", categorie: 'viande' }
-        ];
-        for (const p of produitsDef) await addDoc(uCol('catalogue'), { nom: p.nom, categorie: p.categorie, createdAt: serverTimestamp() });
-      }
-    }, 1000);
+    // Init catalogue par défaut
+    const catSnap = await getDocs(collection(db, 'users', UID, 'catalogue'));
+    if (catSnap.empty) {
+      const defaults = [
+        { nom: 'Carottes', categorie: 'legumes' }, { nom: 'Tomates', categorie: 'legumes' },
+        { nom: 'Pommes', categorie: 'fruits' }, { nom: 'Bananes', categorie: 'fruits' },
+        { nom: 'Poulet', categorie: 'viande' }, { nom: "Côtelettes d'agneau", categorie: 'viande' },
+        { nom: 'Saumon', categorie: 'poisson' }, { nom: 'Lait', categorie: 'laitage' },
+        { nom: 'Œufs', categorie: 'laitage' }, { nom: 'Pâtes', categorie: 'epicerie' },
+        { nom: 'Pain', categorie: 'boulangerie' }
+      ];
+      for (const p of defaults) await addDoc(collection(db, 'users', UID, 'catalogue'), { ...p, createdAt: serverTimestamp() });
+    }
+    goPage('catalogue');
   } else {
+    stopListeners();
     UID = null;
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display = 'none';
-    stopListeners();
   }
 });
 
-// Attachement des événements
-document.getElementById('auth-btn').addEventListener('click', async () => {
-  const email = document.getElementById('i-email').value.trim();
-  const pwd = document.getElementById('i-pwd').value;
-  const errEl = document.getElementById('auth-err');
-  errEl.style.display = 'none';
-  try {
-    await signInWithEmailAndPassword(auth, email, pwd);
-  } catch (e) {
-    errEl.textContent = 'Identifiants incorrects';
-    errEl.style.display = 'block';
-  }
-});
-document.getElementById('i-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('auth-btn').click(); });
-document.getElementById('add-produit-btn').addEventListener('click', () => window.addProduit());
-document.getElementById('clear-sel-btn').addEventListener('click', () => window.clearSel());
-document.getElementById('add-sel-liste-btn').addEventListener('click', () => window.addSelToListe());
-document.getElementById('toggle-dossier-btn').addEventListener('click', () => window.toggleDossierForm());
-document.getElementById('add-dossier-btn').addEventListener('click', () => window.addDossier());
-document.getElementById('close-dossier-btn').addEventListener('click', () => window.toggleDossierForm());
-document.getElementById('add-liste-btn').addEventListener('click', () => window.addListe());
-document.getElementById('update-nom-btn').addEventListener('click', () => window.updateNom());
-document.getElementById('update-pwd-btn').addEventListener('click', () => window.updatePwd());
-document.getElementById('creer-membre-btn').addEventListener('click', () => window.creerMembre());
-document.getElementById('logout-btn').addEventListener('click', () => window.doLogout());
-document.getElementById('close-detail-btn').addEventListener('click', () => window.closeDetail());
-document.getElementById('toggle-add-panel').addEventListener('click', () => window.toggleAddPanel());
-document.getElementById('add-manuel-btn').addEventListener('click', () => window.addManuel());
-document.getElementById('c-search').addEventListener('input', () => renderCat());
-document.getElementById('f-statut').addEventListener('change', () => renderListes());
-document.getElementById('f-dossier').addEventListener('change', () => renderListes());
-document.getElementById('confirm-cancel-btn').addEventListener('click', () => closeModal('m-confirm'));
-document.getElementById('close-listes-modal').addEventListener('click', () => closeModal('m-listes'));
-document.getElementById('close-deplacer-modal').addEventListener('click', () => closeModal('m-deplacer'));
-document.getElementById('nav-catalogue').addEventListener('click', () => window.goPage('catalogue'));
-document.getElementById('nav-listes').addEventListener('click', () => window.goPage('listes'));
-document.getElementById('nav-profil').addEventListener('click', () => window.goPage('profil'));
+// Boutons UI
+document.getElementById('add-produit-btn').onclick = () => window.addProduit();
+document.getElementById('clear-sel-btn').onclick = () => window.clearSel();
+document.getElementById('add-sel-liste-btn').onclick = () => window.addSelectedToList();
+document.getElementById('toggle-dossier-btn').onclick = () => window.toggleDossierForm();
+document.getElementById('add-dossier-btn').onclick = () => window.addDossier();
+document.getElementById('add-liste-btn').onclick = () => window.addListe();
+document.getElementById('toggle-add-panel').onclick = () => window.toggleAddPanel();
+document.getElementById('add-manuel-btn').onclick = () => window.addManualProduct();
+document.getElementById('c-search').oninput = () => renderCatalogue();
+document.getElementById('d-search').oninput = () => renderAvailableProducts();
+document.getElementById('f-statut').onchange = () => renderListes();
+document.getElementById('f-dossier').onchange = () => renderListes();
 
-updateAllCategorySelects();
+// Initialisation des selects
+function initSelects() {
+  const opts = CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+  document.getElementById('c-cat').innerHTML = opts;
+  document.getElementById('d-man-cat').innerHTML = opts;
+}
+initSelects();
 </script>
 </body>
 </html>
