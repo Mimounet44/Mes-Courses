@@ -635,35 +635,44 @@ function updateSelectionBar(){
 
 window.ouvrirModalAjoutListe=function(){
   const lEnCours=listes.filter(l=>l.statut==='en_cours');
-  const el=document.getElementById('modal-listes-choix');
+  console.log('Listes en cours:', lEnCours.length, 'Selection:', [...selectionCat], 'Catalogue:', catalogue.length);
   if(lEnCours.length===0){
-    el.innerHTML='<p style="color:var(--t2);font-size:.88rem">Aucune liste en cours. Créez d\'abord une liste dans l\'onglet Mes listes.</p>';
-  }else{
-    el.innerHTML=lEnCours.map(l=>`
-      <button class="btn btn-ghost" style="justify-content:flex-start;text-align:left" onclick="ajouterSelectionAListe('${l.id}','${l.nom.replace(/'/g,"\\'")}')">
-        🛒 ${l.nom}
-      </button>`).join('');
+    toast('⚠️ Créez d\'abord une liste dans l\'onglet Mes listes');
+    return;
   }
+  if(lEnCours.length===1){
+    ajouterSelectionAListe(lEnCours[0].id, lEnCours[0].nom);
+    return;
+  }
+  const el=document.getElementById('modal-listes-choix');
+  el.innerHTML=lEnCours.map(l=>`<button class="btn btn-ghost" style="justify-content:flex-start;text-align:left" onclick="ajouterSelectionAListe('${l.id}','${l.nom.replace(/'/g,"\'")}')">&#128722; ${l.nom}</button>`).join('');
   openModal('modal-add-liste');
 };
 
 window.ajouterSelectionAListe=async function(listeId,listNom){
-  const selProduits=catalogue.filter(p=>selectionCat.has(p.id));
-  // Récupérer les articles existants
-  const snap=await getDocs(col('users',uid,'listes',listeId,'articles'));
-  const existants=snap.docs.map(d=>d.data().nom.toLowerCase());
-  let ajoutes=0;
-  for(const p of selProduits){
-    if(!existants.includes(p.nom.toLowerCase())){
-      await addDoc(col('users',uid,'listes',listeId,'articles'),{
-        nom:p.nom,categorie:p.categorie,quantite:1,unite:'',coche:false,createdAt:serverTimestamp()
-      });
-      ajoutes++;
-    }
-  }
   closeModal('modal-add-liste');
-  selectionCat.clear(); updateSelectionBar(); renderCatalogue();
-  toast(`✅ ${ajoutes} produit(s) ajouté(s) à "${listNom}"`);
+  const selProduits=catalogue.filter(p=>selectionCat.has(p.id));
+  console.log('Ajout dans liste:', listeId, listNom, 'Produits:', selProduits.map(p=>p.nom));
+  if(!selProduits.length){toast('⚠️ Aucun produit sélectionné');return;}
+  let ajoutes=0;
+  try{
+    const snap=await getDocs(col('users',uid,'listes',listeId,'articles'));
+    const existants=snap.docs.map(d=>d.data().nom.toLowerCase());
+    for(const p of selProduits){
+      if(!existants.includes(p.nom.toLowerCase())){
+        await addDoc(col('users',uid,'listes',listeId,'articles'),{
+          nom:p.nom,categorie:p.categorie,quantite:1,unite:'',coche:false,createdAt:serverTimestamp()
+        });
+        ajoutes++;
+        console.log('Ajouté OK:', p.nom);
+      }
+    }
+    selectionCat.clear(); updateSelectionBar(); renderCatalogue();
+    toast('✅ '+ajoutes+' produit(s) ajouté(s) à "'+listNom+'"');
+  }catch(err){
+    console.error('Erreur Firestore:', err);
+    toast('❌ Erreur: '+err.message);
+  }
 };
 
 function renderCatalogue(){
