@@ -64,6 +64,7 @@ input:focus,select:focus{border-color:var(--accent)}
 .empty-icon{font-size:3rem;margin-bottom:.8rem;opacity:.5}
 .frow{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
 .frow>*{flex:1}
+.avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff}
 </style>
 </head>
 <body>
@@ -130,13 +131,40 @@ input:focus,select:focus{border-color:var(--accent)}
       <select id="f-dossier" style="width:auto"><option value="">Tous dossiers</option></select>
     </div>
     <div id="listes-list"></div>
-    
-    <!-- Profil et déconnexion dans la page listes -->
-    <div class="card" style="margin-top:1rem">
-      <div style="font-weight:800;margin-bottom:.8rem">👤 Compte</div>
-      <div id="profile-info" style="margin-bottom:.8rem;font-size:.85rem;color:var(--text2)"></div>
-      <button class="btn btn-danger btn-full" id="logout-btn">🚪 Se déconnecter</button>
+  </div>
+
+  <!-- Page Profil -->
+  <div id="page-profil" class="page">
+    <div style="font-size:1.5rem;font-weight:900;margin-bottom:1rem">👤 Mon profil</div>
+    <div class="card" style="display:flex;align-items:center;gap:1rem">
+      <div class="avatar" id="p-avatar">?</div>
+      <div>
+        <div id="p-nom" style="font-weight:800;font-size:1.05rem"></div>
+        <div id="p-email" style="color:var(--text2);font-size:.8rem"></div>
+      </div>
     </div>
+    <div class="card">
+      <div style="font-weight:800;margin-bottom:.5rem">✏️ Modifier le prénom</div>
+      <div class="frow">
+        <input id="p-new-nom" placeholder="Nouveau prénom">
+        <button class="btn btn-primary btn-sm" id="update-nom-btn" style="flex:none">Sauvegarder</button>
+      </div>
+    </div>
+    <div class="card">
+      <div style="font-weight:800;margin-bottom:.5rem">🔒 Changer le mot de passe</div>
+      <div style="margin-bottom:.5rem"><input id="p-pwd-cur" type="password" placeholder="Mot de passe actuel"></div>
+      <div style="margin-bottom:.5rem"><input id="p-pwd-new" type="password" placeholder="Nouveau mot de passe (6 min)"></div>
+      <button class="btn btn-primary btn-sm" id="update-pwd-btn">Modifier</button>
+    </div>
+    <div class="card">
+      <div style="font-weight:800;margin-bottom:.5rem">👨‍👩‍👧 Ajouter un membre</div>
+      <p style="font-size:.7rem;color:var(--text2);margin-bottom:.5rem">Créez un compte pour un membre de la famille</p>
+      <div style="margin-bottom:.5rem"><input id="m-prenom" placeholder="Prénom"></div>
+      <div style="margin-bottom:.5rem"><input id="m-email" type="email" placeholder="Email"></div>
+      <div style="margin-bottom:.5rem"><input id="m-pwd" type="password" placeholder="Mot de passe"></div>
+      <button class="btn btn-primary btn-sm" id="creer-membre-btn">➕ Créer le compte</button>
+    </div>
+    <button class="btn btn-danger btn-full" id="logout-btn">🚪 Se déconnecter</button>
   </div>
 
   <!-- Page Détail Liste -->
@@ -180,6 +208,13 @@ input:focus,select:focus{border-color:var(--accent)}
       </svg>
       <span>Mes listes</span>
     </button>
+    <button class="nav-btn" id="nav-profil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span>Profil</span>
+    </button>
   </nav>
 </div>
 
@@ -222,7 +257,7 @@ input:focus,select:focus{border-color:var(--accent)}
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const FB = {
@@ -302,6 +337,7 @@ function confirmAction(title, msg, callback) {
 // Navigation
 document.getElementById('nav-catalogue').onclick = () => goPage('catalogue');
 document.getElementById('nav-listes').onclick = () => goPage('listes');
+document.getElementById('nav-profil').onclick = () => goPage('profil');
 document.getElementById('close-detail-btn').onclick = () => closeDetail();
 
 window.goPage = function(page) {
@@ -675,24 +711,65 @@ function renderDetail() {
   if (!isTerminee) renderAvailableProducts();
 }
 
-// Déconnexion
+// Profil
+function updateProfilUI() {
+  const user = auth.currentUser;
+  if (!user) return;
+  const nom = user.displayName || user.email?.split('@')[0] || '?';
+  document.getElementById('p-avatar').textContent = nom.slice(0, 2).toUpperCase();
+  document.getElementById('p-nom').textContent = user.displayName || 'Utilisateur';
+  document.getElementById('p-email').textContent = user.email;
+  document.getElementById('p-new-nom').value = user.displayName || '';
+}
+
+window.updateNom = async function() {
+  const nom = document.getElementById('p-new-nom').value.trim();
+  if (!nom) { toast('Entrez un prénom'); return; }
+  await updateProfile(auth.currentUser, { displayName: nom });
+  updateProfilUI();
+  toast('✅ Prénom mis à jour');
+};
+
+window.updatePwd = async function() {
+  const cur = document.getElementById('p-pwd-cur').value;
+  const nw = document.getElementById('p-pwd-new').value;
+  if (!cur || !nw) { toast('Remplissez les deux champs'); return; }
+  if (nw.length < 6) { toast('6 caractères minimum'); return; }
+  try {
+    const cred = EmailAuthProvider.credential(auth.currentUser.email, cur);
+    await reauthenticateWithCredential(auth.currentUser, cred);
+    await updatePassword(auth.currentUser, nw);
+    document.getElementById('p-pwd-cur').value = '';
+    document.getElementById('p-pwd-new').value = '';
+    toast('✅ Mot de passe modifié');
+  } catch (e) {
+    toast(e.code === 'auth/wrong-password' ? 'Mot de passe actuel incorrect' : 'Erreur');
+  }
+};
+
+window.creerMembre = async function() {
+  const prenom = document.getElementById('m-prenom').value.trim();
+  const email = document.getElementById('m-email').value.trim();
+  const pwd = document.getElementById('m-pwd').value;
+  if (!prenom || !email || !pwd) { toast('Remplissez tous les champs'); return; }
+  if (pwd.length < 6) { toast('Mot de passe trop court (6 min)'); return; }
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, pwd);
+    await updateProfile(userCred.user, { displayName: prenom });
+    toast(`✅ Compte créé pour ${prenom} !`);
+    document.getElementById('m-prenom').value = '';
+    document.getElementById('m-email').value = '';
+    document.getElementById('m-pwd').value = '';
+    await signOut(auth);
+  } catch (e) {
+    toast(e.code === 'auth/email-already-in-use' ? 'Email déjà utilisé' : 'Erreur');
+  }
+};
+
 window.doLogout = async function() {
   await signOut(auth);
   toast('👋 Déconnecté');
 };
-
-function updateProfileInfo() {
-  const user = auth.currentUser;
-  if (user) {
-    document.getElementById('profile-info').innerHTML = `
-      <div style="display:flex;align-items:center;gap:.5rem">
-        <span style="font-size:1.2rem">👤</span>
-        <div><strong>${user.displayName || user.email?.split('@')[0] || 'Utilisateur'}</strong><br>
-        <span style="font-size:.7rem">${user.email}</span></div>
-      </div>
-    `;
-  }
-}
 
 // Listeners Firebase
 function startListeners() {
@@ -741,7 +818,7 @@ onAuthStateChanged(auth, async user => {
     UID = user.uid;
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'flex';
-    updateProfileInfo();
+    updateProfilUI();
     startListeners();
     
     const catSnap = await getDocs(collection(db, 'users', UID, 'catalogue'));
@@ -749,7 +826,7 @@ onAuthStateChanged(auth, async user => {
       for (const p of DEFAULT_PRODUITS) {
         await addDoc(collection(db, 'users', UID, 'catalogue'), { ...p, createdAt: serverTimestamp() });
       }
-      toast('Catalogue chargé !');
+      toast('Catalogue chargé avec succès !');
     }
     goPage('catalogue');
   } else {
@@ -775,6 +852,9 @@ document.getElementById('f-statut').onchange = () => renderListes();
 document.getElementById('f-dossier').onchange = () => renderListes();
 document.getElementById('manage-cats-btn').onclick = () => window.openCategoriesManager();
 document.getElementById('add-cat-btn').onclick = () => window.addCategory();
+document.getElementById('update-nom-btn').onclick = () => window.updateNom();
+document.getElementById('update-pwd-btn').onclick = () => window.updatePwd();
+document.getElementById('creer-membre-btn').onclick = () => window.creerMembre();
 document.getElementById('logout-btn').onclick = () => window.doLogout();
 
 updateAllCategorySelects();
