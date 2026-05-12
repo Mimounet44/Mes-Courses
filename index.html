@@ -3,205 +3,370 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"/>
-<title>Mes Courses 🛒</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<title>Mes Courses</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#f5f7fa;--card:#fff;--border:#e2e8f2;--accent:#3b7ff5;--green:#16a34a;--red:#dc2626;--text:#1e293b;--text2:#64748b;--text3:#94a3b8;--nav-h:70px;--r:14px;--rs:8px;--ff:'Nunito',sans-serif}
-body{background:var(--bg);font-family:var(--ff);min-height:100vh}
-button{cursor:pointer;border:none;background:none;font-family:var(--ff)}
-input,select{font-family:var(--ff);padding:.6rem .85rem;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--card);width:100%;outline:none}
-input:focus,select:focus{border-color:var(--accent)}
-.btn{display:inline-flex;align-items:center;gap:.35rem;padding:.6rem 1.1rem;border-radius:var(--rs);font-weight:700;transition:all .16s}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-primary:hover{background:#2563cc}
-.btn-danger{background:#fee2e2;color:var(--red)}
-.btn-danger:hover{background:#fecaca}
-.btn-sm{padding:.32rem .65rem;font-size:.78rem}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text2)}
-.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
-.btn-full{width:100%;justify-content:center}
-.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1.1rem;margin-bottom:.6rem;box-shadow:0 2px 8px rgba(0,0,0,.05)}
-.page,.subpage{display:none;padding:1.2rem 1rem 90px;max-width:620px;margin:0 auto;animation:fadeUp .25s ease}
-.page.show,.subpage.show{display:block}
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:rgba(255,255,255,.98);backdrop-filter:blur(20px);border-top:1.5px solid var(--border);display:flex;justify-content:space-around;align-items:center;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.nav-btn{display:flex;flex-direction:column;align-items:center;gap:.2rem;color:var(--text3);font-size:.65rem;font-weight:800;transition:all .18s;padding:.5rem 1rem;border-radius:10px}
-.nav-btn.on{color:var(--accent);background:var(--accent-light)}
-.nav-btn svg{width:22px;height:22px;stroke-width:2}
-.prod-row{display:flex;align-items:center;gap:.6rem;padding:.5rem .75rem;border-radius:8px;transition:background .14s}
-.prod-row:hover{background:#f8fafc}
-.prod-nom{flex:1;font-weight:600}
-.chk{width:22px;height:22px;border:2px solid var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0}
-.chk.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 0 3px rgba(59,127,245,.15)}
-.chk svg{opacity:0;width:13px;height:13px;transition:opacity .1s}
-.chk.on svg{opacity:1}
-.sel-bar{background:var(--accent);color:#fff;border-radius:var(--r);padding:.8rem 1rem;display:none;justify-content:space-between;align-items:center;margin-bottom:.8rem;box-shadow:0 4px 12px rgba(59,127,245,.3)}
-.sel-bar.show{display:flex}
-.cat-group{margin-bottom:.5rem}
-.cat-header{display:flex;align-items:center;justify-content:space-between;padding:.8rem .2rem .3rem}
-.cat-title{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);display:flex;align-items:center;gap:.5rem}
-.cat-title::after{content:'';flex:1;height:1.5px;background:var(--border)}
-.article-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:.6rem .8rem;margin-bottom:.5rem}
-.article-card.done{opacity:.6;background:#f8fafc}
-.article-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
-.article-info{display:flex;align-items:center;gap:.5rem;flex:1;flex-wrap:wrap}
-.article-name{font-weight:600;font-size:.9rem;min-width:100px}
-.article-qty-controls{display:flex;align-items:center;gap:.4rem}
-.qty-input{width:65px;text-align:center;padding:.3rem .2rem;font-weight:700}
-.qty-unite{width:auto;min-width:85px;padding:.3rem .4rem;font-size:.75rem}
-.liste-card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem;margin-bottom:.65rem;cursor:pointer}
-.liste-card:hover{border-color:var(--accent);transform:translateY(-2px)}
-.liste-nom{font-weight:800;margin-bottom:.25rem;font-size:1rem}
-.badge{display:inline-block;padding:.15rem .6rem;border-radius:20px;font-size:.65rem;font-weight:700;margin-left:.5rem}
-.badge-green{background:#dcfce7;color:var(--green)}
-.badge-blue{background:#eef3fe;color:var(--accent)}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
-.overlay.show{display:flex}
-.modal{background:var(--card);border-radius:24px;padding:1.5rem;width:90%;max-width:400px;max-height:85vh;overflow-y:auto}
-.modal-title{font-weight:900;font-size:1.1rem;margin-bottom:.5rem}
-.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;border-radius:40px;padding:.6rem 1.4rem;font-size:.85rem;font-weight:600;z-index:400;display:none;white-space:nowrap}
-@keyframes fadeUp{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
-@keyframes slideUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.empty{text-align:center;padding:2rem;color:var(--text3)}
-.empty-icon{font-size:3rem;margin-bottom:.8rem;opacity:.5}
-.frow{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
-.frow>*{flex:1}
-.avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#60a5fa);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:900;color:#fff}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg:#f7f6f2;
+    --surface:#ffffff;
+    --surface2:#f0eeea;
+    --border:#e4e1d9;
+    --border2:#d4d0c8;
+    --accent:#2d6a4f;
+    --accent2:#40916c;
+    --accent-light:#d8f3dc;
+    --red:#c0392b;
+    --red-light:#fde8e6;
+    --text:#1a1a18;
+    --text2:#5c5c52;
+    --text3:#9e9e90;
+    --nav-h:72px;
+    --r:16px;
+    --rs:10px;
+    --ff:'DM Sans',sans-serif;
+    --ff-serif:'DM Serif Display',serif;
+    --shadow:0 2px 12px rgba(0,0,0,.07);
+    --shadow-lg:0 8px 32px rgba(0,0,0,.12);
+  }
+  body{background:var(--bg);font-family:var(--ff);min-height:100vh;color:var(--text);-webkit-font-smoothing:antialiased}
+  button{cursor:pointer;border:none;background:none;font-family:var(--ff);transition:all .15s}
+  input,select{font-family:var(--ff);padding:.65rem .9rem;border:1.5px solid var(--border);border-radius:var(--rs);background:var(--surface);width:100%;outline:none;color:var(--text);font-size:.9rem;transition:border-color .15s}
+  input:focus,select:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(64,145,108,.12)}
+  input::placeholder{color:var(--text3)}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239e9e90' stroke-width='2.5'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .75rem center;padding-right:2.2rem}
+
+  /* Boutons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.6rem 1.1rem;border-radius:var(--rs);font-weight:600;font-size:.85rem;transition:all .15s;white-space:nowrap}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(45,106,79,.25)}
+  .btn-primary:hover,.btn-primary:active{background:var(--accent2);transform:translateY(-1px)}
+  .btn-danger{background:var(--red-light);color:var(--red)}
+  .btn-danger:hover{background:#f8d7d4}
+  .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--text2)}
+  .btn-outline:hover{border-color:var(--border2);background:var(--surface2)}
+  .btn-ghost{background:transparent;color:var(--text2)}
+  .btn-ghost:hover{background:var(--surface2)}
+  .btn-sm{padding:.38rem .7rem;font-size:.78rem;border-radius:8px}
+  .btn-full{width:100%}
+  .btn-icon{padding:.5rem;border-radius:8px;display:inline-flex;align-items:center;justify-content:center}
+
+  /* Layout */
+  .page,.subpage{display:none;padding:1.2rem 1rem calc(var(--nav-h) + 1.5rem);max-width:600px;margin:0 auto;animation:fadeUp .22s ease}
+  .page.show,.subpage.show{display:block}
+
+  /* Nav */
+  .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav-h);background:rgba(255,255,255,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1.5px solid var(--border);display:flex;justify-content:space-around;align-items:center;z-index:100;padding-bottom:env(safe-area-inset-bottom,0)}
+  .nav-btn{display:flex;flex-direction:column;align-items:center;gap:.25rem;color:var(--text3);font-size:.62rem;font-weight:600;padding:.5rem 1.2rem;border-radius:12px;letter-spacing:.03em}
+  .nav-btn.on{color:var(--accent)}
+  .nav-btn svg{width:21px;height:21px;stroke-width:1.8;transition:transform .15s}
+  .nav-btn.on svg{transform:translateY(-1px)}
+  .nav-dot{width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:0;transition:.15s}
+  .nav-btn.on .nav-dot{opacity:1}
+
+  /* Cards */
+  .card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.6rem;box-shadow:var(--shadow)}
+  .card-flat{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:1rem 1.1rem;margin-bottom:.6rem}
+  .section-title{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3);margin:.8rem 0 .45rem}
+
+  /* Catalogue produits */
+  .cat-group{margin-bottom:.35rem}
+  .cat-header{padding:.6rem 0 .3rem;display:flex;align-items:center;gap:.6rem}
+  .cat-label{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text3)}
+  .cat-line{flex:1;height:1px;background:var(--border)}
+  .prod-row{display:flex;align-items:center;gap:.6rem;padding:.45rem .6rem;border-radius:10px;transition:background .12s}
+  .prod-row:hover{background:var(--surface2)}
+  .prod-nom{flex:1;font-size:.88rem;font-weight:500}
+
+  /* Checkbox */
+  .chk{width:20px;height:20px;border:1.5px solid var(--border2);border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .14s;flex-shrink:0}
+  .chk.on{background:var(--accent);border-color:var(--accent)}
+  .chk svg{opacity:0;width:11px;height:11px;transition:opacity .1s}
+  .chk.on svg{opacity:1}
+
+  /* Selection bar */
+  .sel-bar{background:var(--accent);color:#fff;border-radius:var(--r);padding:.75rem 1rem;display:none;justify-content:space-between;align-items:center;margin-bottom:.75rem;box-shadow:0 4px 16px rgba(45,106,79,.3);animation:fadeUp .2s ease}
+  .sel-bar.show{display:flex}
+
+  /* Articles */
+  .article-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:.65rem .85rem;margin-bottom:.45rem;transition:all .14s}
+  .article-card.done{opacity:.5;background:var(--surface2)}
+  .article-row{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap}
+  .article-info{display:flex;align-items:center;gap:.5rem;flex:1;flex-wrap:wrap;min-width:0}
+  .article-name{font-weight:600;font-size:.88rem;flex:1;min-width:80px}
+  .qty-input{width:62px;text-align:center;padding:.32rem .2rem;font-weight:600;font-size:.85rem}
+  .qty-unite{min-width:90px;padding:.32rem .5rem;font-size:.78rem}
+
+  /* Liste cards */
+  .liste-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:.9rem 1.05rem;margin-bottom:.55rem;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+  .liste-card:hover{border-color:var(--accent2);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+  .liste-card:active{transform:translateY(0)}
+  .liste-nom{font-weight:700;font-size:.95rem}
+
+  /* Badges */
+  .badge{display:inline-flex;align-items:center;padding:.18rem .6rem;border-radius:20px;font-size:.62rem;font-weight:700;gap:.25rem}
+  .badge-green{background:var(--accent-light);color:var(--accent)}
+  .badge-blue{background:#e8f0fe;color:#2563eb}
+
+  /* Progress */
+  .progress-bar{height:3px;background:var(--border);border-radius:10px;overflow:hidden;margin:.4rem 0}
+  .progress-fill{height:100%;background:var(--accent);border-radius:10px;transition:width .3s ease}
+
+  /* Modals */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:200;display:none;align-items:flex-end;justify-content:center;padding:1rem}
+  .overlay.show{display:flex}
+  .modal{background:var(--surface);border-radius:24px 24px 20px 20px;padding:1.5rem;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);animation:slideUp .25s ease}
+  .modal-title{font-family:var(--ff-serif);font-size:1.2rem;margin-bottom:.4rem}
+  .modal-drag{width:40px;height:4px;background:var(--border);border-radius:10px;margin:0 auto .8rem}
+
+  /* Toast */
+  .toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;border-radius:40px;padding:.55rem 1.3rem;font-size:.82rem;font-weight:600;z-index:400;display:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+
+  /* Auth */
+  .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:var(--bg)}
+  .auth-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;padding:2rem;width:100%;max-width:380px;text-align:center;box-shadow:var(--shadow-lg)}
+  .auth-logo{width:64px;height:64px;background:var(--accent);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 4px 16px rgba(45,106,79,.3)}
+
+  /* Profil avatar */
+  .avatar{width:52px;height:52px;border-radius:14px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;color:#fff;font-family:var(--ff-serif)}
+
+  /* Row */
+  .frow{display:flex;gap:.5rem;align-items:flex-end;flex-wrap:wrap}
+  .frow>*{flex:1}
+
+  /* Dossier tags */
+  .dossier-tag{display:inline-flex;align-items:center;gap:.3rem;background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.25rem .7rem;font-size:.78rem;font-weight:500}
+
+  /* Empty state */
+  .empty{text-align:center;padding:2.5rem 1rem;color:var(--text3)}
+  .empty-icon{font-size:2.5rem;margin-bottom:.75rem;opacity:.6}
+  .empty p{font-size:.88rem}
+
+  /* Page header */
+  .page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem}
+  .page-title{font-family:var(--ff-serif);font-size:1.55rem;color:var(--text)}
+
+  /* Divider */
+  .divider{height:1px;background:var(--border);margin:.8rem 0}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+  /* Scrollbar */
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
 </style>
 </head>
 <body>
 
-<div id="auth-screen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem">
-  <div class="card" style="max-width:380px;width:100%;text-align:center">
-    <div style="font-size:3.5rem;margin-bottom:1rem">🛒</div>
-    <h1 style="font-size:1.8rem;margin-bottom:.3rem">Mes Courses</h1>
-    <p style="color:var(--text2);margin-bottom:1.5rem">Gérez vos courses en famille</p>
-    <div id="auth-err" style="background:#fee2e2;color:var(--red);border-radius:8px;padding:.7rem;margin-bottom:1rem;display:none"></div>
-    <input id="i-email" type="email" placeholder="Email" style="margin-bottom:.8rem">
-    <input id="i-pwd" type="password" placeholder="Mot de passe" style="margin-bottom:1rem">
-    <button class="btn btn-primary btn-full" id="auth-btn">Se connecter</button>
+<!-- AUTH -->
+<div id="auth-screen" class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+      </svg>
+    </div>
+    <h1 style="font-family:var(--ff-serif);font-size:1.7rem;margin-bottom:.3rem">Mes Courses</h1>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.6rem">Gérez vos courses en famille</p>
+    <div id="auth-err" style="background:var(--red-light);color:var(--red);border-radius:10px;padding:.7rem .9rem;margin-bottom:1rem;display:none;font-size:.85rem;text-align:left"></div>
+    <div style="margin-bottom:.7rem"><input id="i-email" type="email" placeholder="Adresse email"></div>
+    <div style="margin-bottom:1.1rem"><input id="i-pwd" type="password" placeholder="Mot de passe"></div>
+    <button class="btn btn-primary btn-full" id="auth-btn" style="padding:.75rem">Se connecter</button>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app-screen" style="display:none">
+
+  <!-- CATALOGUE -->
   <div id="page-catalogue" class="page show">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:1.5rem;font-weight:900">📋 Catalogue</div>
-      <button class="btn btn-outline btn-sm" id="manage-cats-btn">🏷️ Catégories</button>
+    <div class="page-header">
+      <div class="page-title">Catalogue</div>
+      <button class="btn btn-outline btn-sm" id="manage-cats-btn">Catégories</button>
     </div>
     <div class="card">
       <div class="frow">
-        <input id="c-nom" placeholder="Nouveau produit" style="flex:2">
-        <select id="c-cat" style="flex:1"></select>
-        <button class="btn btn-primary" id="add-produit-btn" style="flex:none">+</button>
+        <input id="c-nom" placeholder="Ajouter un produit" style="flex:2">
+        <select id="c-cat" style="flex:1;min-width:110px"></select>
+        <button class="btn btn-primary btn-icon" id="add-produit-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
       </div>
     </div>
     <div class="sel-bar" id="sel-bar">
-      <span id="sel-count">0 sélectionné(s)</span>
+      <span id="sel-count" style="font-size:.85rem;font-weight:600">0 sélectionné(s)</span>
       <div style="display:flex;gap:.5rem">
         <button class="btn btn-sm" id="clear-sel-btn" style="background:rgba(255,255,255,.2);color:#fff">Annuler</button>
-        <button class="btn btn-sm" id="add-sel-liste-btn" style="background:#fff;color:var(--accent)">Ajouter</button>
+        <button class="btn btn-sm" id="add-sel-liste-btn" style="background:#fff;color:var(--accent)">→ Liste</button>
       </div>
     </div>
-    <input id="c-search" placeholder="🔍 Rechercher un produit" style="margin-bottom:.8rem">
+    <input id="c-search" placeholder="Rechercher un produit…" style="margin-bottom:.8rem">
     <div id="cat-list"></div>
   </div>
 
+  <!-- LISTES -->
   <div id="page-listes" class="page">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-      <div style="font-size:1.5rem;font-weight:900">🛍️ Mes listes</div>
-      <button class="btn btn-outline btn-sm" id="toggle-dossier-btn">📁 Dossier</button>
+    <div class="page-header">
+      <div class="page-title">Mes listes</div>
+      <button class="btn btn-outline btn-sm" id="toggle-dossier-btn">Dossiers</button>
     </div>
     <div id="dossier-form" class="card" style="display:none">
-      <div class="frow">
-        <input id="i-dossier" placeholder="Nouveau dossier">
+      <div class="frow" style="margin-bottom:.7rem">
+        <input id="i-dossier" placeholder="Nom du dossier">
         <button class="btn btn-primary btn-sm" id="add-dossier-btn" style="flex:none">Créer</button>
       </div>
-      <div id="dossiers-tags" style="display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.8rem"></div>
+      <div id="dossiers-tags" style="display:flex;flex-wrap:wrap;gap:.4rem"></div>
     </div>
     <div class="card">
       <div class="frow">
         <input id="i-liste" placeholder="Nom de la liste" style="flex:2">
-        <select id="i-liste-dossier" style="width:auto;flex:none"></select>
-        <button class="btn btn-primary" id="add-liste-btn" style="flex:none">+</button>
+        <select id="i-liste-dossier" style="flex:none;width:auto"></select>
+        <button class="btn btn-primary btn-icon" id="add-liste-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
       </div>
     </div>
-    <div style="display:flex;gap:.5rem;margin-bottom:.8rem;flex-wrap:wrap">
-      <select id="f-statut" style="width:auto"><option value="">Toutes</option><option value="en_cours">En cours</option><option value="terminee">Terminées</option></select>
-      <select id="f-dossier" style="width:auto"><option value="">Tous dossiers</option></select>
+    <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+      <select id="f-statut" style="width:auto;flex:1"><option value="">Toutes</option><option value="en_cours">En cours</option><option value="terminee">Terminées</option></select>
+      <select id="f-dossier" style="width:auto;flex:1"><option value="">Tous dossiers</option></select>
     </div>
     <div id="listes-list"></div>
   </div>
 
+  <!-- PROFIL -->
   <div id="page-profil" class="page">
-    <div style="font-size:1.5rem;font-weight:900;margin-bottom:1rem">👤 Mon profil</div>
+    <div class="page-header">
+      <div class="page-title">Profil</div>
+    </div>
     <div class="card" style="display:flex;align-items:center;gap:1rem">
       <div class="avatar" id="p-avatar">?</div>
       <div>
-        <div id="p-nom" style="font-weight:800;font-size:1.05rem"></div>
-        <div id="p-email" style="color:var(--text2);font-size:.8rem"></div>
+        <div id="p-nom" style="font-weight:700;font-size:1rem"></div>
+        <div id="p-email" style="color:var(--text2);font-size:.8rem;margin-top:.15rem"></div>
       </div>
     </div>
+
+    <div class="section-title">Modifier le prénom</div>
     <div class="card">
-      <div style="font-weight:800;margin-bottom:.5rem">✏️ Modifier le prénom</div>
       <div class="frow">
         <input id="p-new-nom" placeholder="Nouveau prénom">
         <button class="btn btn-primary btn-sm" id="update-nom-btn" style="flex:none">Sauvegarder</button>
       </div>
     </div>
+
+    <div class="section-title">Sécurité</div>
     <div class="card">
-      <div style="font-weight:800;margin-bottom:.5rem">🔒 Changer le mot de passe</div>
-      <div style="margin-bottom:.5rem"><input id="p-pwd-cur" type="password" placeholder="Mot de passe actuel"></div>
-      <div style="margin-bottom:.5rem"><input id="p-pwd-new" type="password" placeholder="Nouveau mot de passe (6 min)"></div>
-      <button class="btn btn-primary btn-sm" id="update-pwd-btn">Modifier</button>
+      <div style="margin-bottom:.6rem"><input id="p-pwd-cur" type="password" placeholder="Mot de passe actuel"></div>
+      <div style="margin-bottom:.7rem"><input id="p-pwd-new" type="password" placeholder="Nouveau mot de passe (6 min)"></div>
+      <button class="btn btn-outline btn-sm" id="update-pwd-btn">Modifier le mot de passe</button>
     </div>
+
+    <div class="section-title">Ajouter un membre</div>
     <div class="card">
-      <div style="font-weight:800;margin-bottom:.5rem">👨‍👩‍👧 Ajouter un membre</div>
-      <p style="font-size:.7rem;color:var(--text2);margin-bottom:.5rem">Créez un compte pour un membre de la famille</p>
-      <div style="margin-bottom:.5rem"><input id="m-prenom" placeholder="Prénom"></div>
-      <div style="margin-bottom:.5rem"><input id="m-email" type="email" placeholder="Email"></div>
-      <div style="margin-bottom:.5rem"><input id="m-pwd" type="password" placeholder="Mot de passe"></div>
-      <button class="btn btn-primary btn-sm" id="creer-membre-btn">➕ Créer le compte</button>
+      <p style="font-size:.78rem;color:var(--text2);margin-bottom:.8rem">Créez un compte pour un membre de la famille</p>
+      <div style="margin-bottom:.55rem"><input id="m-prenom" placeholder="Prénom"></div>
+      <div style="margin-bottom:.55rem"><input id="m-email" type="email" placeholder="Email"></div>
+      <div style="margin-bottom:.8rem"><input id="m-pwd" type="password" placeholder="Mot de passe"></div>
+      <button class="btn btn-primary btn-sm" id="creer-membre-btn">Créer le compte</button>
     </div>
-    <button class="btn btn-danger btn-full" id="logout-btn">🚪 Se déconnecter</button>
+
+    <div style="height:.5rem"></div>
+    <button class="btn btn-danger btn-full" id="logout-btn" style="padding:.75rem">Se déconnecter</button>
   </div>
 
+  <!-- DETAIL LISTE -->
   <div id="page-detail" class="subpage">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
-      <button id="close-detail-btn" style="color:var(--text2);font-weight:700;display:flex;align-items:center;gap:.3rem">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>Retour
+      <button id="close-detail-btn" class="btn btn-ghost btn-sm" style="gap:.3rem">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Retour
       </button>
-      <button id="print-list-btn" class="btn btn-outline btn-sm">🖨️ Imprimer</button>
+      <button id="print-list-btn" class="btn btn-outline btn-sm">Imprimer</button>
     </div>
     <div id="detail-header"></div>
-    <div class="card" id="add-section">
-      <button id="toggle-add-panel" style="width:100%;text-align:center;color:var(--accent);font-weight:800;padding:.6rem">➕ Ajouter des produits</button>
-      <div id="add-body" style="display:none;margin-top:.8rem">
-        <input id="d-search" placeholder="Rechercher..." style="margin-bottom:.5rem">
-        <div id="d-cat-list" style="max-height:250px;overflow:auto"></div>
-        <div style="height:1px;background:var(--border);margin:.8rem 0"></div>
-        <div style="font-size:.7rem;font-weight:800;color:var(--text3);margin-bottom:.4rem">AJOUTER MANUELLEMENT</div>
+    <div class="card-flat" id="add-section">
+      <button id="toggle-add-panel" style="width:100%;text-align:center;color:var(--accent);font-weight:600;font-size:.85rem;padding:.5rem;display:flex;align-items:center;justify-content:center;gap:.4rem">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Ajouter des produits
+      </button>
+      <div id="add-body" style="display:none;margin-top:.75rem">
+        <input id="d-search" placeholder="Rechercher dans le catalogue…" style="margin-bottom:.6rem">
+        <div id="d-cat-list" style="max-height:240px;overflow-y:auto"></div>
+        <div class="divider"></div>
+        <div class="section-title" style="margin-top:.5rem">Ajout manuel</div>
         <div class="frow">
           <input id="d-man-nom" placeholder="Nom du produit">
-          <select id="d-man-cat" style="width:auto;flex:none"></select>
-          <button class="btn btn-primary btn-sm" id="add-manuel-btn" style="flex:none">+</button>
+          <select id="d-man-cat" style="flex:none;width:auto"></select>
+          <button class="btn btn-primary btn-icon btn-sm" id="add-manuel-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+          </button>
         </div>
       </div>
     </div>
+    <div style="height:.5rem"></div>
     <div id="detail-articles"></div>
   </div>
 
+  <!-- NAV -->
   <nav class="bottom-nav">
-    <button class="nav-btn on" id="nav-catalogue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M5 7h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7z"/></svg><span>Catalogue</span></button>
-    <button class="nav-btn" id="nav-listes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z"/><path d="M8 8h8M8 12h6M8 16h4"/></svg><span>Mes listes</span></button>
-    <button class="nav-btn" id="nav-profil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>Profil</span></button>
+    <button class="nav-btn on" id="nav-catalogue">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M5 7h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7z"/></svg>
+      <span>Catalogue</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" id="nav-listes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 8h8M8 12h5M8 16h6"/></svg>
+      <span>Listes</span>
+      <div class="nav-dot"></div>
+    </button>
+    <button class="nav-btn" id="nav-profil">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span>Profil</span>
+      <div class="nav-dot"></div>
+    </button>
   </nav>
 </div>
 
-<div id="categories-modal" class="overlay"><div class="modal"><div class="modal-title">🏷️ Gérer les catégories</div><p style="color:var(--text2);font-size:.8rem;margin-bottom:1rem">Ajoutez, modifiez ou supprimez vos catégories</p><div class="frow" style="margin-bottom:1rem"><input id="new-cat-name" placeholder="Nouvelle catégorie"><button class="btn btn-primary btn-sm" id="add-cat-btn" style="flex:none">+</button></div><div id="categories-list" style="max-height:300px;overflow:auto"></div><div style="display:flex;justify-content:flex-end;margin-top:1rem"><button class="btn btn-outline" id="close-cats-modal">Fermer</button></div></div></div>
-<div id="confirm-modal" class="overlay"><div class="modal"><div class="modal-title" id="confirm-title"></div><p id="confirm-msg" style="margin:.5rem 0 1rem"></p><div style="display:flex;gap:.5rem;justify-content:flex-end"><button class="btn btn-outline" id="confirm-no">Annuler</button><button class="btn btn-danger" id="confirm-yes">Supprimer</button></div></div></div>
-<div id="listes-modal" class="overlay"><div class="modal"><div class="modal-title">Choisir une liste</div><div id="listes-choix" style="margin:1rem 0"></div><button class="btn btn-outline" id="close-listes-modal" style="width:100%">Fermer</button></div></div>
-<div class="toast" id="toast">Message</div>
+<!-- MODALS -->
+<div id="categories-modal" class="overlay">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-title">Catégories</div>
+    <p style="color:var(--text2);font-size:.82rem;margin-bottom:1.1rem">Gérez vos catégories personnalisées</p>
+    <div class="frow" style="margin-bottom:1rem">
+      <input id="new-cat-name" placeholder="Nouvelle catégorie">
+      <button class="btn btn-primary btn-sm" id="add-cat-btn" style="flex:none">Ajouter</button>
+    </div>
+    <div id="categories-list" style="max-height:300px;overflow-y:auto"></div>
+    <div style="margin-top:1rem">
+      <button class="btn btn-outline btn-full" id="close-cats-modal">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirm-modal" class="overlay">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-title" id="confirm-title"></div>
+    <p id="confirm-msg" style="color:var(--text2);font-size:.88rem;margin:.5rem 0 1.2rem"></p>
+    <div style="display:flex;gap:.5rem">
+      <button class="btn btn-outline btn-full" id="confirm-no">Annuler</button>
+      <button class="btn btn-danger btn-full" id="confirm-yes">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<div id="listes-modal" class="overlay">
+  <div class="modal">
+    <div class="modal-drag"></div>
+    <div class="modal-title">Choisir une liste</div>
+    <div id="listes-choix" style="margin:1rem 0"></div>
+    <button class="btn btn-outline btn-full" id="close-listes-modal">Fermer</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
@@ -209,97 +374,80 @@ import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updat
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const FB = {
-  apiKey: "AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
-  authDomain: "mes-courses-cf52d.firebaseapp.com",
-  projectId: "mes-courses-cf52d",
-  storageBucket: "mes-courses-cf52d.firebasestorage.app",
-  messagingSenderId: "248641691402",
-  appId: "1:248641691402:web:f36ad91dc0045d1edf24f3"
+  apiKey:"AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
+  authDomain:"mes-courses-cf52d.firebaseapp.com",
+  projectId:"mes-courses-cf52d",
+  storageBucket:"mes-courses-cf52d.firebasestorage.app",
+  messagingSenderId:"248641691402",
+  appId:"1:248641691402:web:f36ad91dc0045d1edf24f3"
 };
 
 const app = initializeApp(FB);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-let UID = null;
-let activeListeId = null;
-let catalogue = [];
-let listes = [];
-let dossiers = [];
-let articles = [];
+let UID = null, activeListeId = null;
+let catalogue = [], listes = [], dossiers = [], articles = [];
 let selectedIds = new Set();
 let unsubCat = null, unsubListes = null, unsubDoss = null, unsubArt = null, unsubCategories = null;
 
 const DEFAULT_CATEGORIES = [
-  { id: 'legumes', label: '🥦 Légumes' }, { id: 'fruits', label: '🍎 Fruits' },
-  { id: 'viande', label: '🥩 Viande' }, { id: 'poisson', label: '🐟 Poisson' },
-  { id: 'laitage', label: '🥛 Laitage & Œufs' }, { id: 'epicerie', label: '🥫 Épicerie' },
-  { id: 'boulangerie', label: '🥖 Boulangerie' }, { id: 'boissons', label: '🥤 Boissons' },
-  { id: 'hygiene', label: '🧴 Hygiène' }, { id: 'entretien', label: '🧹 Entretien' }, { id: 'autre', label: '📦 Autre' }
+  {id:'legumes',label:'🥦 Légumes'},{id:'fruits',label:'🍎 Fruits'},
+  {id:'viande',label:'🥩 Viande'},{id:'poisson',label:'🐟 Poisson'},
+  {id:'laitage',label:'🥛 Laitage & Œufs'},{id:'epicerie',label:'🥫 Épicerie'},
+  {id:'boulangerie',label:'🥖 Boulangerie'},{id:'boissons',label:'🥤 Boissons'},
+  {id:'hygiene',label:'🧴 Hygiène'},{id:'entretien',label:'🧹 Entretien'},
+  {id:'autre',label:'📦 Autre'}
 ];
 let categories = [...DEFAULT_CATEGORIES];
 
-// 80+ produits bien répartis dans les catégories
 const DEFAULT_PRODUITS = [
-  // Légumes (15)
-  { nom: 'Carottes', categorie: 'legumes' }, { nom: 'Tomates', categorie: 'legumes' }, { nom: 'Courgettes', categorie: 'legumes' },
-  { nom: 'Poivrons', categorie: 'legumes' }, { nom: 'Aubergines', categorie: 'legumes' }, { nom: 'Oignons', categorie: 'legumes' },
-  { nom: 'Ail', categorie: 'legumes' }, { nom: 'Échalottes', categorie: 'legumes' }, { nom: 'Salade', categorie: 'legumes' }, { nom: 'Concombre', categorie: 'legumes' },
-  { nom: 'Pommes de terre', categorie: 'legumes' }, { nom: 'Brocolis', categorie: 'legumes' }, { nom: 'Choux-fleurs', categorie: 'legumes' },
-  { nom: 'Haricots verts', categorie: 'legumes' }, { nom: 'Petits pois', categorie: 'legumes' }, { nom: 'Épinards', categorie: 'legumes' }, { nom: 'Rutabaga', categorie: 'legumes' }, { nom: 'Navets', categorie: 'legumes' },
-  // Fruits (12)
-  { nom: 'Pommes', categorie: 'fruits' }, { nom: 'Bananes', categorie: 'fruits' }, { nom: 'Oranges', categorie: 'fruits' },
-  { nom: 'Fraises', categorie: 'fruits' }, { nom: 'Raisins', categorie: 'fruits' }, { nom: 'Citrons', categorie: 'fruits' }, { nom: 'Citrons verts', categorie: 'fruits' },
-  { nom: 'Poires', categorie: 'fruits' }, { nom: 'Pêches', categorie: 'fruits' }, { nom: 'Abricots', categorie: 'fruits' },
-  { nom: 'Kiwis', categorie: 'fruits' }, { nom: 'Mangues', categorie: 'fruits' }, { nom: 'Ananas', categorie: 'fruits' },
-  // Viande (10)
-  { nom: 'Poulet', categorie: 'viande' }, { nom: 'Steaks hachés', categorie: 'viande' }, { nom: "Côtelettes d'agneau", categorie: 'viande' },
-  { nom: 'Saucisses', categorie: 'viande' }, { nom: 'Jambon blanc', categorie: 'viande' }, { nom: 'Rôti de boeuf', categorie: 'viande' },
-  { nom: 'Escalopes de dinde', categorie: 'viande' }, { nom: 'Merguez', categorie: 'viande' }, { nom: 'Lardons', categorie: 'viande' },
-  { nom: 'Côtes de porc', categorie: 'viande' },
-  // Poisson (8)
-  { nom: 'Saumon', categorie: 'poisson' }, { nom: 'Cabillaud', categorie: 'poisson' }, { nom: 'Thon en boîte', categorie: 'poisson' },
-  { nom: 'Sardines', categorie: 'poisson' }, { nom: 'Maquereaux', categorie: 'poisson' }, { nom: 'Crevettes', categorie: 'poisson' },
-  { nom: 'Moules', categorie: 'poisson' }, { nom: 'Lieu noir', categorie: 'poisson' },
-  // Laitage & Œufs (10)
-  { nom: 'Lait', categorie: 'laitage' }, { nom: 'Œufs', categorie: 'laitage' }, { nom: 'Beurre', categorie: 'laitage' },
-  { nom: 'Yaourts nature', categorie: 'laitage' }, { nom: 'Yaourts aux fruits', categorie: 'laitage' }, { nom: 'Fromage râpé', categorie: 'laitage' },
-  { nom: 'Camembert', categorie: 'laitage' }, { nom: 'Crème fraîche', categorie: 'laitage' }, { nom: 'Mozzarella', categorie: 'laitage' },
-  { nom: 'Parmesan', categorie: 'laitage' },
-  // Épicerie (15)
-  { nom: 'Pâtes', categorie: 'epicerie' }, { nom: 'Riz', categorie: 'epicerie' }, { nom: 'Farine', categorie: 'epicerie' },
-  { nom: 'Sucre', categorie: 'epicerie' }, { nom: 'Sel', categorie: 'epicerie' }, { nom: 'Poivre', categorie: 'epicerie' },
-  { nom: "Huile d'olive", categorie: 'epicerie' }, { nom: 'Huile Tournesol', categorie: 'epicerie' },{ nom: 'Vinaigre', categorie: 'epicerie' }, { nom: 'Café', categorie: 'epicerie' },
-  { nom: 'Thé', categorie: 'epicerie' }, { nom: 'Moutarde', categorie: 'epicerie' }, { nom: 'Ketchup', categorie: 'epicerie' },
-  { nom: 'Mayonnaise', categorie: 'epicerie' }, { nom: 'Concentré de tomate', categorie: 'epicerie' }, { nom: 'Bouillon cubes', categorie: 'epicerie' },
-  // Boulangerie (6)
-  { nom: 'Pain', categorie: 'boulangerie' }, { nom: 'Baguette', categorie: 'boulangerie' }, { nom: 'Croissants', categorie: 'boulangerie' },
-  { nom: 'Pains au chocolat', categorie: 'boulangerie' }, { nom: 'Brioche', categorie: 'boulangerie' }, { nom: 'Biscottes', categorie: 'boulangerie' },
-  // Boissons (8)
-  { nom: 'Eau plate', categorie: 'boissons' }, { nom: 'Eau pétillante', categorie: 'boissons' }, { nom: "Jus d'orange", categorie: 'boissons' },
-  { nom: 'Jus de pomme', categorie: 'boissons' }, { nom: 'Coca-Cola', categorie: 'boissons' }, { nom: 'Limonade', categorie: 'boissons' },
-  { nom: 'Bière', categorie: 'boissons' }, { nom: 'Vin rouge', categorie: 'boissons' }, { nom: 'Vin blanc', categorie: 'boissons' },{ nom: 'Rhum', categorie: 'boissons' }, { nom: 'Whisky', categorie: 'boissons' }, { nom: 'Ricard', categorie: 'boissons' },
-  // Hygiène (8)
-  { nom: 'Shampoing', categorie: 'hygiene' }, { nom: 'Dentifrice', categorie: 'hygiene' }, { nom: 'Papier toilette', categorie: 'hygiene' },
-  { nom: 'Gel douche', categorie: 'hygiene' }, { nom: 'Déodorant', categorie: 'hygiene' }, { nom: 'Brosse à dents', categorie: 'hygiene' },
-  { nom: 'Savon', categorie: 'hygiene' }, { nom: 'Mouchoirs', categorie: 'hygiene' },
-  // Entretien (6)
-  { nom: 'Liquide vaisselle', categorie: 'entretien' }, { nom: 'Lessive', categorie: 'entretien' }, { nom: 'Sacs poubelle', categorie: 'entretien' },
-  { nom: 'Nettoyant multi-usages', categorie: 'entretien' }, { nom: 'Éponges', categorie: 'entretien' }, { nom: 'Papier aluminium', categorie: 'entretien' }
+  {nom:'Carottes',categorie:'legumes'},{nom:'Tomates',categorie:'legumes'},{nom:'Courgettes',categorie:'legumes'},
+  {nom:'Poivrons',categorie:'legumes'},{nom:'Aubergines',categorie:'legumes'},{nom:'Oignons',categorie:'legumes'},
+  {nom:'Ail',categorie:'legumes'},{nom:'Échalotes',categorie:'legumes'},{nom:'Salade',categorie:'legumes'},
+  {nom:'Concombre',categorie:'legumes'},{nom:'Pommes de terre',categorie:'legumes'},{nom:'Brocolis',categorie:'legumes'},
+  {nom:'Chou-fleur',categorie:'legumes'},{nom:'Haricots verts',categorie:'legumes'},{nom:'Petits pois',categorie:'legumes'},
+  {nom:'Épinards',categorie:'legumes'},{nom:'Navets',categorie:'legumes'},
+  {nom:'Pommes',categorie:'fruits'},{nom:'Bananes',categorie:'fruits'},{nom:'Oranges',categorie:'fruits'},
+  {nom:'Fraises',categorie:'fruits'},{nom:'Raisins',categorie:'fruits'},{nom:'Citrons',categorie:'fruits'},
+  {nom:'Poires',categorie:'fruits'},{nom:'Pêches',categorie:'fruits'},{nom:'Kiwis',categorie:'fruits'},
+  {nom:'Mangues',categorie:'fruits'},{nom:'Ananas',categorie:'fruits'},
+  {nom:'Poulet',categorie:'viande'},{nom:'Steaks hachés',categorie:'viande'},{nom:'Saucisses',categorie:'viande'},
+  {nom:'Jambon blanc',categorie:'viande'},{nom:'Rôti de bœuf',categorie:'viande'},{nom:'Lardons',categorie:'viande'},
+  {nom:'Côtes de porc',categorie:'viande'},{nom:'Merguez',categorie:'viande'},
+  {nom:'Saumon',categorie:'poisson'},{nom:'Cabillaud',categorie:'poisson'},{nom:'Thon en boîte',categorie:'poisson'},
+  {nom:'Crevettes',categorie:'poisson'},{nom:'Moules',categorie:'poisson'},{nom:'Sardines',categorie:'poisson'},
+  {nom:'Lait',categorie:'laitage'},{nom:'Œufs',categorie:'laitage'},{nom:'Beurre',categorie:'laitage'},
+  {nom:'Yaourts nature',categorie:'laitage'},{nom:'Fromage râpé',categorie:'laitage'},{nom:'Camembert',categorie:'laitage'},
+  {nom:'Crème fraîche',categorie:'laitage'},{nom:'Mozzarella',categorie:'laitage'},
+  {nom:'Pâtes',categorie:'epicerie'},{nom:'Riz',categorie:'epicerie'},{nom:'Farine',categorie:'epicerie'},
+  {nom:'Sucre',categorie:'epicerie'},{nom:'Sel',categorie:'epicerie'},{nom:'Huile d\'olive',categorie:'epicerie'},
+  {nom:'Café',categorie:'epicerie'},{nom:'Moutarde',categorie:'epicerie'},{nom:'Ketchup',categorie:'epicerie'},
+  {nom:'Concentré de tomate',categorie:'epicerie'},{nom:'Bouillon cubes',categorie:'epicerie'},
+  {nom:'Pain',categorie:'boulangerie'},{nom:'Baguette',categorie:'boulangerie'},{nom:'Croissants',categorie:'boulangerie'},
+  {nom:'Pains au chocolat',categorie:'boulangerie'},{nom:'Brioche',categorie:'boulangerie'},
+  {nom:'Eau plate',categorie:'boissons'},{nom:'Eau pétillante',categorie:'boissons'},
+  {nom:'Jus d\'orange',categorie:'boissons'},{nom:'Coca-Cola',categorie:'boissons'},
+  {nom:'Bière',categorie:'boissons'},{nom:'Vin rouge',categorie:'boissons'},{nom:'Vin blanc',categorie:'boissons'},
+  {nom:'Shampoing',categorie:'hygiene'},{nom:'Dentifrice',categorie:'hygiene'},{nom:'Papier toilette',categorie:'hygiene'},
+  {nom:'Gel douche',categorie:'hygiene'},{nom:'Déodorant',categorie:'hygiene'},{nom:'Savon',categorie:'hygiene'},
+  {nom:'Liquide vaisselle',categorie:'entretien'},{nom:'Lessive',categorie:'entretien'},
+  {nom:'Sacs poubelle',categorie:'entretien'},{nom:'Éponges',categorie:'entretien'}
 ];
 
+// --- Utils ---
 function toast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2000);
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.style.display = 'none', 2200);
 }
-
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function openModal(id) { document.getElementById(id).classList.add('show'); }
 
 let confirmCallback = null;
-document.getElementById('confirm-yes').onclick = () => { if (confirmCallback) confirmCallback(); closeModal('confirm-modal'); };
+document.getElementById('confirm-yes').onclick = () => { if(confirmCallback) confirmCallback(); closeModal('confirm-modal'); };
 document.getElementById('confirm-no').onclick = () => closeModal('confirm-modal');
 document.getElementById('close-listes-modal').onclick = () => closeModal('listes-modal');
 document.getElementById('close-cats-modal').onclick = () => closeModal('categories-modal');
@@ -311,7 +459,14 @@ function confirmAction(title, msg, callback) {
   openModal('confirm-modal');
 }
 
-// Navigation
+// Fermer modal en cliquant l'overlay
+['categories-modal','confirm-modal','listes-modal'].forEach(id => {
+  document.getElementById(id).addEventListener('click', e => {
+    if(e.target.id === id) closeModal(id);
+  });
+});
+
+// --- Navigation ---
 document.getElementById('nav-catalogue').onclick = () => goPage('catalogue');
 document.getElementById('nav-listes').onclick = () => goPage('listes');
 document.getElementById('nav-profil').onclick = () => goPage('profil');
@@ -319,20 +474,21 @@ document.getElementById('close-detail-btn').onclick = () => closeDetail();
 document.getElementById('print-list-btn').onclick = () => printListe();
 
 window.goPage = function(page) {
-  document.querySelectorAll('.page, .subpage').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.page,.subpage').forEach(p => p.classList.remove('show'));
   document.getElementById(`page-${page}`).classList.add('show');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
-  document.getElementById(`nav-${page}`).classList.add('on');
+  const navBtn = document.getElementById(`nav-${page}`);
+  if(navBtn) navBtn.classList.add('on');
 };
 
 window.openDetail = function(listeId) {
   activeListeId = listeId;
-  if (unsubArt) unsubArt();
-  unsubArt = onSnapshot(collection(db, 'users', UID, 'listes', listeId, 'articles'), snap => {
-    articles = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  if(unsubArt) unsubArt();
+  unsubArt = onSnapshot(collection(db,'users',UID,'listes',listeId,'articles'), snap => {
+    articles = snap.docs.map(d => ({id:d.id,...d.data()}));
     renderDetail();
   });
-  document.querySelectorAll('.page, .subpage').forEach(p => p.classList.remove('show'));
+  document.querySelectorAll('.page,.subpage').forEach(p => p.classList.remove('show'));
   document.getElementById('page-detail').classList.add('show');
   document.getElementById('add-body').style.display = 'none';
   renderDetailHeader();
@@ -340,44 +496,43 @@ window.openDetail = function(listeId) {
 };
 
 window.closeDetail = function() {
-  if (unsubArt) { unsubArt(); unsubArt = null; }
+  if(unsubArt){unsubArt();unsubArt=null;}
   activeListeId = null;
   goPage('listes');
 };
 
 window.printListe = function() {
   const liste = listes.find(l => l.id === activeListeId);
-  if (!liste || !articles.length) { toast('Liste vide'); return; }
+  if(!liste || !articles.length){toast('Liste vide');return;}
   const date = new Date().toLocaleDateString('fr-FR');
   let body = '';
-  for (const cat of categories) {
+  for(const cat of categories){
     const items = articles.filter(a => a.categorie === cat.id);
-    if (!items.length) continue;
+    if(!items.length) continue;
     body += `<div class="cat">${cat.label}</div>`;
-    for (const a of items) {
-      body += `<div class="item"><div class="box"></div><div class="nom">${a.nom}</div><div class="qty">${a.quantite || 1} ${a.unite || ''}</div></div>`;
-    }
+    for(const a of items)
+      body += `<div class="item"><div class="box"></div><div class="nom">${a.nom}</div><div class="qty">${a.quantite||1} ${a.unite||''}</div></div>`;
   }
-  const win = window.open('', '_blank');
-  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${liste.nom}</title><style>body{font-family:sans-serif;padding:2cm}.cat{font-size:12px;font-weight:800;margin:16px 0 6px;border-bottom:1px solid #ccc}.item{display:flex;align-items:center;gap:12px;padding:6px 0}.box{width:16px;height:16px;border:2px solid #999;border-radius:3px}.nom{flex:1}.qty{color:#666}</style></head><body><h1>🛒 ${liste.nom}</h1><div style="margin-bottom:20px">📅 ${date} • ${articles.length} article(s)</div>${body}</body></html>`);
+  const win = window.open('','_blank');
+  win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${liste.nom}</title><style>body{font-family:sans-serif;padding:2cm;color:#1a1a18}.cat{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin:18px 0 6px;border-bottom:1px solid #ddd;padding-bottom:4px;color:#5c5c52}.item{display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid #f0f0f0}.box{width:14px;height:14px;border:1.5px solid #aaa;border-radius:3px;flex-shrink:0}.nom{flex:1}.qty{color:#9e9e90;font-size:13px}</style></head><body><h1 style="font-size:22px;margin-bottom:4px">${liste.nom}</h1><p style="color:#9e9e90;font-size:13px;margin-bottom:20px">${date} · ${articles.length} article(s)</p>${body}</body></html>`);
   win.document.close();
   win.print();
 };
 
-// Gestion catalogue
+// --- Catalogue ---
 window.addProduit = async function() {
   const nom = document.getElementById('c-nom').value.trim();
   const cat = document.getElementById('c-cat').value;
-  if (!nom) { toast('Entrez un nom'); return; }
-  if (catalogue.some(p => p.nom === nom)) { toast('Ce produit existe déjà'); return; }
-  await addDoc(collection(db, 'users', UID, 'catalogue'), { nom, categorie: cat, createdAt: serverTimestamp() });
+  if(!nom){toast('Entrez un nom');return;}
+  if(catalogue.some(p => p.nom.toLowerCase() === nom.toLowerCase())){toast('Ce produit existe déjà');return;}
+  await addDoc(collection(db,'users',UID,'catalogue'),{nom,categorie:cat,createdAt:serverTimestamp()});
   document.getElementById('c-nom').value = '';
   toast('Produit ajouté');
 };
 
 window.delProduit = function(id, nom) {
-  confirmAction('Supprimer', `Supprimer "${nom}" du catalogue ?`, async () => {
-    await deleteDoc(doc(db, 'users', UID, 'catalogue', id));
+  confirmAction('Supprimer',`Supprimer "${nom}" du catalogue ?`, async () => {
+    await deleteDoc(doc(db,'users',UID,'catalogue',id));
     selectedIds.delete(id);
     updateSelBar();
     toast('Produit supprimé');
@@ -389,77 +544,70 @@ window.toggleSel = function(id) {
   updateSelBar();
   renderCatalogue();
 };
-
 window.clearSel = function() { selectedIds.clear(); updateSelBar(); renderCatalogue(); };
-function updateSelBar() { 
+function updateSelBar() {
   const bar = document.getElementById('sel-bar');
   bar.classList.toggle('show', selectedIds.size > 0);
   document.getElementById('sel-count').textContent = `${selectedIds.size} sélectionné(s)`;
 }
 
 window.addSelectedToList = async function() {
-  const activeLists = listes.filter(l => l.statut === 'en_cours');
-  if (!activeLists.length) { toast('Créez une liste d\'abord'); return; }
-  if (activeLists.length === 1) return addToSpecificList(activeLists[0].id, activeLists[0].nom);
-  const container = document.getElementById('listes-choix');
-  container.innerHTML = activeLists.map(l => `<button class="btn" style="width:100%;margin-bottom:.5rem;border:1px solid var(--border);padding:.6rem" onclick="addToSpecificList('${l.id}','${l.nom.replace(/'/g,"\\'")}')">🛒 ${l.nom}</button>`).join('');
+  const active = listes.filter(l => l.statut === 'en_cours');
+  if(!active.length){toast("Créez d'abord une liste");return;}
+  if(active.length === 1) return addToSpecificList(active[0].id, active[0].nom);
+  const c = document.getElementById('listes-choix');
+  c.innerHTML = active.map(l => `<button class="btn btn-outline btn-full" style="margin-bottom:.45rem;justify-content:flex-start;gap:.5rem" onclick="addToSpecificList('${l.id}','${esc(l.nom)}')">🛒 ${l.nom}</button>`).join('');
   openModal('listes-modal');
 };
 
 window.addToSpecificList = async function(listeId, listNom) {
   closeModal('listes-modal');
   const produits = catalogue.filter(p => selectedIds.has(p.id));
-  const snap = await getDocs(collection(db, 'users', UID, 'listes', listeId, 'articles'));
+  const snap = await getDocs(collection(db,'users',UID,'listes',listeId,'articles'));
   const existing = new Set(snap.docs.map(d => d.data().nom));
   let added = 0;
-  for (const p of produits) {
-    if (!existing.has(p.nom)) {
-      await addDoc(collection(db, 'users', UID, 'listes', listeId, 'articles'), {
-        nom: p.nom, categorie: p.categorie, quantite: 1, unite: '', coche: false
-      });
+  for(const p of produits){
+    if(!existing.has(p.nom)){
+      await addDoc(collection(db,'users',UID,'listes',listeId,'articles'),{nom:p.nom,categorie:p.categorie,quantite:1,unite:'',coche:false});
       added++;
     }
   }
-  selectedIds.clear();
-  updateSelBar();
-  renderCatalogue();
+  selectedIds.clear(); updateSelBar(); renderCatalogue();
   toast(`${added} produit(s) ajouté(s) à "${listNom}"`);
 };
 
-window.addFast = async function(e, produitId, nom, cat) {
+window.addFast = async function(e, id, nom, cat) {
   e.stopPropagation();
-  const activeLists = listes.filter(l => l.statut === 'en_cours');
-  if (!activeLists.length) { toast('Créez une liste d\'abord'); return; }
-  const liste = activeLists[0];
-  const snap = await getDocs(collection(db, 'users', UID, 'listes', liste.id, 'articles'));
-  if (snap.docs.some(d => d.data().nom === nom)) { toast('Déjà dans la liste'); return; }
-  await addDoc(collection(db, 'users', UID, 'listes', liste.id, 'articles'), {
-    nom, categorie: cat, quantite: 1, unite: '', coche: false
-  });
-  toast(`"${nom}" ajouté à "${liste.nom}"`);
+  const active = listes.filter(l => l.statut === 'en_cours');
+  if(!active.length){toast('Créez une liste d\'abord');return;}
+  const liste = active[0];
+  const snap = await getDocs(collection(db,'users',UID,'listes',liste.id,'articles'));
+  if(snap.docs.some(d => d.data().nom === nom)){toast('Déjà dans la liste');return;}
+  await addDoc(collection(db,'users',UID,'listes',liste.id,'articles'),{nom,categorie:cat,quantite:1,unite:'',coche:false});
+  toast(`"${nom}" ajouté`);
 };
 
 function renderCatalogue() {
   const search = document.getElementById('c-search')?.value.toLowerCase() || '';
   const filtered = catalogue.filter(p => p.nom.toLowerCase().includes(search));
-  
-  if (!filtered.length) {
-    document.getElementById('cat-list').innerHTML = '<div class="empty"><div class="empty-icon">🛒</div><p>Aucun produit trouvé</p></div>';
+  if(!filtered.length){
+    document.getElementById('cat-list').innerHTML = '<div class="empty"><div class="empty-icon">🔍</div><p>Aucun produit trouvé</p></div>';
     return;
   }
-  
   let html = '';
-  for (const cat of categories) {
+  for(const cat of categories){
     const items = filtered.filter(p => p.categorie === cat.id);
-    if (!items.length) continue;
-    html += `<div class="cat-group"><div class="cat-header"><div class="cat-title">${cat.label}</div></div>`;
-    for (const p of items) {
+    if(!items.length) continue;
+    html += `<div class="cat-group"><div class="cat-header"><span class="cat-label">${cat.label}</span><div class="cat-line"></div></div>`;
+    for(const p of items){
       const isSel = selectedIds.has(p.id);
       html += `<div class="prod-row">
-        <div class="chk ${isSel ? 'on' : ''}" onclick="toggleSel('${p.id}')"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div>
+        <div class="chk ${isSel?'on':''}" onclick="toggleSel('${p.id}')"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div>
         <span class="prod-nom">${p.nom}</span>
-        <button class="btn btn-sm" style="color:var(--accent)" onclick="addFast(event,'${p.id}','${p.nom.replace(/'/g,"\\'")}','${p.categorie}')">+ Liste</button>
-        <button class="btn btn-danger btn-sm" onclick="delProduit('${p.id}','${p.nom.replace(/'/g,"\\'")}')">🗑</button>
+        <button class="btn btn-outline btn-sm" style="color:var(--accent);border-color:var(--accent-light)" onclick="addFast(event,'${p.id}','${esc(p.nom)}','${p.categorie}')">+ Liste</button>
+        <button class="btn btn-icon btn-sm" style="color:var(--red)" onclick="delProduit('${p.id}','${esc(p.nom)}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
       </div>`;
     }
     html += `</div>`;
@@ -467,38 +615,38 @@ function renderCatalogue() {
   document.getElementById('cat-list').innerHTML = html;
 }
 
-// Gestion listes
+// --- Listes ---
 window.addListe = async function() {
   const nom = document.getElementById('i-liste').value.trim();
   const dossier = document.getElementById('i-liste-dossier').value;
-  if (!nom) { toast('Entrez un nom'); return; }
-  const ref = await addDoc(collection(db, 'users', UID, 'listes'), { nom, dossier, statut: 'en_cours', createdAt: serverTimestamp() });
+  if(!nom){toast('Entrez un nom');return;}
+  const ref = await addDoc(collection(db,'users',UID,'listes'),{nom,dossier,statut:'en_cours',createdAt:serverTimestamp()});
   document.getElementById('i-liste').value = '';
   openDetail(ref.id);
 };
 
 window.toggleListeStatus = async function(id, current) {
   const newStatus = current === 'terminee' ? 'en_cours' : 'terminee';
-  await updateDoc(doc(db, 'users', UID, 'listes', id), { statut: newStatus });
+  await updateDoc(doc(db,'users',UID,'listes',id),{statut:newStatus});
   toast(newStatus === 'terminee' ? '✅ Courses terminées !' : '🔄 Liste réouverte');
-  if (activeListeId === id) renderDetailHeader();
+  if(activeListeId === id) renderDetailHeader();
 };
 
 window.renommerListe = async function(id, oldName) {
   const newName = prompt('Nouveau nom :', oldName);
-  if (!newName?.trim()) return;
-  await updateDoc(doc(db, 'users', UID, 'listes', id), { nom: newName.trim() });
+  if(!newName?.trim()) return;
+  await updateDoc(doc(db,'users',UID,'listes',id),{nom:newName.trim()});
 };
 
 window.supprimerListe = async function(id, nom) {
-  confirmAction('Supprimer', `Supprimer "${nom}" définitivement ?`, async () => {
-    const articlesRef = collection(db, 'users', UID, 'listes', id, 'articles');
+  confirmAction('Supprimer',`Supprimer "${nom}" définitivement ?`, async () => {
+    const articlesRef = collection(db,'users',UID,'listes',id,'articles');
     const snap = await getDocs(articlesRef);
     const batch = writeBatch(db);
-    for (const d of snap.docs) batch.delete(d.ref);
-    batch.delete(doc(db, 'users', UID, 'listes', id));
+    snap.docs.forEach(d => batch.delete(d.ref));
+    batch.delete(doc(db,'users',UID,'listes',id));
     await batch.commit();
-    if (activeListeId === id) closeDetail();
+    if(activeListeId === id) closeDetail();
     toast('Liste supprimée');
   });
 };
@@ -507,181 +655,198 @@ function renderListes() {
   const fStatut = document.getElementById('f-statut').value;
   const fDossier = document.getElementById('f-dossier').value;
   let filtered = listes;
-  if (fStatut) filtered = filtered.filter(l => l.statut === fStatut);
-  if (fDossier) filtered = filtered.filter(l => l.dossier === fDossier);
+  if(fStatut) filtered = filtered.filter(l => l.statut === fStatut);
+  if(fDossier) filtered = filtered.filter(l => l.dossier === fDossier);
+  if(!filtered.length){
+    document.getElementById('listes-list').innerHTML = '<div class="empty"><div class="empty-icon">🛍️</div><p>Créez votre première liste</p></div>';
+    return;
+  }
   let html = '';
-  for (const l of filtered) {
-    const badge = l.statut === 'terminee' ? '<span class="badge badge-green">✓ Terminée</span>' : '<span class="badge badge-blue">En cours</span>';
+  for(const l of filtered){
+    const badge = l.statut === 'terminee'
+      ? '<span class="badge badge-green">✓ Terminée</span>'
+      : '<span class="badge badge-blue">En cours</span>';
+    const dossierLabel = l.dossier ? `<span style="font-size:.72rem;color:var(--text3);margin-top:.2rem;display:block">📁 ${l.dossier}</span>` : '';
     html += `<div class="liste-card" onclick="openDetail('${l.id}')">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><div class="liste-nom">${l.nom} ${badge}</div><div style="font-size:.7rem;color:var(--text2)">${l.dossier ? '📁 ' + l.dossier : ''}</div></div>
-        <div><button class="btn btn-sm" style="border:1px solid var(--border)" onclick="event.stopPropagation();renommerListe('${l.id}','${l.nom.replace(/'/g,"\\'")}')">✏️</button>
-        <button class="btn btn-sm btn-danger" onclick="event.stopPropagation();supprimerListe('${l.id}','${l.nom.replace(/'/g,"\\'")}')">🗑</button></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+        <div style="min-width:0">
+          <div class="liste-nom">${l.nom}</div>
+          <div style="margin-top:.3rem">${badge}${dossierLabel}</div>
+        </div>
+        <div style="display:flex;gap:.35rem;flex-shrink:0">
+          <button class="btn btn-icon btn-sm btn-outline" onclick="event.stopPropagation();renommerListe('${l.id}','${esc(l.nom)}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn btn-icon btn-sm btn-danger" onclick="event.stopPropagation();supprimerListe('${l.id}','${esc(l.nom)}')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          </button>
+        </div>
       </div>
     </div>`;
   }
-  document.getElementById('listes-list').innerHTML = html || '<div class="empty"><div class="empty-icon">🛍️</div><p>Créez votre première liste</p></div>';
+  document.getElementById('listes-list').innerHTML = html;
 }
 
-// Dossiers
+// --- Dossiers ---
 window.toggleDossierForm = function() {
   const f = document.getElementById('dossier-form');
   f.style.display = f.style.display === 'none' ? 'block' : 'none';
 };
 window.addDossier = async function() {
   const nom = document.getElementById('i-dossier').value.trim();
-  if (!nom) { toast('Entrez un nom'); return; }
-  if (dossiers.some(d => d.nom === nom)) { toast('Ce dossier existe déjà'); return; }
-  await addDoc(collection(db, 'users', UID, 'dossiers'), { nom, createdAt: serverTimestamp() });
+  if(!nom){toast('Entrez un nom');return;}
+  if(dossiers.some(d => d.nom === nom)){toast('Ce dossier existe déjà');return;}
+  await addDoc(collection(db,'users',UID,'dossiers'),{nom,createdAt:serverTimestamp()});
   document.getElementById('i-dossier').value = '';
   toast(`Dossier "${nom}" créé`);
 };
 window.delDossier = async function(id, nom) {
-  confirmAction('Supprimer', `Supprimer le dossier "${nom}" ?`, async () => { await deleteDoc(doc(db, 'users', UID, 'dossiers', id)); });
+  confirmAction('Supprimer',`Supprimer le dossier "${nom}" ?`, async () => {
+    await deleteDoc(doc(db,'users',UID,'dossiers',id));
+  });
 };
 function updateDossierSelects() {
   const opts = '<option value="">Sans dossier</option>' + dossiers.map(d => `<option value="${d.nom}">${d.nom}</option>`).join('');
   document.getElementById('i-liste-dossier').innerHTML = opts;
   document.getElementById('f-dossier').innerHTML = '<option value="">Tous dossiers</option>' + dossiers.map(d => `<option value="${d.nom}">📁 ${d.nom}</option>`).join('');
-  const tagsDiv = document.getElementById('dossiers-tags');
-  if (tagsDiv) tagsDiv.innerHTML = dossiers.map(d => `<div style="display:flex;align-items:center;gap:.3rem;background:#f0f3f8;border-radius:20px;padding:.2rem .6rem"><span>📁 ${d.nom}</span><button onclick="delDossier('${d.id}','${d.nom.replace(/'/g,"\\'")}')" style="color:var(--red);font-size:1.1rem">✕</button></div>`).join('');
+  const tags = document.getElementById('dossiers-tags');
+  if(tags) tags.innerHTML = dossiers.map(d => `<div class="dossier-tag">📁 ${d.nom}<button onclick="delDossier('${d.id}','${esc(d.nom)}')" style="color:var(--red);margin-left:.25rem;font-size:.9rem;line-height:1">×</button></div>`).join('');
 }
 
-// Gestion catégories
+// --- Catégories ---
 window.openCategoriesManager = function() {
   renderCategoriesList();
   openModal('categories-modal');
 };
 function renderCategoriesList() {
-  const container = document.getElementById('categories-list');
-  container.innerHTML = categories.map(c => `
-    <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
-      <input id="edit-cat-${c.id.replace(/-/g,'_')}" value="${c.label}" style="flex:1;padding:.5rem">
-      <button class="btn btn-sm btn-outline" onclick="updateCategory('${c.id}','edit-cat-${c.id.replace(/-/g,'_')}')">✏️</button>
-      ${!DEFAULT_CATEGORIES.some(d => d.id === c.id) ? `<button class="btn btn-sm btn-danger" onclick="deleteCategory('${c.id}')">🗑</button>` : ''}
-    </div>
-  `).join('');
+  document.getElementById('categories-list').innerHTML = categories.map(c => {
+    const isDefault = DEFAULT_CATEGORIES.some(d => d.id === c.id);
+    return `<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem">
+      <input id="edit-cat-${c.id.replace(/-/g,'_')}" value="${c.label}" style="flex:1;padding:.45rem .7rem;font-size:.85rem" ${isDefault?'disabled':''}>
+      ${!isDefault?`<button class="btn btn-sm btn-outline" onclick="updateCategory('${c.id}','edit-cat-${c.id.replace(/-/g,'_')}')">✓</button><button class="btn btn-sm btn-danger" onclick="deleteCategory('${c.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></button>`:'<span style="font-size:.7rem;color:var(--text3);padding:.2rem .5rem">Par défaut</span>'}
+    </div>`;
+  }).join('');
 }
 window.addCategory = async function() {
   const newName = document.getElementById('new-cat-name').value.trim();
-  if (!newName) { toast('Entrez un nom'); return; }
-  const newId = 'cat_' + Date.now() + '_' + Math.floor(Math.random()*1000);
-  if (categories.some(c => c.label === newName)) { toast('Cette catégorie existe déjà'); return; }
-  await addDoc(collection(db, 'users', UID, 'categories'), { id: newId, label: newName, createdAt: serverTimestamp() });
+  if(!newName){toast('Entrez un nom');return;}
+  if(categories.some(c => c.label === newName)){toast('Cette catégorie existe déjà');return;}
+  const newId = 'cat_' + Date.now();
+  await addDoc(collection(db,'users',UID,'categories'),{id:newId,label:newName,createdAt:serverTimestamp()});
   document.getElementById('new-cat-name').value = '';
   toast('Catégorie ajoutée');
 };
 window.updateCategory = async function(catId, inputId) {
   const newLabel = document.getElementById(inputId).value.trim();
-  if (!newLabel) return;
-  if (DEFAULT_CATEGORIES.some(d => d.id === catId)) {
-    toast('Les catégories par défaut ne peuvent pas être modifiées');
-    return;
-  }
-  await updateDoc(doc(db, 'users', UID, 'categories', catId), { label: newLabel });
+  if(!newLabel) return;
+  await updateDoc(doc(db,'users',UID,'categories',catId),{label:newLabel});
   toast('Catégorie modifiée');
 };
 window.deleteCategory = async function(catId) {
-  confirmAction('Supprimer', 'Les produits de cette catégorie passeront en "Autre"', async () => {
-    await deleteDoc(doc(db, 'users', UID, 'categories', catId));
+  confirmAction('Supprimer','Les produits de cette catégorie passeront en "Autre"', async () => {
+    await deleteDoc(doc(db,'users',UID,'categories',catId));
     toast('Catégorie supprimée');
   });
 };
-
 function initCategoriesListener() {
-  if (unsubCategories) unsubCategories();
-  unsubCategories = onSnapshot(collection(db, 'users', UID, 'categories'), snap => {
-    const userCats = snap.docs.map(d => ({ id: d.data().id, label: d.data().label }));
+  if(unsubCategories) unsubCategories();
+  unsubCategories = onSnapshot(collection(db,'users',UID,'categories'), snap => {
+    const userCats = snap.docs.map(d => ({id:d.data().id,label:d.data().label}));
     categories = [...DEFAULT_CATEGORIES];
-    for (const uc of userCats) {
-      if (!DEFAULT_CATEGORIES.some(d => d.id === uc.id)) categories.push(uc);
-    }
+    for(const uc of userCats) if(!DEFAULT_CATEGORIES.some(d => d.id === uc.id)) categories.push(uc);
     updateAllCategorySelects();
-    if (activeListeId) renderAvailableProducts();
+    if(activeListeId) renderAvailableProducts();
     renderCatalogue();
   });
 }
 function updateAllCategorySelects() {
   const opts = categories.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
-  const cCat = document.getElementById('c-cat');
-  const dManCat = document.getElementById('d-man-cat');
-  if (cCat) cCat.innerHTML = opts;
-  if (dManCat) dManCat.innerHTML = opts;
+  ['c-cat','d-man-cat'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = opts; });
 }
 
-// Détail liste
+// --- Détail liste ---
 function renderDetailHeader() {
   const liste = listes.find(l => l.id === activeListeId);
-  if (!liste) return;
+  if(!liste) return;
   const total = articles.length;
   const checked = articles.filter(a => a.coche).length;
   const pct = total ? Math.round(checked/total*100) : 0;
+  const isTerminee = liste.statut === 'terminee';
   document.getElementById('detail-header').innerHTML = `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;flex-wrap:wrap;gap:.5rem">
-      <h2 style="font-size:1.3rem;">${liste.nom}</h2>
-      <button class="btn ${liste.statut === 'terminee' ? 'btn-outline' : 'btn-success'}" style="padding:.4rem .8rem" onclick="toggleListeStatus('${liste.id}','${liste.statut}')">${liste.statut === 'terminee' ? '🔄 Réouvrir' : '✅ Terminer'}</button>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.75rem;flex-wrap:wrap;gap:.5rem">
+      <div>
+        <h2 style="font-family:var(--ff-serif);font-size:1.4rem">${liste.nom}</h2>
+        ${liste.dossier ? `<span style="font-size:.75rem;color:var(--text3)">📁 ${liste.dossier}</span>` : ''}
+      </div>
+      <button class="btn ${isTerminee?'btn-outline':'btn-primary'} btn-sm" onclick="toggleListeStatus('${liste.id}','${liste.statut}')">
+        ${isTerminee ? '🔄 Réouvrir' : '✅ Terminer'}
+      </button>
     </div>
-    ${total ? `<div style="display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:.3rem"><span>✓ ${checked}/${total} articles</span><span>${pct}%</span></div><div style="height:4px;background:var(--border);border-radius:2px;margin-bottom:.8rem"><div style="width:${pct}%;height:100%;background:var(--green);border-radius:2px"></div></div>` : ''}
+    ${total ? `
+      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--text2);margin-bottom:.3rem">
+        <span>${checked} / ${total} article${total>1?'s':''}</span>
+        <span>${pct}%</span>
+      </div>
+      <div class="progress-bar" style="margin-bottom:.8rem"><div class="progress-fill" style="width:${pct}%"></div></div>
+    ` : ''}
   `;
 }
 
 window.toggleAddPanel = function() {
   const body = document.getElementById('add-body');
   body.style.display = body.style.display === 'none' ? 'block' : 'none';
-  if (body.style.display === 'block') renderAvailableProducts();
+  if(body.style.display === 'block') renderAvailableProducts();
 };
 
 window.renderAvailableProducts = function() {
   const search = document.getElementById('d-search')?.value.toLowerCase() || '';
-  const existingNames = new Set(articles.map(a => a.nom));
-  const available = catalogue.filter(p => !existingNames.has(p.nom) && p.nom.toLowerCase().includes(search));
+  const existing = new Set(articles.map(a => a.nom));
+  const available = catalogue.filter(p => !existing.has(p.nom) && p.nom.toLowerCase().includes(search));
   let html = '';
-  for (const cat of categories) {
+  for(const cat of categories){
     const items = available.filter(p => p.categorie === cat.id);
-    if (!items.length) continue;
-    html += `<div class="cat-title" style="margin-top:.5rem">${cat.label}</div>`;
-    for (const p of items) {
-      html += `<div class="prod-row" style="cursor:pointer" onclick="addToCurrentList('${p.id}','${p.nom.replace(/'/g,"\\'")}','${p.categorie}')"><span style="color:var(--accent);font-size:1.1rem;font-weight:800">+</span><span class="prod-nom">${p.nom}</span></div>`;
-    }
+    if(!items.length) continue;
+    html += `<div class="cat-header" style="padding:.4rem 0 .2rem"><span class="cat-label">${cat.label}</span><div class="cat-line"></div></div>`;
+    for(const p of items)
+      html += `<div class="prod-row" style="cursor:pointer" onclick="addToCurrentList('${p.id}','${esc(p.nom)}','${p.categorie}')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="prod-nom">${p.nom}</span>
+      </div>`;
   }
-  document.getElementById('d-cat-list').innerHTML = html || '<p style="padding:1rem;text-align:center;color:var(--text2)">Aucun produit disponible</p>';
+  document.getElementById('d-cat-list').innerHTML = html || '<p style="text-align:center;color:var(--text3);padding:.8rem;font-size:.85rem">Aucun produit disponible</p>';
 };
 
 window.addToCurrentList = async function(id, nom, cat) {
-  await addDoc(collection(db, 'users', UID, 'listes', activeListeId, 'articles'), {
-    nom, categorie: cat, quantite: 1, unite: '', coche: false
-  });
+  await addDoc(collection(db,'users',UID,'listes',activeListeId,'articles'),{nom,categorie:cat,quantite:1,unite:'',coche:false});
   toast(`"${nom}" ajouté`);
 };
 
 window.addManualProduct = async function() {
   const nom = document.getElementById('d-man-nom').value.trim();
   const cat = document.getElementById('d-man-cat').value;
-  if (!nom) { toast('Entrez un nom'); return; }
-  await addDoc(collection(db, 'users', UID, 'listes', activeListeId, 'articles'), {
-    nom, categorie: cat, quantite: 1, unite: '', coche: false
-  });
+  if(!nom){toast('Entrez un nom');return;}
+  await addDoc(collection(db,'users',UID,'listes',activeListeId,'articles'),{nom,categorie:cat,quantite:1,unite:'',coche:false});
   document.getElementById('d-man-nom').value = '';
   toast(`"${nom}" ajouté`);
 };
 
 window.toggleCheck = async function(id, current) {
-  await updateDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id), { coche: !current });
+  await updateDoc(doc(db,'users',UID,'listes',activeListeId,'articles',id),{coche:!current});
 };
 
 window.changeQuantity = async function(id, value) {
   let qty = parseFloat(value);
-  if (isNaN(qty) || qty < 0) qty = 0;
-  await updateDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id), { quantite: qty });
+  if(isNaN(qty)||qty<0) qty = 0;
+  await updateDoc(doc(db,'users',UID,'listes',activeListeId,'articles',id),{quantite:qty});
 };
 
 window.changeUnit = async function(id, unit) {
-  await updateDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id), { unite: unit });
+  await updateDoc(doc(db,'users',UID,'listes',activeListeId,'articles',id),{unite:unit});
 };
 
 window.deleteArticle = function(id, nom) {
-  confirmAction('Retirer', `Retirer "${nom}" de la liste ?`, async () => {
-    await deleteDoc(doc(db, 'users', UID, 'listes', activeListeId, 'articles', id));
+  confirmAction('Retirer',`Retirer "${nom}" de la liste ?`, async () => {
+    await deleteDoc(doc(db,'users',UID,'listes',activeListeId,'articles',id));
   });
 };
 
@@ -689,41 +854,45 @@ function renderDetail() {
   renderDetailHeader();
   const liste = listes.find(l => l.id === activeListeId);
   const isTerminee = liste?.statut === 'terminee';
+  const units = ['','kg','g','L','cl','pièce(s)','boîte(s)','sachet(s)','bouteille(s)'];
   let html = '';
-  for (const cat of categories) {
+  for(const cat of categories){
     const items = articles.filter(a => a.categorie === cat.id);
-    if (!items.length) continue;
-    html += `<div class="cat-title" style="margin-top:.5rem">${cat.label}</div>`;
-    for (const a of items) {
-      const units = ['', 'kg', 'g', 'L', 'cl', 'pièce(s)', 'boîte(s)', 'sachet(s)', 'bouteille(s)'];
-      const unitOptions = units.map(u => `<option value="${u}" ${a.unite === u ? 'selected' : ''}>${u || '—'}</option>`).join('');
-      html += `<div class="article-card ${a.coche ? 'done' : ''}">
+    if(!items.length) continue;
+    html += `<div class="cat-header" style="padding:.5rem 0 .25rem"><span class="cat-label">${cat.label}</span><div class="cat-line"></div></div>`;
+    for(const a of items){
+      const unitOpts = units.map(u => `<option value="${u}" ${a.unite===u?'selected':''}>${u||'—'}</option>`).join('');
+      html += `<div class="article-card ${a.coche?'done':''}">
         <div class="article-row">
-          <div class="chk ${a.coche ? 'on' : ''}" onclick="${isTerminee ? '' : `toggleCheck('${a.id}',${a.coche})`}"><svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg></div>
-          <div class="article-info">
-            <span class="article-name">${a.nom}</span>
-            ${!isTerminee ? `
-              <div class="article-qty-controls">
-                <input type="number" step="0.5" min="0" value="${a.quantite || 1}" class="qty-input" onchange="changeQuantity('${a.id}',this.value)">
-                <select class="qty-unite" onchange="changeUnit('${a.id}',this.value)">${unitOptions}</select>
-              </div>
-            ` : `<span style="font-size:.75rem;color:var(--text2)">${a.quantite || 1} ${a.unite || ''}</span>`}
+          <div class="chk ${a.coche?'on':''}" onclick="${isTerminee?'':`toggleCheck('${a.id}',${a.coche})`}">
+            <svg viewBox="0 0 13 13" fill="none" stroke="white" stroke-width="2.5"><path d="M2 7L5 10L11 3"/></svg>
           </div>
-          ${!isTerminee ? `<button class="btn btn-danger btn-sm" onclick="deleteArticle('${a.id}','${a.nom.replace(/'/g,"\\'")}')">🗑</button>` : ''}
+          <div class="article-info">
+            <span class="article-name" style="${a.coche?'text-decoration:line-through':''}">${a.nom}</span>
+            ${!isTerminee ? `
+              <div style="display:flex;align-items:center;gap:.35rem">
+                <input type="number" step="0.5" min="0" value="${a.quantite||1}" class="qty-input" onchange="changeQuantity('${a.id}',this.value)">
+                <select class="qty-unite" onchange="changeUnit('${a.id}',this.value)">${unitOpts}</select>
+              </div>
+            ` : `<span style="font-size:.75rem;color:var(--text2)">${a.quantite||1} ${a.unite||''}</span>`}
+          </div>
+          ${!isTerminee ? `<button class="btn btn-icon btn-sm" style="color:var(--red)" onclick="deleteArticle('${a.id}','${esc(a.nom)}')">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          </button>` : ''}
         </div>
       </div>`;
     }
   }
-  document.getElementById('detail-articles').innerHTML = html || '<div class="empty"><div class="empty-icon">🛒</div><p>Liste vide<br>Ajoutez des produits !</p></div>';
-  if (!isTerminee) renderAvailableProducts();
+  document.getElementById('detail-articles').innerHTML = html || '<div class="empty"><div class="empty-icon">🛒</div><p>Liste vide — ajoutez des produits !</p></div>';
+  if(!isTerminee) renderAvailableProducts();
 }
 
-// Profil
+// --- Profil ---
 function updateProfilUI() {
   const user = auth.currentUser;
-  if (!user) return;
+  if(!user) return;
   const nom = user.displayName || user.email?.split('@')[0] || '?';
-  document.getElementById('p-avatar').textContent = nom.slice(0, 2).toUpperCase();
+  document.getElementById('p-avatar').textContent = nom.slice(0,2).toUpperCase();
   document.getElementById('p-nom').textContent = user.displayName || 'Utilisateur';
   document.getElementById('p-email').textContent = user.email;
   document.getElementById('p-new-nom').value = user.displayName || '';
@@ -731,8 +900,8 @@ function updateProfilUI() {
 
 window.updateNom = async function() {
   const nom = document.getElementById('p-new-nom').value.trim();
-  if (!nom) { toast('Entrez un prénom'); return; }
-  await updateProfile(auth.currentUser, { displayName: nom });
+  if(!nom){toast('Entrez un prénom');return;}
+  await updateProfile(auth.currentUser,{displayName:nom});
   updateProfilUI();
   toast('✅ Prénom mis à jour');
 };
@@ -740,17 +909,17 @@ window.updateNom = async function() {
 window.updatePwd = async function() {
   const cur = document.getElementById('p-pwd-cur').value;
   const nw = document.getElementById('p-pwd-new').value;
-  if (!cur || !nw) { toast('Remplissez les deux champs'); return; }
-  if (nw.length < 6) { toast('6 caractères minimum'); return; }
+  if(!cur||!nw){toast('Remplissez les deux champs');return;}
+  if(nw.length<6){toast('6 caractères minimum');return;}
   try {
-    const cred = EmailAuthProvider.credential(auth.currentUser.email, cur);
-    await reauthenticateWithCredential(auth.currentUser, cred);
-    await updatePassword(auth.currentUser, nw);
+    const cred = EmailAuthProvider.credential(auth.currentUser.email,cur);
+    await reauthenticateWithCredential(auth.currentUser,cred);
+    await updatePassword(auth.currentUser,nw);
     document.getElementById('p-pwd-cur').value = '';
     document.getElementById('p-pwd-new').value = '';
     toast('✅ Mot de passe modifié');
-  } catch (e) {
-    toast(e.code === 'auth/wrong-password' ? 'Mot de passe actuel incorrect' : 'Erreur');
+  } catch(e) {
+    toast(e.code==='auth/wrong-password'?'Mot de passe actuel incorrect':'Erreur');
   }
 };
 
@@ -758,18 +927,16 @@ window.creerMembre = async function() {
   const prenom = document.getElementById('m-prenom').value.trim();
   const email = document.getElementById('m-email').value.trim();
   const pwd = document.getElementById('m-pwd').value;
-  if (!prenom || !email || !pwd) { toast('Remplissez tous les champs'); return; }
-  if (pwd.length < 6) { toast('Mot de passe trop court (6 min)'); return; }
+  if(!prenom||!email||!pwd){toast('Remplissez tous les champs');return;}
+  if(pwd.length<6){toast('Mot de passe trop court (6 min)');return;}
   try {
-    const userCred = await createUserWithEmailAndPassword(auth, email, pwd);
-    await updateProfile(userCred.user, { displayName: prenom });
+    const userCred = await createUserWithEmailAndPassword(auth,email,pwd);
+    await updateProfile(userCred.user,{displayName:prenom});
     toast(`✅ Compte créé pour ${prenom} !`);
-    document.getElementById('m-prenom').value = '';
-    document.getElementById('m-email').value = '';
-    document.getElementById('m-pwd').value = '';
+    ['m-prenom','m-email','m-pwd'].forEach(id => document.getElementById(id).value = '');
     await signOut(auth);
-  } catch (e) {
-    toast(e.code === 'auth/email-already-in-use' ? 'Email déjà utilisé' : 'Erreur');
+  } catch(e) {
+    toast(e.code==='auth/email-already-in-use'?'Email déjà utilisé':'Erreur');
   }
 };
 
@@ -778,43 +945,38 @@ window.doLogout = async function() {
   toast('👋 Déconnecté');
 };
 
-// Fonction pour initialiser le catalogue par défaut
+// --- Init ---
+function esc(s) { return String(s).replace(/'/g,"\\'"); }
+
 async function initializeDefaultCatalogue() {
-  const catSnap = await getDocs(collection(db, 'users', UID, 'catalogue'));
-  if (catSnap.empty) {
-    toast('Chargement du catalogue...');
-    for (const p of DEFAULT_PRODUITS) {
-      await addDoc(collection(db, 'users', UID, 'catalogue'), { ...p, createdAt: serverTimestamp() });
-    }
+  const snap = await getDocs(collection(db,'users',UID,'catalogue'));
+  if(snap.empty){
+    toast('Chargement du catalogue…');
+    for(const p of DEFAULT_PRODUITS)
+      await addDoc(collection(db,'users',UID,'catalogue'),{...p,createdAt:serverTimestamp()});
     toast(`✅ ${DEFAULT_PRODUITS.length} produits chargés !`);
   }
 }
 
-// Listeners Firebase
 function startListeners() {
-  unsubCat = onSnapshot(collection(db, 'users', UID, 'catalogue'), snap => {
-    catalogue = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  unsubCat = onSnapshot(collection(db,'users',UID,'catalogue'), snap => {
+    catalogue = snap.docs.map(d => ({id:d.id,...d.data()}));
     renderCatalogue();
-    if (document.getElementById('add-body')?.style.display === 'block') renderAvailableProducts();
+    if(document.getElementById('add-body')?.style.display === 'block') renderAvailableProducts();
   });
-  unsubListes = onSnapshot(collection(db, 'users', UID, 'listes'), snap => {
-    listes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  unsubListes = onSnapshot(collection(db,'users',UID,'listes'), snap => {
+    listes = snap.docs.map(d => ({id:d.id,...d.data()}));
     renderListes();
-    if (activeListeId) renderDetailHeader();
+    if(activeListeId) renderDetailHeader();
   });
-  unsubDoss = onSnapshot(collection(db, 'users', UID, 'dossiers'), snap => {
-    dossiers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  unsubDoss = onSnapshot(collection(db,'users',UID,'dossiers'), snap => {
+    dossiers = snap.docs.map(d => ({id:d.id,...d.data()}));
     updateDossierSelects();
   });
   initCategoriesListener();
 }
-
 function stopListeners() {
-  if (unsubCat) unsubCat();
-  if (unsubListes) unsubListes();
-  if (unsubDoss) unsubDoss();
-  if (unsubArt) unsubArt();
-  if (unsubCategories) unsubCategories();
+  [unsubCat,unsubListes,unsubDoss,unsubArt,unsubCategories].forEach(u => u && u());
 }
 
 // Auth
@@ -824,16 +986,16 @@ document.getElementById('auth-btn').onclick = async () => {
   const errDiv = document.getElementById('auth-err');
   errDiv.style.display = 'none';
   try {
-    await signInWithEmailAndPassword(auth, email, pwd);
-  } catch (e) {
+    await signInWithEmailAndPassword(auth,email,pwd);
+  } catch(e) {
     errDiv.textContent = 'Email ou mot de passe incorrect';
     errDiv.style.display = 'block';
   }
 };
-document.getElementById('i-pwd').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('auth-btn').click(); });
+document.getElementById('i-pwd').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('auth-btn').click(); });
 
 onAuthStateChanged(auth, async user => {
-  if (user) {
+  if(user){
     UID = user.uid;
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'flex';
@@ -849,7 +1011,7 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-// Attachement des événements
+// Events
 document.getElementById('add-produit-btn').onclick = () => window.addProduit();
 document.getElementById('clear-sel-btn').onclick = () => window.clearSel();
 document.getElementById('add-sel-liste-btn').onclick = () => window.addSelectedToList();
