@@ -123,8 +123,32 @@
 
   /* Auth */
   .auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1.5rem;background:var(--bg)}
-  .auth-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;padding:2rem;width:100%;max-width:380px;text-align:center;box-shadow:var(--shadow-lg)}
+  .auth-card{background:var(--surface);border:1.5px solid var(--border);border-radius:24px;padding:2rem;width:100%;max-width:400px;text-align:center;box-shadow:var(--shadow-lg)}
   .auth-logo{width:64px;height:64px;background:var(--accent);border-radius:18px;display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;box-shadow:0 4px 16px rgba(45,106,79,.3)}
+
+  /* Login tabs */
+  .auth-tabs{display:flex;gap:0;background:var(--surface2);border-radius:10px;padding:4px;margin-bottom:1.4rem}
+  .auth-tab{flex:1;padding:8px 10px;border:none;background:none;font-family:var(--ff);font-size:.8rem;font-weight:600;color:var(--text2);cursor:pointer;border-radius:7px;transition:all .18s}
+  .auth-tab.on{background:var(--surface);color:var(--accent);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+  .auth-panel{display:none}
+  .auth-panel.on{display:block;animation:fadeUp .2s ease both}
+
+  /* Google button */
+  .btn-google{width:100%;padding:.75rem;display:flex;align-items:center;justify-content:center;gap:.75rem;
+    background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rs);
+    font-family:var(--ff);font-size:.9rem;font-weight:600;color:var(--text);cursor:pointer;
+    transition:all .15s;margin-bottom:.6rem}
+  .btn-google:hover{border-color:#4285f4;background:#f5f8ff;transform:translateY(-1px);box-shadow:0 4px 16px rgba(66,133,244,.15)}
+  .btn-google svg{width:20px;height:20px;flex-shrink:0}
+
+  /* Admin note */
+  .auth-admin-note{background:var(--accent-light);border-radius:var(--rs);padding:.65rem .9rem;font-size:.78rem;color:var(--accent);margin-bottom:1rem;text-align:left;line-height:1.5}
+
+  /* Spinner */
+  .auth-spinner{display:none;flex-direction:column;align-items:center;gap:.7rem;padding:.75rem 0}
+  .auth-spinner.on{display:flex}
+  .spinner{width:32px;height:32px;border:2.5px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
 
   /* Profil avatar */
   .avatar{width:52px;height:52px;border-radius:14px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.2rem;font-weight:800;color:#fff;font-family:var(--ff-serif)}
@@ -168,11 +192,42 @@
       </svg>
     </div>
     <h1 style="font-family:var(--ff-serif);font-size:1.7rem;margin-bottom:.3rem">Mes Courses</h1>
-    <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.6rem">Gérez vos courses en famille</p>
-    <div id="auth-err" style="background:var(--red-light);color:var(--red);border-radius:10px;padding:.7rem .9rem;margin-bottom:1rem;display:none;font-size:.85rem;text-align:left"></div>
-    <div style="margin-bottom:.7rem"><input id="i-email" type="email" placeholder="Adresse email"></div>
-    <div style="margin-bottom:1.1rem"><input id="i-pwd" type="password" placeholder="Mot de passe"></div>
-    <button class="btn btn-primary btn-full" id="auth-btn" style="padding:.75rem">Se connecter</button>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.4rem">Gérez vos courses en famille</p>
+
+    <!-- Onglets -->
+    <div class="auth-tabs">
+      <button class="auth-tab on" id="tab-google" onclick="switchAuthTab('google')">🔑 Administrateur</button>
+      <button class="auth-tab" id="tab-email" onclick="switchAuthTab('email')">👤 Utilisateur</button>
+    </div>
+
+    <!-- Panel Google (admin) -->
+    <div class="auth-panel on" id="panel-google">
+      <div class="auth-admin-note">
+        🔑 Connexion <strong>administrateur</strong> via votre compte Google.<br>Accès complet à la gestion de la famille.
+      </div>
+      <button class="btn-google" id="google-btn">
+        <svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continuer avec Google
+      </button>
+      <div class="auth-spinner" id="google-spinner">
+        <div class="spinner"></div>
+        <span style="font-size:.8rem;color:var(--text2)">Connexion en cours…</span>
+      </div>
+      <div id="google-err" style="background:var(--red-light);color:var(--red);border-radius:var(--rs);padding:.6rem .9rem;margin-top:.6rem;display:none;font-size:.82rem;text-align:left"></div>
+    </div>
+
+    <!-- Panel Email (utilisateur) -->
+    <div class="auth-panel" id="panel-email">
+      <div id="auth-err" style="background:var(--red-light);color:var(--red);border-radius:10px;padding:.7rem .9rem;margin-bottom:.9rem;display:none;font-size:.85rem;text-align:left"></div>
+      <div style="margin-bottom:.7rem"><input id="i-email" type="email" placeholder="Adresse email"></div>
+      <div style="margin-bottom:1rem"><input id="i-pwd" type="password" placeholder="Mot de passe"></div>
+      <button class="btn btn-primary btn-full" id="auth-btn" style="padding:.75rem">Se connecter</button>
+    </div>
   </div>
 </div>
 
@@ -256,7 +311,7 @@
     </div>
 
     <div class="section-title">Sécurité</div>
-    <div class="card">
+    <div class="card" id="pwd-section">
       <div style="margin-bottom:.6rem"><input id="p-pwd-cur" type="password" placeholder="Mot de passe actuel"></div>
       <div style="margin-bottom:.7rem"><input id="p-pwd-new" type="password" placeholder="Nouveau mot de passe (6 min)"></div>
       <button class="btn btn-outline btn-sm" id="update-pwd-btn">Modifier le mot de passe</button>
@@ -370,7 +425,7 @@
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const FB = {
@@ -893,9 +948,14 @@ function updateProfilUI() {
   if(!user) return;
   const nom = user.displayName || user.email?.split('@')[0] || '?';
   document.getElementById('p-avatar').textContent = nom.slice(0,2).toUpperCase();
-  document.getElementById('p-nom').textContent = user.displayName || 'Utilisateur';
-  document.getElementById('p-email').textContent = user.email;
+  document.getElementById('p-nom').textContent = (user.displayName || 'Utilisateur')
+    + (user.providerData[0]?.providerId === 'google.com' ? ' 🔑' : '');
+  document.getElementById('p-email').textContent = user.email
+    + (user.providerData[0]?.providerId === 'google.com' ? '  •  Google' : '');
   document.getElementById('p-new-nom').value = user.displayName || '';
+  // Masquer la section mot de passe pour les comptes Google
+  const pwdSection = document.getElementById('pwd-section');
+  if(pwdSection) pwdSection.style.display = user.providerData[0]?.providerId === 'google.com' ? 'none' : '';
 }
 
 window.updateNom = async function() {
@@ -979,22 +1039,60 @@ function stopListeners() {
   [unsubCat,unsubListes,unsubDoss,unsubArt,unsubCategories].forEach(u => u && u());
 }
 
-// Auth
+// --- Auth ---
+window.switchAuthTab = function(tab) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('on'));
+  document.getElementById('tab-' + tab).classList.add('on');
+  document.getElementById('panel-' + tab).classList.add('on');
+  document.getElementById('google-err').style.display = 'none';
+  document.getElementById('auth-err').style.display = 'none';
+};
+
+// Google (admin)
+document.getElementById('google-btn').onclick = async () => {
+  const errEl = document.getElementById('google-err');
+  const spinEl = document.getElementById('google-spinner');
+  errEl.style.display = 'none';
+  spinEl.classList.add('on');
+  try {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    await signInWithPopup(auth, provider);
+    // onAuthStateChanged prend le relais
+  } catch(e) {
+    spinEl.classList.remove('on');
+    if(e.code !== 'auth/popup-closed-by-user') {
+      errEl.textContent = e.code === 'auth/unauthorized-domain'
+        ? '⚠️ Domaine non autorisé dans Firebase (ajoutez-le dans Authentication → Domaines).'
+        : '❌ ' + (e.message || 'Erreur de connexion Google');
+      errEl.style.display = 'block';
+    }
+  }
+};
+
+// Email / Password (utilisateurs)
 document.getElementById('auth-btn').onclick = async () => {
   const email = document.getElementById('i-email').value.trim();
-  const pwd = document.getElementById('i-pwd').value;
+  const pwd   = document.getElementById('i-pwd').value;
   const errDiv = document.getElementById('auth-err');
   errDiv.style.display = 'none';
   try {
-    await signInWithEmailAndPassword(auth,email,pwd);
+    await signInWithEmailAndPassword(auth, email, pwd);
   } catch(e) {
-    errDiv.textContent = 'Email ou mot de passe incorrect';
+    errDiv.textContent = (e.code === 'auth/user-not-found' || e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential')
+      ? 'Email ou mot de passe incorrect'
+      : (e.message || 'Erreur de connexion');
     errDiv.style.display = 'block';
   }
 };
 document.getElementById('i-pwd').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('auth-btn').click(); });
 
 onAuthStateChanged(auth, async user => {
+  // Masquer le spinner Google dans tous les cas
+  const spinEl = document.getElementById('google-spinner');
+  if(spinEl) spinEl.classList.remove('on');
+
   if(user){
     UID = user.uid;
     document.getElementById('auth-screen').style.display = 'none';
