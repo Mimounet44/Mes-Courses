@@ -224,9 +224,28 @@
     <!-- Panel Email (utilisateur) -->
     <div class="auth-panel" id="panel-email">
       <div id="auth-err" style="background:var(--red-light);color:var(--red);border-radius:10px;padding:.7rem .9rem;margin-bottom:.9rem;display:none;font-size:.85rem;text-align:left"></div>
-      <div style="margin-bottom:.7rem"><input id="i-email" type="email" placeholder="Adresse email"></div>
-      <div style="margin-bottom:1rem"><input id="i-pwd" type="password" placeholder="Mot de passe"></div>
-      <button class="btn btn-primary btn-full" id="auth-btn" style="padding:.75rem">Se connecter</button>
+      <!-- Sous-onglets connexion / inscription -->
+      <div style="display:flex;gap:0;background:var(--surface2);border-radius:8px;padding:3px;margin-bottom:1rem">
+        <button class="auth-tab on" id="subtab-login" onclick="switchSubTab('login')" style="font-size:.75rem">Se connecter</button>
+        <button class="auth-tab" id="subtab-register" onclick="switchSubTab('register')" style="font-size:.75rem">Créer un compte</button>
+      </div>
+      <!-- Login -->
+      <div id="subpanel-login">
+        <div style="margin-bottom:.7rem"><input id="i-email" type="email" placeholder="Adresse email"></div>
+        <div style="margin-bottom:1rem"><input id="i-pwd" type="password" placeholder="Mot de passe"></div>
+        <button class="btn btn-primary btn-full" id="auth-btn" style="padding:.75rem">Se connecter</button>
+      </div>
+      <!-- Register -->
+      <div id="subpanel-register" style="display:none">
+        <p style="font-size:.78rem;color:var(--text2);margin-bottom:.9rem;text-align:left">Créez votre compte puis entrez le code d'invitation reçu.</p>
+        <div style="margin-bottom:.6rem"><input id="r-prenom" placeholder="Prénom"></div>
+        <div style="margin-bottom:.6rem"><input id="r-email" type="email" placeholder="Adresse email"></div>
+        <div style="margin-bottom:.6rem"><input id="r-pwd" type="password" placeholder="Mot de passe (6 min)"></div>
+        <div style="margin-bottom:1rem">
+          <input id="r-code" placeholder="Code d'invitation (optionnel)" style="text-transform:uppercase;letter-spacing:.08em">
+        </div>
+        <button class="btn btn-primary btn-full" id="register-btn" style="padding:.75rem">Créer mon compte</button>
+      </div>
     </div>
   </div>
 </div>
@@ -317,13 +336,20 @@
       <button class="btn btn-outline btn-sm" id="update-pwd-btn">Modifier le mot de passe</button>
     </div>
 
-    <div class="section-title">Ajouter un membre</div>
+    <div class="section-title">Partage familial</div>
     <div class="card">
-      <p style="font-size:.78rem;color:var(--text2);margin-bottom:.8rem">Créez un compte pour un membre de la famille</p>
-      <div style="margin-bottom:.55rem"><input id="m-prenom" placeholder="Prénom"></div>
-      <div style="margin-bottom:.55rem"><input id="m-email" type="email" placeholder="Email"></div>
-      <div style="margin-bottom:.8rem"><input id="m-pwd" type="password" placeholder="Mot de passe"></div>
-      <button class="btn btn-primary btn-sm" id="creer-membre-btn">Créer le compte</button>
+      <p style="font-size:.78rem;color:var(--text2);margin-bottom:.9rem">Générez un code et partagez-le avec vos proches pour qu'ils puissent rejoindre votre espace.</p>
+      <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.8rem">
+        <div id="invite-code-display" style="flex:1;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--rs);padding:.6rem .9rem;font-size:1.1rem;font-weight:800;letter-spacing:.15em;text-align:center;color:var(--accent);font-family:monospace">—</div>
+        <button class="btn btn-primary btn-sm" id="gen-code-btn" style="flex:none">Générer</button>
+        <button class="btn btn-outline btn-sm" id="copy-code-btn" style="flex:none">Copier</button>
+      </div>
+      <p style="font-size:.72rem;color:var(--text3)">Le code expire après 48h. Un seul code actif à la fois.</p>
+    </div>
+
+    <div class="section-title">Membres autorisés</div>
+    <div class="card" id="membres-list-card">
+      <div id="membres-list"><p style="font-size:.82rem;color:var(--text3);text-align:center;padding:.5rem">Aucun membre pour l'instant</p></div>
     </div>
 
     <div style="height:.5rem"></div>
@@ -543,6 +569,11 @@ window.goPage = function(page) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
   const navBtn = document.getElementById(`nav-${page}`);
   if(navBtn) navBtn.classList.add('on');
+  // Rafraichir membres et code quand on va sur profil et qu'on est sur son propre compte
+  if(page === 'profil' && UID && auth.currentUser && UID === auth.currentUser.uid) {
+    loadInviteCode();
+    renderMembres();
+  }
 };
 
 window.openDetail = function(listeId) {
@@ -992,32 +1023,84 @@ window.updatePwd = async function() {
   }
 };
 
-window.creerMembre = async function() {
-  const prenom = document.getElementById('m-prenom').value.trim();
-  const email = document.getElementById('m-email').value.trim();
-  const pwd = document.getElementById('m-pwd').value;
-  if(!prenom||!email||!pwd){toast('Remplissez tous les champs');return;}
-  if(pwd.length<6){toast('Mot de passe trop court (6 min)');return;}
-  const adminUID = UID; // mémoriser l'UID admin avant signOut
-  try {
-    const userCred = await createUserWithEmailAndPassword(auth,email,pwd);
-    const membreUID = userCred.user.uid;
-    await updateProfile(userCred.user,{displayName:prenom});
-    // 1. Enregistrer le membre dans la liste de l'admin
-    await setDoc(doc(db,'users',adminUID,'membres',membreUID), {
-      prenom, email, createdAt: serverTimestamp()
-    });
-    // 2. Enregistrer le profil du membre avec lien vers l'admin
-    await setDoc(doc(db,'users',membreUID,'profile','data'), {
-      ownerUID: adminUID, prenom, email, role: 'membre'
-    });
-    toast(`✅ Compte créé pour ${prenom} !`);
-    ['m-prenom','m-email','m-pwd'].forEach(id => document.getElementById(id).value = '');
-    await signOut(auth);
-  } catch(e) {
-    toast(e.code==='auth/email-already-in-use'?'Email déjà utilisé':'Erreur');
-  }
+// --- Système d'invitation ---
+function genCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for(let i=0;i<6;i++) code += chars[Math.floor(Math.random()*chars.length)];
+  return code;
+}
+
+window.genererCode = async function() {
+  const code = genCode();
+  const expires = new Date(Date.now() + 48*3600*1000);
+  await setDoc(doc(db,'invitations',code), {
+    ownerUID: auth.currentUser.uid,
+    ownerPrenom: auth.currentUser.displayName || 'Admin',
+    createdAt: serverTimestamp(),
+    expires: expires,
+    used: false
+  });
+  // Sauvegarder le code actif dans le profil admin
+  await setDoc(doc(db,'users',auth.currentUser.uid,'profile','invite'), {
+    code, expires
+  });
+  document.getElementById('invite-code-display').textContent = code;
+  toast('Code généré ! Valable 48h');
 };
+
+window.copierCode = function() {
+  const code = document.getElementById('invite-code-display').textContent;
+  if(code === '—'){toast('Générez d'abord un code');return;}
+  navigator.clipboard.writeText(code).then(() => toast('Code copié !')).catch(() => toast('Code : ' + code));
+};
+
+window.retirerMembre = async function(membreUID, prenom) {
+  confirmAction('Retirer', `Retirer ${prenom} de votre espace ?`, async () => {
+    // Supprimer de la liste des membres
+    await deleteDoc(doc(db,'users',auth.currentUser.uid,'membres',membreUID));
+    // Supprimer le lien dans le profil du membre
+    try {
+      await deleteDoc(doc(db,'users',membreUID,'profile','data'));
+    } catch(e) {}
+    toast(`${prenom} retiré`);
+    renderMembres();
+  });
+};
+
+async function renderMembres() {
+  const snap = await getDocs(collection(db,'users',auth.currentUser.uid,'membres'));
+  const list = document.getElementById('membres-list');
+  if(!list) return;
+  if(snap.empty){
+    list.innerHTML = '<p style="font-size:.82rem;color:var(--text3);text-align:center;padding:.5rem">Aucun membre pour l'instant</p>';
+    return;
+  }
+  list.innerHTML = snap.docs.map(d => {
+    const m = d.data();
+    return `<div style="display:flex;align-items:center;gap:.75rem;padding:.55rem 0;border-bottom:1px solid var(--border)">
+      <div style="width:34px;height:34px;border-radius:9px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:.8rem;flex-shrink:0">${(m.prenom||'?').slice(0,2).toUpperCase()}</div>
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:.88rem">${m.prenom||'Membre'}</div>
+        <div style="font-size:.72rem;color:var(--text3)">${m.email||''}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="retirerMembre('${d.id}','${esc(m.prenom||'ce membre')}')">Retirer</button>
+    </div>`;
+  }).join('');
+}
+
+async function loadInviteCode() {
+  try {
+    const snap = await getDoc(doc(db,'users',auth.currentUser.uid,'profile','invite'));
+    if(snap.exists()){
+      const data = snap.data();
+      const expires = data.expires?.toDate ? data.expires.toDate() : new Date(data.expires);
+      if(expires > new Date()){
+        document.getElementById('invite-code-display').textContent = data.code;
+      }
+    }
+  } catch(e){}
+}
 
 window.doLogout = async function() {
   await signOut(auth);
@@ -1107,6 +1190,57 @@ document.getElementById('auth-btn').onclick = async () => {
 };
 document.getElementById('i-pwd').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('auth-btn').click(); });
 
+window.switchSubTab = function(tab) {
+  document.getElementById('subpanel-login').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('subpanel-register').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('subtab-login').classList.toggle('on', tab==='login');
+  document.getElementById('subtab-register').classList.toggle('on', tab==='register');
+  document.getElementById('auth-err').style.display = 'none';
+};
+
+document.getElementById('register-btn').onclick = async () => {
+  const prenom = document.getElementById('r-prenom').value.trim();
+  const email = document.getElementById('r-email').value.trim();
+  const pwd = document.getElementById('r-pwd').value;
+  const code = document.getElementById('r-code').value.trim().toUpperCase();
+  const errDiv = document.getElementById('auth-err');
+  errDiv.style.display = 'none';
+  if(!prenom||!email||!pwd){errDiv.textContent='Remplissez tous les champs';errDiv.style.display='block';return;}
+  if(pwd.length<6){errDiv.textContent='Mot de passe trop court (6 min)';errDiv.style.display='block';return;}
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, pwd);
+    await updateProfile(userCred.user, {displayName: prenom});
+    const uid = userCred.user.uid;
+    // Si code d'invitation fourni, rejoindre le compte de l'admin
+    if(code) {
+      try {
+        const invSnap = await getDoc(doc(db,'invitations',code));
+        if(!invSnap.exists()){errDiv.textContent='Code invalide';errDiv.style.display='block';await signOut(auth);return;}
+        const inv = invSnap.data();
+        const expires = inv.expires?.toDate ? inv.expires.toDate() : new Date(inv.expires);
+        if(expires < new Date()){errDiv.textContent='Code expiré';errDiv.style.display='block';await signOut(auth);return;}
+        if(inv.used){errDiv.textContent='Code déjà utilisé';errDiv.style.display='block';await signOut(auth);return;}
+        const ownerUID = inv.ownerUID;
+        // Créer le lien membre chez l'admin
+        await setDoc(doc(db,'users',ownerUID,'membres',uid), {prenom, email, createdAt: serverTimestamp()});
+        // Créer le profil du membre avec référence à l'admin
+        await setDoc(doc(db,'users',uid,'profile','data'), {ownerUID, prenom, email, role:'membre'});
+        // Marquer le code comme utilisé
+        await updateDoc(doc(db,'invitations',code), {used:true, usedBy:uid, usedAt:serverTimestamp()});
+        toast('Bienvenue ! Compte lié avec succès.');
+      } catch(e2) {
+        errDiv.textContent='Erreur avec le code : ' + (e2.message||e2.code);
+        errDiv.style.display='block';
+        return;
+      }
+    }
+    // onAuthStateChanged prend le relais
+  } catch(e) {
+    errDiv.textContent = e.code==='auth/email-already-in-use' ? 'Email déjà utilisé' : (e.message||'Erreur');
+    errDiv.style.display = 'block';
+  }
+};
+
 // Lancer l'app avec un UID choisi
 async function launchApp(uid) {
   UID = uid;
@@ -1116,6 +1250,11 @@ async function launchApp(uid) {
   updateProfilUI();
   startListeners();
   await initializeDefaultCatalogue();
+  // Charger membres et code invite si on est sur son propre compte
+  if(uid === auth.currentUser.uid) {
+    await loadInviteCode();
+    await renderMembres();
+  }
   goPage('catalogue');
 }
 
@@ -1198,7 +1337,8 @@ document.getElementById('manage-cats-btn').onclick = () => window.openCategories
 document.getElementById('add-cat-btn').onclick = () => window.addCategory();
 document.getElementById('update-nom-btn').onclick = () => window.updateNom();
 document.getElementById('update-pwd-btn').onclick = () => window.updatePwd();
-document.getElementById('creer-membre-btn').onclick = () => window.creerMembre();
+document.getElementById('gen-code-btn').onclick = () => window.genererCode();
+document.getElementById('copy-code-btn').onclick = () => window.copierCode();
 document.getElementById('logout-btn').onclick = () => window.doLogout();
 
 updateAllCategorySelects();
