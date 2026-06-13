@@ -426,7 +426,7 @@
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, doc, addDoc, setDoc, getDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, getDocs, writeBatch } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
 const FB = {
   apiKey:"AIzaSyDMHRowm0gRH09w6qzRf89SWtE_y89KcZY",
@@ -989,9 +989,19 @@ window.creerMembre = async function() {
   const pwd = document.getElementById('m-pwd').value;
   if(!prenom||!email||!pwd){toast('Remplissez tous les champs');return;}
   if(pwd.length<6){toast('Mot de passe trop court (6 min)');return;}
+  const adminUID = UID; // mémoriser l'UID admin avant signOut
   try {
     const userCred = await createUserWithEmailAndPassword(auth,email,pwd);
+    const membreUID = userCred.user.uid;
     await updateProfile(userCred.user,{displayName:prenom});
+    // 1. Enregistrer le membre dans la liste de l'admin
+    await setDoc(doc(db,'users',adminUID,'membres',membreUID), {
+      prenom, email, createdAt: serverTimestamp()
+    });
+    // 2. Enregistrer le profil du membre avec lien vers l'admin
+    await setDoc(doc(db,'users',membreUID,'profile','data'), {
+      ownerUID: adminUID, prenom, email, role: 'membre'
+    });
     toast(`✅ Compte créé pour ${prenom} !`);
     ['m-prenom','m-email','m-pwd'].forEach(id => document.getElementById(id).value = '');
     await signOut(auth);
@@ -1094,7 +1104,15 @@ onAuthStateChanged(auth, async user => {
   if(spinEl) spinEl.classList.remove('on');
 
   if(user){
-    UID = user.uid;
+    // Vérifier si c'est un membre ou l'admin
+    const profileSnap = await getDoc(doc(db,'users',user.uid,'profile','data'));
+    if(profileSnap.exists() && profileSnap.data().role === 'membre') {
+      // Membre : charger les données de l'admin
+      UID = profileSnap.data().ownerUID;
+    } else {
+      // Admin : utiliser son propre UID
+      UID = user.uid;
+    }
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app-screen').style.display = 'flex';
     updateProfilUI();
