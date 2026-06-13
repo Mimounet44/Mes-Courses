@@ -1051,7 +1051,7 @@ window.genererCode = async function() {
 
 window.copierCode = function() {
   const code = document.getElementById('invite-code-display').textContent;
-  if(code === '—'){toast('Générez d'abord un code');return;}
+  if(code === '\u2014'){toast('G\u00e9n\u00e9rez d\u2019abord un code');return;}
   navigator.clipboard.writeText(code).then(() => toast('Code copié !')).catch(() => toast('Code : ' + code));
 };
 
@@ -1073,7 +1073,7 @@ async function renderMembres() {
   const list = document.getElementById('membres-list');
   if(!list) return;
   if(snap.empty){
-    list.innerHTML = '<p style="font-size:.82rem;color:var(--text3);text-align:center;padding:.5rem">Aucun membre pour l'instant</p>';
+    list.innerHTML = '<p style="font-size:.82rem;color:var(--text3);text-align:center;padding:.5rem">Aucun membre pour l\u2019instant</p>';
     return;
   }
   list.innerHTML = snap.docs.map(d => {
