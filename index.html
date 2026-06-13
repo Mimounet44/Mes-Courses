@@ -421,6 +421,15 @@
   </div>
 </div>
 
+<div id="account-modal" class="overlay" style="align-items:center">
+  <div class="modal" style="border-radius:24px">
+    <div class="modal-drag"></div>
+    <div class="modal-title">Quel compte ?</div>
+    <p style="color:var(--text2);font-size:.85rem;margin-bottom:1.2rem">Vous avez acces a plusieurs comptes. Lequel voulez-vous utiliser ?</p>
+    <div id="account-choices" style="display:flex;flex-direction:column;gap:.5rem"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -1098,30 +1107,75 @@ document.getElementById('auth-btn').onclick = async () => {
 };
 document.getElementById('i-pwd').addEventListener('keydown', e => { if(e.key==='Enter') document.getElementById('auth-btn').click(); });
 
+// Lancer l'app avec un UID choisi
+async function launchApp(uid) {
+  UID = uid;
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('account-modal').classList.remove('show');
+  document.getElementById('app-screen').style.display = 'flex';
+  updateProfilUI();
+  startListeners();
+  await initializeDefaultCatalogue();
+  goPage('catalogue');
+}
+
+// Afficher le sélecteur de compte
+function showAccountChooser(comptes) {
+  const c = document.getElementById('account-choices');
+  c.innerHTML = comptes.map(compte => `
+    <button class="btn btn-outline btn-full" style="justify-content:flex-start;gap:.75rem;padding:.85rem 1rem" onclick="window.choisirCompte('${compte.uid}')">
+      <div style="width:36px;height:36px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent);font-size:.9rem;flex-shrink:0">${compte.prenom.slice(0,2).toUpperCase()}</div>
+      <div style="text-align:left">
+        <div style="font-weight:700;font-size:.9rem">${compte.prenom}</div>
+        <div style="font-size:.72rem;color:var(--text2)">${compte.role}</div>
+      </div>
+    </button>
+  `).join('');
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('account-modal').classList.add('show');
+}
+
+window.choisirCompte = async function(uid) {
+  await launchApp(uid);
+};
+
 onAuthStateChanged(auth, async user => {
   // Masquer le spinner Google dans tous les cas
   const spinEl = document.getElementById('google-spinner');
   if(spinEl) spinEl.classList.remove('on');
 
   if(user){
-    // Vérifier si c'est un membre ou l'admin
+    // Construire la liste des comptes accessibles
+    const comptes = [];
+
+    // 1. Son propre compte admin
+    const ownPrenom = user.displayName || user.email?.split('@')[0] || 'Mon compte';
+    comptes.push({ uid: user.uid, prenom: ownPrenom, role: 'Mon compte (admin)' });
+
+    // 2. Vérifier s'il est membre d'autres comptes (profile/data avec role=membre)
     const profileSnap = await getDoc(doc(db,'users',user.uid,'profile','data'));
-    if(profileSnap.exists() && profileSnap.data().role === 'membre') {
-      // Membre : charger les données de l'admin
-      UID = profileSnap.data().ownerUID;
-    } else {
-      // Admin : utiliser son propre UID
-      UID = user.uid;
+    if(profileSnap.exists() && profileSnap.data().ownerUID) {
+      const ownerUID = profileSnap.data().ownerUID;
+      // Récupérer le nom du propriétaire
+      try {
+        const ownerSnap = await getDoc(doc(db,'users',ownerUID,'profile','data'));
+        const ownerPrenom = ownerSnap.exists() ? (ownerSnap.data().prenom || 'Compte famille') : 'Compte famille';
+        comptes.push({ uid: ownerUID, prenom: ownerPrenom, role: 'Compte partagé' });
+      } catch(e) {
+        comptes.push({ uid: ownerUID, prenom: 'Compte famille', role: 'Compte partagé' });
+      }
     }
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('app-screen').style.display = 'flex';
-    updateProfilUI();
-    startListeners();
-    await initializeDefaultCatalogue();
-    goPage('catalogue');
+
+    // Si un seul compte : accès direct, sinon sélecteur
+    if(comptes.length === 1) {
+      await launchApp(comptes[0].uid);
+    } else {
+      showAccountChooser(comptes);
+    }
   } else {
     stopListeners();
     UID = null;
+    document.getElementById('account-modal').classList.remove('show');
     document.getElementById('auth-screen').style.display = 'flex';
     document.getElementById('app-screen').style.display = 'none';
   }
